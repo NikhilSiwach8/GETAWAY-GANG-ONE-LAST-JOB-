@@ -81,4 +81,4 @@ Engineers swap assets by ID. No game logic changes:
 - HUD, background and frame: `UI-*` and `BG-*`;
 - the web-sdk sample assets still loaded by `game/assets.ts` (loader, free-spin intro and outro, big-win spine, coins, fonts, sounds) become the `SCR-*`, `WIN-*`, `MUS-*` and `SFX-*` assets.
 
-Remove `TempWatermark` for release. The full map is §11 of `docs/ASSET_PROMPTS.md`.
+Remove `TempWatermark` for release. The full map is the "Replacement map" section of `docs/ASSET_PROMPTS.md`.
