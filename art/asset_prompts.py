@@ -330,7 +330,37 @@ def render():
     w("")
     with open(OUT, "w", encoding="UTF-8") as f:
         f.write("\n".join(out))
+    write_txt()
     print(f"wrote {OUT}: {len(ASSETS)} prompts")
+
+
+def full_prompt(title, kind, body):
+    visual = {"char_sheet", "char_anim", "symbol", "symbol_anim", "bg", "bg_loop", "fx", "cinematic", "ui", "screen"}
+    if kind in visual:
+        style = STYLE_UI if kind == "ui" else STYLE_3D
+        return f"Create the asset \"{title}\" for {GAME}. {body} {style} {PALETTE} {SPEC[kind]} {NEG}"
+    return f"{body} {SPEC[kind]}"
+
+
+def write_txt():
+    """Plain-text edition: every prompt in full, numbered, no Markdown."""
+    path = os.path.join(os.path.dirname(OUT), "ASSET_PROMPTS.txt")
+    bar = "=" * 78
+    lines = [
+        "GETAWAY GANG: ONE LAST JOB! - COMPLETE ASSET PRODUCTION PROMPTS",
+        f"{len(ASSETS)} assets. Each prompt below is complete on its own: copy the text under PROMPT.",
+        "Asset IDs match the TEMP labels in the playable build.",
+        "",
+    ]
+    section = None
+    for n, (sec, aid, title, kind, body) in enumerate(ASSETS, 1):
+        if sec != section:
+            section = sec
+            lines += [bar, sec.upper(), bar, ""]
+        lines += [f"[{n:03d}] {aid} - {title}", "PROMPT:", full_prompt(title, kind, body), "", "-" * 78, ""]
+    with open(path, "w", encoding="UTF-8") as f:
+        f.write("\n".join(lines))
+    print(f"wrote {path}")
 
 
 if __name__ == "__main__":
