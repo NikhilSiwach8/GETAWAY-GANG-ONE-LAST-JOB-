@@ -197,12 +197,15 @@ whole bonus.
 
 **Loot Meter.** It earns +1 per activation, +1 when Tank opens a vault, and +1 per combo:
 
-| Points | Reward |
-|---|---|
-| 10 | +2 free spins |
-| 20 | Loot multiplier ×2, for the rest of the bonus |
-| 30 | Every crew ability +1 level, for the rest of the bonus |
-| 40 | +3 free spins and loot multiplier ×3 |
+| Points | Reward | Reached in (measured) |
+|---|---|---|
+| 4 | +1 free spin | ≈ 49% of Heists |
+| 8 | Loot multiplier ×2, for the rest of the bonus | ≈ 11% |
+| 12 | Every crew ability +1 level, for the rest of the bonus | ≈ 1.4% |
+| 16 | +2 free spins and loot multiplier ×3 | ≈ 0.17% |
+
+The thresholds were lowered from 10/20/30/40 after measurement showed the 30 and 40 milestones were
+never reached. A meter must not advertise rewards players cannot get.
 
 Retrigger: 3+ Scatters on a free spin's initial board give +5 free spins. Total free spins are
 capped at **30**.
@@ -242,7 +245,7 @@ The round settles at exactly 12,000×.
 | D4 | Several copies of one character on a board | One activation per character per reveal, so value is predictable and bounded |
 | D5 | Resolution order when a combo needs a later character's output (Byte+Tank) | Individual abilities run first in R→B→T→F order, then combos. "Vault rewards become eligible for duplication" is a separate Vault Clone step |
 | D6 | Scatters during re-spins | Scatters count only on initial boards. Re-spins use Scatter-free strips, so features cannot loop into bonuses |
-| D7 | Zero-win bonus rounds | The Heist can pay 0 (about 1.7% of Heists). No minimum is guaranteed, because that would hide a dead zone in the distribution |
+| D7 | Zero-win bonus rounds | The Heist can pay 0 (about 2.8% of Heists). No minimum is guaranteed, because that would hide a dead zone in the distribution |
 | D8 | 5 or 6 Scatters | Same as 4: 12 free spins of The Perfect Escape, as the brief specifies |
 | D9 | RTP target exactly 96.00% with "must not exceed" | Publish at exactly 96.0000% (table RTP ≤ 0.96, verified with exact rational arithmetic) |
 | D10 | Payout increments | Stake's RGS requires multiples of 0.1×. All per-way pays are multiples of 0.1×, so no rounding is ever applied to a win |

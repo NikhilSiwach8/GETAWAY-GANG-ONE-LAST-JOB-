@@ -307,6 +307,8 @@ class GameExecutables(GameCalculations):
         self.meter_points = min(self.meter_points + gained, METER_THRESHOLDS[-1])
         self.meter_stage = sum(self.meter_points >= t for t in METER_THRESHOLDS)
         new_stages = list(range(old_stage + 1, self.meter_stage + 1))
+        for st in new_stages:
+            self.round_stats[f"meter_stage{st}"] += 1
         ev.getaway_meter_event(self, self.meter_points, self.meter_stage, gained, new_stages)
         if 3 in new_stages:
             self.add_respins(METER_STAGE3_RESPINS, "getawayMeterStage3")
@@ -325,6 +327,7 @@ class GameExecutables(GameCalculations):
             for threshold, reward in LOOT_MILESTONES:
                 if old < threshold <= self.loot_points:
                     rewards.append({"at": threshold, **reward})
+                    self.round_stats[f"loot_milestone{threshold}"] += 1
                     if "extra_fs" in reward:
                         self.add_free_spins(reward["extra_fs"], "lootMeter")
                     if "loot_mult" in reward:

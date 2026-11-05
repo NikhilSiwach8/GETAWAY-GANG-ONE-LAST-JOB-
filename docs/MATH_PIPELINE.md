@@ -100,3 +100,7 @@ bit. The stratified study uses separate id ranges (`--seed`) that do not overlap
 4. Reel banding. Each reel favours different low symbols (A/K vs Q/J), found with `calibrate_banding.py` against the exact analytic ordinary RTP: 30.0% ordinary, 40% of it from premiums.
 5. Base strips lengthened to 600 stops (Scatter density unchanged) to set crew frequency. Then bonus crew density, bonus Wilds, Loot Meter thresholds and Escape level thresholds were tuned against stratified measurements.
 6. Final large-sample verification run, then publication (`docs/RTP_REPORT.md`).
+7. **Loot Meter reachability fix.** The frontend's showcase scan of all 1M published books found that
+   the 30- and 40-point milestones never occurred (a Heist averaged 4.4 points). The thresholds became
+   4/8/12/16 with the rewards reordered. The Heist strips went from 100 to 110 stops, keeping one
+   Wild per reel, to hold The Heist's value. Then everything was re-verified and republished.

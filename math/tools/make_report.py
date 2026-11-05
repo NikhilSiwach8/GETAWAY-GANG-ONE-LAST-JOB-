@@ -151,6 +151,8 @@ def main():
         for k in sorted(x for x in b if x.startswith("combo_")):
             w(f"| Combo {k[6:]} | {one_in(b[k])} |")
         w(f"| Perfectly Bad Plan | {one_in(b.get('pbp', 0))} |")
+        for k in sorted(x for x in b if x.startswith("meter_stage")):
+            w(f"| Getaway Meter reaches stage {k[-1]} | {one_in(b[k])} |")
         hist = sim["strata"]["basegame"]["histogram"]
         for k in sorted(x for x in hist if x.startswith("chain_")):
             w(f"| Chaos Re-spin chain length {k[6:]} | {hist[k] / n_b * 100:.4f}% |")
@@ -162,7 +164,7 @@ def main():
             w(f"**{bonus.upper()} feature counts (average per bonus round)**\n")
             w("| Event | Average per round |\n|---|---:|")
             for k in sorted(pr2):
-                if k.startswith(("act_", "combo_")) or k in ("pbp", "activations"):
+                if k.startswith(("act_", "combo_", "meter_stage", "loot_milestone")) or k in ("pbp", "activations"):
                     w(f"| {k} | {pr2[k]:.3f} |")
             w("")
             w(f"Win distribution for {bonus} rounds (share of rounds):\n")
