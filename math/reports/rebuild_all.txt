@@ -1,2 +1,30 @@
 ..............................                                           [100%]
 30 passed in 1.15s
+P(basegame)=0.991488  P(heist)=1/125.4  P(escape)=1/1857.4
+basegame  n=  3000000 mean=   0.4132 sd=    3.973 se=0.0023 rtp+=40.965%  hit=0.1791 max=810.00 caps=0
+heist     n=   400000 mean=  40.6224 sd=  218.382 se=0.3453 rtp+=32.391%  hit=0.9770 max=12000.00 caps=25
+escape    n=   150000 mean= 433.6697 sd= 1103.655 se=2.8496 rtp+=23.348%  hit=0.9982 max=12000.00 caps=381
+contributions: ordinary_base=29.993%, crew_base=11.131%, heist=32.239%, escape=23.340%, final_escape=1.666%
+RTP = 96.7041%  (95% CI 95.9422 - 97.4659)  [601s]
+
+Creating books...
+
+Creating books for getaway_gang in base
+Saving books for  getaway_gang in base
+Saving force files for getaway_gang in base
+Saving LUTs for getaway_gang in base
+Wrote verification file: /home/user/GETAWAY-GANG-ONE-LAST-JOB-/vendor/math-sdk/games/getaway_gang/library/configs/books_base.verification.json
+
+Finished creating books in 397.71766901016235 seconds.
+
+[LUT] base: natural sample RTP 96.8016% -> table RTP 96.0000% (zero-win trim x1.01025)
+[FAST PATH] Using verification sidecar for base
+[FAST PATH] base: SHA-256 OK, payout hash OK, entries=1000000
+
+Risk checks: 6 of 6 pass
+Max base bet: up to $1,000.00. Studio gives the highest bet template at or below this.
+
+wrote /home/user/GETAWAY-GANG-ONE-LAST-JOB-/docs/RTP_REPORT.md
+dev books: 28067  dev RTP 94.282%  showcase tags: 32
+REBUILD_DONE
+exit=0

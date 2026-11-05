@@ -7,9 +7,9 @@ Saving force files for getaway_gang in base
 Saving LUTs for getaway_gang in base
 Wrote verification file: /home/user/GETAWAY-GANG-ONE-LAST-JOB-/vendor/math-sdk/games/getaway_gang/library/configs/books_base.verification.json
 
-Finished creating books in 383.38352823257446 seconds.
+Finished creating books in 397.71766901016235 seconds.
 
-[LUT] base: natural sample RTP 94.7253% -> table RTP 96.0000% (zero-win trim x0.98370)
+[LUT] base: natural sample RTP 96.8016% -> table RTP 96.0000% (zero-win trim x1.01025)
 [FAST PATH] Using verification sidecar for base
 [FAST PATH] base: SHA-256 OK, payout hash OK, entries=1000000
 

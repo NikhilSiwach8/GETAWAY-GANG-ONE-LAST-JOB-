@@ -9,42 +9,42 @@ The RGS picks each round's outcome by weight from `lookUpTable_base_0.csv`, so t
 | Metric | Value |
 |---|---|
 | Books (simulations) | 1,000,000 |
-| Distinct non-zero payouts | 21,250 |
+| Distinct non-zero payouts | 21,379 |
 | **RTP** | **96.0000%** |
-| Base-game wins share of RTP | 41.524% |
-| Free-game wins share of RTP | 54.476% |
-| Hit rate (round pays > 0) | 18.77% (1 in 5) |
-| Standard deviation (x bet) | 33.54 |
+| Base-game wins share of RTP | 40.633% |
+| Free-game wins share of RTP | 55.367% |
+| Hit rate (round pays > 0) | 18.36% (1 in 5) |
+| Standard deviation (x bet) | 34.19 |
 | Maximum win in table | 12,000.00x |
-| P(max win 12,000x) | 1 in 545,146 (386 books) |
-| Natural RTP of the book sample (before trim) | 94.7253% |
-| Zero-win re-weighting factor (RTP trim) | x0.98370 |
+| P(max win 12,000x) | 1 in 503,826 (392 books) |
+| Natural RTP of the book sample (before trim) | 96.8016% |
+| Zero-win re-weighting factor (RTP trim) | x1.01025 |
 
 | Stratum | Books | Probability | RTP contribution |
 |---|---:|---:|---:|
-| basegame | 600,000 | 99.137% | 41.365% |
-| escape | 150,000 | 1 in 1,833 | 23.387% |
-| heist | 250,000 | 1 in 124 | 31.248% |
+| basegame | 600,000 | 99.156% | 40.478% |
+| escape | 150,000 | 1 in 1,873 | 22.885% |
+| heist | 250,000 | 1 in 126 | 32.637% |
 
 **Win distribution (probability per round):**
 
 | Win range (x bet) | Probability |
 |---|---:|
-| 0 – 0.1 | 81.23481% |
-| 0.1 – 1 | 11.54493% |
-| 1 – 2 | 3.13809% |
-| 2 – 5 | 2.19012% |
-| 5 – 10 | 0.80405% |
-| 10 – 20 | 0.48841% |
-| 20 – 50 | 0.36633% |
-| 50 – 100 | 0.12366% |
-| 100 – 250 | 0.06983% |
-| 250 – 500 | 0.02140% |
-| 500 – 1000 | 0.00991% |
-| 1000 – 2500 | 0.00593% |
-| 2500 – 5000 | 0.00165% |
-| 5000 – 12000 | 0.00070% |
-| 12000 (max win) | 0.00018% |
+| 0 – 0.1 | 81.63735% |
+| 0.1 – 1 | 11.29734% |
+| 1 – 2 | 3.07090% |
+| 2 – 5 | 2.14337% |
+| 5 – 10 | 0.78694% |
+| 10 – 20 | 0.47779% |
+| 20 – 50 | 0.35752% |
+| 50 – 100 | 0.12016% |
+| 100 – 250 | 0.06804% |
+| 250 – 500 | 0.02146% |
+| 500 – 1000 | 0.01022% |
+| 1000 – 2500 | 0.00618% |
+| 2500 – 5000 | 0.00179% |
+| 5000 – 12000 | 0.00074% |
+| 12000 (max win) | 0.00020% |
 
 ## 2. Independent Monte Carlo of the reel model
 
@@ -56,10 +56,10 @@ The trigger probabilities come from the reel strips analytically. The conditiona
 
 | Quantity | Value |
 |---|---|
-| **Estimated RTP** | **94.516%** ± 0.721% (95% CI 93.795% – 95.237%) |
+| **Estimated RTP** | **96.704%** ± 0.762% (95% CI 95.942% – 97.466%) |
 | THE HEIST trigger | 1 in 125 spins (exact) |
 | THE PERFECT ESCAPE trigger | 1 in 1,857 spins (exact) |
-| Runtime | 8.9 min |
+| Runtime | 10.0 min |
 
 **RTP contributions vs. the initial budget**
 
@@ -67,7 +67,7 @@ The trigger probabilities come from the reel strips analytically. The conditiona
 |---|---:|---:|
 | Ordinary base-game wins (no crew, no re-spin) | 30.00% | 29.993% |
 | Base-game Crew Chaos (crew reveals + Chaos Re-spins) | 12.00% | 11.131% |
-| THE HEIST (free-spin wins) | 31.00% | 30.051% |
+| THE HEIST (free-spin wins) | 31.00% | 32.239% |
 | THE PERFECT ESCAPE (free-spin wins incl. Final Escape) | 23.00% | 23.340% |
 | …of which Final Escape awards | – | 1.666% |
 
@@ -78,7 +78,7 @@ Each round's win is credited to exactly one bucket: the base reveal it came from
 | Stratum | Sims | Mean win | SD | Hit rate | Max | 12,000x rounds | Rounds with crew |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | basegame | 3,000,000 | 0.413x | 3.97 | 17.91% | 810.0x | 0 | 5.71% |
-| heist | 400,000 | 37.878x | 194.14 | 97.71% | 12,000.0x | 19 | 95.04% |
+| heist | 400,000 | 40.622x | 218.38 | 97.70% | 12,000.0x | 25 | 95.04% |
 | escape | 150,000 | 433.670x | 1103.66 | 99.82% | 12,000.0x | 381 | 99.94% |
 
 **Base-game feature frequencies (per paid spin, non-trigger rounds)**
@@ -105,23 +105,23 @@ Each round's win is credited to exactly one bucket: the base reveal it came from
 
 | Event | Average per round |
 |---|---:|
-| act_B | 0.770 |
-| act_F | 0.772 |
-| act_R | 0.772 |
-| act_T | 0.771 |
-| activations | 3.085 |
+| act_B | 0.763 |
+| act_F | 0.765 |
+| act_R | 0.764 |
+| act_T | 0.764 |
+| activations | 3.056 |
 | combo_armoredGetaway | 0.040 |
 | combo_blastDrift | 0.054 |
 | combo_goldenVault | 0.041 |
-| combo_hotwiredClone | 0.041 |
+| combo_hotwiredClone | 0.040 |
 | combo_vaultClone | 0.053 |
-| loot_milestone12 | 0.019 |
+| loot_milestone12 | 0.013 |
 | loot_milestone16 | 0.002 |
 | loot_milestone4 | 0.485 |
 | loot_milestone8 | 0.110 |
 | meter_stage1 | 0.563 |
-| meter_stage2 | 0.147 |
-| meter_stage3 | 0.015 |
+| meter_stage2 | 0.145 |
+| meter_stage3 | 0.012 |
 | meter_stage4 | 0.001 |
 | meter_stage5 | 0.000 |
 | pbp | 0.000 |
@@ -130,21 +130,21 @@ Win distribution for heist rounds (share of rounds):
 
 | Range | Share |
 |---|---:|
-| [0,0.0001) | 2.2945% |
-| [0.0001,1) | 9.5353% |
-| [1,2) | 10.1515% |
-| [2,5) | 19.2387% |
-| [5,10) | 15.7713% |
-| [10,20) | 14.5225% |
-| [20,50) | 14.6900% |
-| [50,100) | 6.8065% |
-| [100,250) | 4.5565% |
-| [250,500) | 1.4572% |
-| [500,1000) | 0.6240% |
-| [1000,2500) | 0.2678% |
-| [2500,5000) | 0.0570% |
-| [5000,12000) | 0.0225% |
-| [12000,1000000000.0) | 0.0047% |
+| [0,0.0001) | 2.2965% |
+| [0.0001,1) | 9.5433% |
+| [1,2) | 10.1623% |
+| [2,5) | 19.2692% |
+| [5,10) | 15.7805% |
+| [10,20) | 14.5077% |
+| [20,50) | 14.5480% |
+| [50,100) | 6.6967% |
+| [100,250) | 4.5477% |
+| [250,500) | 1.5252% |
+| [500,1000) | 0.6868% |
+| [1000,2500) | 0.3253% |
+| [2500,5000) | 0.0757% |
+| [5000,12000) | 0.0287% |
+| [12000,1000000000.0) | 0.0063% |
 
 **ESCAPE feature counts (average per bonus round)**
 
