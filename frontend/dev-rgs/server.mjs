@@ -5,18 +5,25 @@
 // Uses @slot-engine/lgs (vendor/slot-engine) with a custom GameMath that reads the dev book set
 // built by build_dev_books.py (a stratified sample of the published 1M-book math).
 // Prints a launch URL for the frontend. Force any feature with:
-//   curl -X PUT localhost:7771/lgs/sessions/<id>/force -H 'content-type: application/json' -d '{"force":{"bookId":123}}'
+//   curl -X PUT localhost:7770/lgs/sessions/<id>/force -H 'content-type: application/json' -d '{"force":{"bookId":123}}'
 // Book ids per feature are listed in data/showcase.json.
 import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
 import { fileURLToPath } from 'node:url';
+import https from 'node:https';
+import http from 'node:http';
+import { execFileSync } from 'node:child_process';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const LGS = path.join(HERE, '../../vendor/slot-engine/packages/lgs/dist/index.mjs');
 const { EngineLgs, InMemoryStorage } = await import(LGS);
 const DATA = path.join(HERE, 'data');
+// The web-sdk RGS client always calls https://<rgs_url>. The LGS speaks plain http on HTTP_PORT, and a
+// small TLS proxy with a self-signed certificate serves it on PORT (accept the certificate once in the
+// browser by opening https://localhost:7771/lgs).
 const PORT = Number(process.env.PORT ?? 7771);
+const HTTP_PORT = Number(process.env.HTTP_PORT ?? 7770);
 const FRONTEND = process.env.FRONTEND_URL ?? 'http://localhost:3010';
 
 async function loadBooks() {
@@ -74,7 +81,7 @@ function createMath({ books, rows }) {
 const data = await loadBooks();
 const lgs = new EngineLgs({
 	storage: new InMemoryStorage(),
-	port: PORT,
+	port: HTTP_PORT,
 	defaultCurrency: 'USD',
 	balance: { starting: 10000 },
 	bets: { min: 0.1, max: 100, step: 0.1, default: 1, levels: [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100] },
@@ -92,7 +99,29 @@ lgs.registerGame({
 });
 await lgs.start();
 
-const res = await fetch(`http://localhost:${PORT}/lgs/sessions`, {
+const certDir = path.join(HERE, '.cert');
+const keyFile = path.join(certDir, 'key.pem');
+const certFile = path.join(certDir, 'cert.pem');
+if (!fs.existsSync(certFile)) {
+	fs.mkdirSync(certDir, { recursive: true });
+	execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '825', '-subj', '/CN=localhost',
+		'-addext', 'subjectAltName=DNS:localhost,IP:127.0.0.1', '-keyout', keyFile, '-out', certFile], { stdio: 'ignore' });
+}
+https
+	.createServer({ key: fs.readFileSync(keyFile), cert: fs.readFileSync(certFile) }, (req, res) => {
+		const upstream = http.request(
+			{ host: '127.0.0.1', port: HTTP_PORT, path: req.url, method: req.method, headers: { ...req.headers, host: `localhost:${PORT}` } },
+			(up) => {
+				res.writeHead(up.statusCode ?? 502, up.headers);
+				up.pipe(res);
+			},
+		);
+		upstream.on('error', () => res.writeHead(502).end());
+		req.pipe(upstream);
+	})
+	.listen(PORT);
+
+const res = await fetch(`http://localhost:${HTTP_PORT}/lgs/sessions`, {
 	method: 'POST',
 	headers: { 'content-type': 'application/json' },
 	body: JSON.stringify({ gameId: 'getaway_gang' }),
@@ -100,4 +129,5 @@ const res = await fetch(`http://localhost:${PORT}/lgs/sessions`, {
 const session = await res.json();
 console.log(`Loaded ${data.books.size} books.`);
 console.log(`Session: ${session.sessionID}`);
-console.log(`Play: ${FRONTEND}/?${session.launchQuery}`);
+console.log(`HTTPS RGS on https://localhost:${PORT} (plain http management API on :${HTTP_PORT})`);
+console.log(`Play: ${FRONTEND}/?${session.launchQuery.replace(`localhost%3A${HTTP_PORT}`, `localhost%3A${PORT}`)}`);

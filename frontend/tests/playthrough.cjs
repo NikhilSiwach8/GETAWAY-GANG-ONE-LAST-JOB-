@@ -1,13 +1,14 @@
 // End-to-end play-through: real frontend build + local RGS + forced feature books.
-//   node frontend/tests/playthrough.cjs <playUrl> <outDir> [case ...]
+//   node frontend/tests/playthrough.cjs http://localhost:3010 <outDir> [case ...]   (dev RGS on :7771)
 // Cases: base, pbp, heist, escape, maxwin, respin4, retrigger, masters4  (book ids from showcase.json)
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-const [, , playUrl, outDir, ...wanted] = process.argv;
+const [, , frontendUrl, outDir, ...wanted] = process.argv;
 const showcase = JSON.parse(fs.readFileSync(path.join(__dirname, '../dev-rgs/data/showcase.json'), 'utf8'));
-const sessionID = new URL(playUrl).searchParams.get('sessionID');
+let sessionID;
+let playUrl;
 const CASES = {
 	base: { force: null, waitMs: 12000 },
 	pbp: { force: showcase.perfectlyBadPlan[0], waitMs: 45000 },
@@ -19,7 +20,7 @@ const CASES = {
 	masters4: { force: showcase.final_escape_masters_4[0], waitMs: 420000 },
 };
 
-const lgs = (p, init) => fetch(`http://localhost:7771${p}`, init).then((r) => r.json());
+const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.json());
 const force = (bookId) =>
 	lgs(`/lgs/sessions/${sessionID}/force`, {
 		method: 'PUT',
@@ -29,27 +30,28 @@ const force = (bookId) =>
 
 (async () => {
 	fs.mkdirSync(outDir, { recursive: true });
+	// Fresh session per run, so no unfinished round from an earlier run is resumed.
+	const session = await lgs('/lgs/sessions', {
+		method: 'POST',
+		headers: { 'content-type': 'application/json' },
+		body: JSON.stringify({ gameId: 'getaway_gang' }),
+	});
+	sessionID = session.sessionID;
+	playUrl = `${frontendUrl}/?${session.launchQuery.replace('localhost%3A7770', 'localhost%3A7771')}`;
 	const browser = await chromium.launch();
-	const page = await browser.newPage({ viewport: { width: 1422, height: 800 } });
+	// Real https path to the dev RGS TLS proxy (self-signed certificate).
+	const page = await browser.newPage({ viewport: { width: 1422, height: 800 }, ignoreHTTPSErrors: true });
 	const errors = [];
 	page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
 	page.on('pageerror', (e) => errors.push('PAGEERROR ' + e.message));
-	// The web-sdk RGS client always uses https://; route it to the local plain-http LGS.
-	await page.route('https://localhost:7771/**', async (route) => {
-		const req = route.request();
-		const res = await fetch(req.url().replace('https://', 'http://'), {
-			method: req.method(),
-			headers: { 'content-type': 'application/json' },
-			body: req.postData() ?? undefined,
-		});
-		await route.fulfill({ status: res.status, headers: { 'access-control-allow-origin': '*', 'content-type': 'application/json' }, body: await res.text() });
-	});
-
 	await page.goto(playUrl);
 	await page.waitForTimeout(20000);
 	await page.screenshot({ path: path.join(outDir, '00_loading.png') });
 	await page.mouse.click(711, 400); // "press anywhere to continue"
 	await page.waitForTimeout(3000);
+	await page.mouse.click(711, 400);
+	await page.waitForTimeout(1000);
+	if (process.env.TURBO) await page.mouse.click(842, 742); // shared UI turbo button (desktop layout)
 	await page.screenshot({ path: path.join(outDir, '01_idle.png') });
 
 	const results = [];
@@ -65,7 +67,7 @@ const force = (bookId) =>
 		while (Date.now() - t0 < c.waitMs) {
 			await page.waitForTimeout(2500);
 			const s = await lgs(`/lgs/sessions/${sessionID}`);
-			if (shot < 6 && (Date.now() - t0) > shot * 5000) {
+			if (shot < 30 && (Date.now() - t0) > shot * 15000) {
 				await page.screenshot({ path: path.join(outDir, `${name}_${String(shot).padStart(2, '0')}.png`) });
 				shot++;
 			}
