@@ -206,7 +206,7 @@ trim, navy glass panels. Every interactive element has idle, hover, pressed and 
 | UI-BALANCE · UI-WIN | Balance and win display capsules. The win display has a gold count-up flare |
 | UI-FS-COUNTER | Free-spin counter: a blueprint-styled plaque "FREE SPINS 3 / 10" |
 | UI-METER-GETAWAY | Getaway Meter: a horizontal speedometer-styled bar with 5 notches labelled 1–5, filling with gold, plus a tiny van icon riding along the bar. Each stage notch pops with a reward icon (Wild, level-up chevron, re-spin arrow, ×2, chequered flag ×5) |
-| UI-METER-LOOT | Loot Meter (Heist only): a vault-shaped bar filling with tumbling gold coins, with milestones at 4/8/12/16 showing +1 spin, ×2, crew level-up and +2 spins ×3 |
+| UI-METER-LOOT | Loot Meter (Heist only): a vault-shaped bar filling with tumbling gold coins, with milestones at 4/8/12/16 showing +1 spin, +1 spin, ×2 and +2 spins ×3 with a crew level-up |
 | UI-CREW-LEVELS | Crew upgrade panel (Escape only): four character mini-portraits, each with three star pips that light in its colour as it levels up |
 | UI-MULT | Multiplier badge: a chrome "×N" sticker with a gold burst |
 | UI-RESPIN | Re-spin chain indicator: four small lock icons that light per re-spin |

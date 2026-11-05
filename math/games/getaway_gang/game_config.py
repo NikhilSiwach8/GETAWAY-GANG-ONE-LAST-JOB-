@@ -93,9 +93,9 @@ METER_STAGE5_RESPINS = 1  # one-off on reaching stage 5
 LOOT_POINTS = {"activation": 1, "vault": 1, "combo": 1}
 LOOT_MILESTONES = [  # (points, reward)
     (4, {"extra_fs": 1}),
-    (8, {"loot_mult": 2}),
-    (12, {"level_bonus": 1}),
-    (16, {"extra_fs": 2, "loot_mult": 3}),
+    (8, {"extra_fs": 1}),
+    (12, {"loot_mult": 2}),
+    (16, {"extra_fs": 2, "loot_mult": 3, "level_bonus": 1}),
 ]
 HEIST_MAX_FS = 30
 

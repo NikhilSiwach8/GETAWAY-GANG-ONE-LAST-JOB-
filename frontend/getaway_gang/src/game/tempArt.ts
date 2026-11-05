@@ -84,4 +84,4 @@ export const METER_STAGE_REWARDS = [
 
 export const METER_THRESHOLDS: readonly number[] = config.features.meterThresholds;
 export const LOOT_THRESHOLDS: readonly number[] = config.features.lootThresholds;
-export const LOOT_REWARDS = ['+1 free spin', '×2 loot multiplier', 'All crew +1 level', '+2 free spins & ×3'];
+export const LOOT_REWARDS = ['+1 free spin', '+1 free spin', '×2 loot multiplier', '+2 spins, ×3, crew +1 lvl'];
