@@ -10,3 +10,9 @@
 [submodule "vendor/skills/stake-engine-skills"]
 	path = vendor/skills/stake-engine-skills
 	url = https://github.com/ReSkin-Games/stake-engine-skills.git
+[submodule "vendor/math-sdk"]
+	path = vendor/math-sdk
+	url = https://github.com/StakeEngine/math-sdk.git
+[submodule "vendor/web-sdk"]
+	path = vendor/web-sdk
+	url = https://github.com/StakeEngine/web-sdk.git

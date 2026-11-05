@@ -4,3 +4,7 @@ dist/
 .env.*
 *.log
 .DS_Store
+# generated math artifacts (rebuild with math/games/getaway_gang/run.py)
+math/games/getaway_gang/library/
+__pycache__/
+.pytest_cache/
