@@ -13,6 +13,8 @@
 [submodule "vendor/math-sdk"]
 	path = vendor/math-sdk
 	url = https://github.com/StakeEngine/math-sdk.git
+	ignore = dirty
 [submodule "vendor/web-sdk"]
 	path = vendor/web-sdk
 	url = https://github.com/StakeEngine/web-sdk.git
+	ignore = dirty
