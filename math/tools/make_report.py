@@ -104,7 +104,8 @@ def main():
         w("")
         w("| Stratum | Books | Probability | RTP contribution |\n|---|---:|---:|---:|")
         for c, d in sorted(s["strata"].items()):
-            w(f"| {c} | {d['books']:,} | {one_in(d['probability'])} | {pct(d['rtp'])} |")
+            prob = pct(d["probability"], 3) if d["probability"] > 0.5 else one_in(d["probability"])
+            w(f"| {c} | {d['books']:,} | {prob} | {pct(d['rtp'])} |")
         w("\n**Win distribution (probability per round):**\n")
         w("| Win range (x bet) | Probability |\n|---|---:|")
         for lo, hi, p in s["hist"]:

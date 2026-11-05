@@ -1,6 +1,33 @@
-# Getaway Gang: One Last Job
+# Getaway Gang: One Last Job!
 
-A slot game for [Stake Engine](https://engine.stake.com/).
+A high-volatility 6×4, 4,096-ways slot for [Stake Engine](https://engine.stake.com/).
+*Four criminals. One vault. Absolutely no plan B.*
+
+## Status
+
+| Phase | State |
+|---|---|
+| Math model (Stake Engine Math SDK, Python) | **Done.** Calibrated, 1M publishable books, SDK RGS verification passes (6/6 risk checks) |
+| RTP | **96.0000%** published table; independent Monte Carlo 96.18% ± 0.67% (95% CI) |
+| Max win | 12,000× hard cap; occurs naturally, 1 in 683k rounds |
+| Game design document | `docs/GAME_DESIGN.md` |
+| Frontend (Stake web-sdk, Svelte + PixiJS) | Not started; SDK cloned and installed in `vendor/web-sdk` |
+| Art, animation, audio | Not started; needs a production asset source (see below) |
+
+## Documents
+
+- `docs/GAME_DESIGN.md`: rules, paytable, every feature rule with exact numbers, design decisions, book-event contract
+- `docs/MATH_PIPELINE.md`: SDK integration, book weighting, how to reproduce every number, calibration log
+- `docs/RTP_REPORT.md`: generated RTP, volatility and feature-frequency report
+
+## Math quick start
+
+```bash
+math/setup.sh
+cd vendor/math-sdk
+env/bin/python -m pytest ../../math/games/getaway_gang/tests -q
+GG_SIMS=1000000 env/bin/python games/getaway_gang/run.py   # ~5 min on 4 cores, ~800 MB of books
+```
 
 ## Setup
 
@@ -30,6 +57,8 @@ If you cloned without `--recurse-submodules`, run `npm run vendor:init` first.
 | `vendor/slot-engine` | https://github.com/slot-engine/slot-engine (includes `examples/`) |
 | `vendor/skills/slot-casino-skills` | https://github.com/egorfedorov/Slot-Casino-Game-Developer-Skills-for-Stake-Engine |
 | `vendor/skills/stake-engine-skills` | https://github.com/ReSkin-Games/stake-engine-skills |
+| `vendor/math-sdk` | https://github.com/StakeEngine/math-sdk (the official Python Math SDK) |
+| `vendor/web-sdk` | https://github.com/StakeEngine/web-sdk (the official frontend SDK) |
 
 `slot-engine` declares Node >= 23.8 and pnpm 11; it installs and builds on Node 22 too. `vendor:install` runs pnpm 11 through `npx`.
 
