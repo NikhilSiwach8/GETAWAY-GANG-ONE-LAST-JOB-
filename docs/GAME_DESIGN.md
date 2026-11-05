@@ -200,8 +200,8 @@ whole bonus.
 | Points | Reward | Reached in (measured) |
 |---|---|---|
 | 4 | +1 free spin | ≈ 49% of Heists |
-| 8 | +1 free spin | ≈ 11% |
-| 12 | Loot multiplier ×2, for the rest of the bonus | ≈ 1.4% |
+| 8 | Loot multiplier ×2, for the rest of the bonus | ≈ 11% |
+| 12 | +1 free spin | ≈ 1.4% |
 | 16 | +2 free spins, loot multiplier ×3 and every crew ability +1 level | ≈ 0.17% |
 
 The thresholds were lowered from 10/20/30/40 after measurement showed the 30 and 40 milestones were
