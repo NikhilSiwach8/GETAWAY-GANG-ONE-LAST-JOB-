@@ -102,10 +102,10 @@ HEIST_MAX_FS = 30
 # --------------------------------------------------------------------------------------
 # THE PERFECT ESCAPE -- persistent crew upgrades
 # --------------------------------------------------------------------------------------
-ESCAPE_LEVEL_UP_AT = {2: 2, 3: 4}  # cumulative activations of a character to reach level 2 / 3
+ESCAPE_LEVEL_UP_AT = {2: 2, 3: 3}  # cumulative activations of a character to reach level 2 / 3
 ESCAPE_MAX_FS = 40
-FINAL_ESCAPE_PER_MASTER = 20  # x bet paid at bonus end for each character at level 3
-FINAL_ESCAPE_ALL_MASTERS = 200  # x bet paid instead if all four are level 3
+FINAL_ESCAPE_PER_MASTER = 30  # x bet paid at bonus end for each character at level 3
+FINAL_ESCAPE_ALL_MASTERS = 300  # x bet paid instead if all four are level 3
 
 MAX_TOTAL_MULTIPLIER = 45  # PBP(3) x meter(5) x loot(3); asserted, never exceeded
 

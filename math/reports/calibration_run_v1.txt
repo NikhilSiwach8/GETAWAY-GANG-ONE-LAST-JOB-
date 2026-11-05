@@ -1,0 +1,6 @@
+P(basegame)=0.991488  P(heist)=1/125.4  P(escape)=1/1857.4
+basegame  n=  2000000 mean=   0.4052 sd=    4.124 se=0.0029 rtp+=40.175%  hit=0.1745 max=810.00 caps=0
+heist     n=   400000 mean=  39.6260 sd=  156.472 se=0.2474 rtp+=31.597%  hit=0.9831 max=12000.00 caps=6
+escape    n=   120000 mean= 404.4896 sd= 1087.477 se=3.1393 rtp+=21.777%  hit=0.9979 max=12000.00 caps=308
+contributions: ordinary_base=29.712%, crew_base=10.649%, heist=31.420%, escape=21.768%, final_escape=0.410%
+RTP = 93.5486%  (95% CI 92.7868 - 94.3104)  [379s]

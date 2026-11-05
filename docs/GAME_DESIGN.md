@@ -213,14 +213,14 @@ The premium bonus. The crew races through a neon city at night in the getaway va
 reel set, with more Crew and more Wilds than The Heist.
 
 **Persistent crew upgrades.** Each character starts at Level 1. A character reaches **Level 2 after
-2 activations** and **Level 3 after 4**, counted across the whole bonus, including re-spins and
+2 activations** and **Level 3 after 3**, counted across the whole bonus, including re-spins and
 retriggers. The maximum is Level 3. Effective level = persistent level + Getaway Meter stage-2
 bonus, capped at 3. Everything resets when the bonus ends.
 
 Retrigger: 3+ Scatters give +5 free spins. Total free spins are capped at **40**.
 
 **Final Escape.** When the last free spin ends, the van makes its getaway. Each character at Level 3
-pays **20× bet**, or **200×** in total if all four reached Level 3. This is the only end-of-bonus
+pays **30× bet**, or **300×** in total if all four reached Level 3. This is the only end-of-bonus
 award. It is in the math and the books, and the cinematic only displays it.
 
 **Effective multiplier ceiling.** ×3 (PBP) × ×5 (meter) × ×3 (loot) = ×45. The code asserts this ceiling on every reveal.
