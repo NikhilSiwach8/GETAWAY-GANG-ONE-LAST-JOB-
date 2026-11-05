@@ -51,6 +51,7 @@ const force = (bookId) =>
 	await page.waitForTimeout(3000);
 	await page.mouse.click(711, 400);
 	await page.waitForTimeout(1000);
+	await page.waitForTimeout(5000); // UI fades in after the loading screen; earlier clicks are ignored
 	if (process.env.TURBO) await page.mouse.click(842, 742); // shared UI turbo button (desktop layout)
 	await page.screenshot({ path: path.join(outDir, '01_idle.png') });
 

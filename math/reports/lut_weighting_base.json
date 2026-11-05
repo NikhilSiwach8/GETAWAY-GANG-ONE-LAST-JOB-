@@ -1,7 +1,7 @@
 {
- "natural_rtp_of_book_sample": 0.9479874150302654,
- "table_rtp": 0.9599999803680974,
- "zero_win_trim_factor": 0.9846400083185016,
+ "natural_rtp_of_book_sample": 0.9691631963421712,
+ "table_rtp": 0.9599999688430098,
+ "zero_win_trim_factor": 1.011716597214196,
  "books_per_stratum": {
   "escape": 150000,
   "basegame": 600000,

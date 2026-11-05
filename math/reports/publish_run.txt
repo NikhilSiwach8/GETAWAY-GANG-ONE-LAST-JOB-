@@ -1,0 +1,18 @@
+
+Creating books...
+
+Creating books for getaway_gang in base
+Saving books for  getaway_gang in base
+Saving force files for getaway_gang in base
+Saving LUTs for getaway_gang in base
+Wrote verification file: /home/user/GETAWAY-GANG-ONE-LAST-JOB-/vendor/math-sdk/games/getaway_gang/library/configs/books_base.verification.json
+
+Finished creating books in 856.3276472091675 seconds.
+
+[LUT] base: natural sample RTP 96.9163% -> table RTP 96.0000% (zero-win trim x1.01172)
+[FAST PATH] Using verification sidecar for base
+[FAST PATH] base: SHA-256 OK, payout hash OK, entries=1000000
+
+Risk checks: 6 of 6 pass
+Max base bet: up to $1,000.00. Studio gives the highest bet template at or below this.
+
