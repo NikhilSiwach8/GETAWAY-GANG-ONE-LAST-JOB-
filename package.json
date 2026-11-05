@@ -1,0 +1,22 @@
+{
+  "name": "getaway-gang-one-last-job",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Getaway Gang: One Last Job — a Stake Engine slot game.",
+  "scripts": {
+    "vendor:init": "git submodule update --init --recursive",
+    "vendor:install": "cd vendor/ts-client && yarn install --frozen-lockfile && cd ../slot-engine && npx -y pnpm@11.22.0 install"
+  },
+  "dependencies": {
+    "@slot-engine/core": "^0.4.0",
+    "@slot-engine/lgs": "^0.1.0",
+    "@slot-engine/optimizer": "^0.2.0",
+    "stake-engine": "^0.1.32"
+  },
+  "devDependencies": {
+    "@slot-engine/panel": "^0.3.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.2"
+  }
+}

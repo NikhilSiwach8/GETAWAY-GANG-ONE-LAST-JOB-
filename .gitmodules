@@ -1,0 +1,12 @@
+[submodule "vendor/ts-client"]
+	path = vendor/ts-client
+	url = https://github.com/engineio/ts-client.git
+[submodule "vendor/slot-engine"]
+	path = vendor/slot-engine
+	url = https://github.com/slot-engine/slot-engine.git
+[submodule "vendor/skills/slot-casino-skills"]
+	path = vendor/skills/slot-casino-skills
+	url = https://github.com/egorfedorov/Slot-Casino-Game-Developer-Skills-for-Stake-Engine.git
+[submodule "vendor/skills/stake-engine-skills"]
+	path = vendor/skills/stake-engine-skills
+	url = https://github.com/ReSkin-Games/stake-engine-skills.git
