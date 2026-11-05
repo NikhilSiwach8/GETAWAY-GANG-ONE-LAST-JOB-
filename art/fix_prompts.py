@@ -104,20 +104,30 @@ def full(title, kind, body):
 
 bar = "=" * 78
 L = ["GETAWAY GANG: ONE LAST JOB! - CORRECTED PROMPTS FOR DELIVERED ASSETS", "",
-     "Only assets that need redoing are listed. Each prompt is complete on its own.", "",
+     "Only assets that need redoing are listed. Every prompt is complete: copy the text under PROMPT as-is.", "",
      bar, "A. REDO WITH A NEW PROMPT", bar, ""]
 for n, (aid, title, kind, why, body) in enumerate(FIXES, 1):
     L += [f"[{n:02d}] {aid} - {title}", f"WHAT WAS WRONG: {why}", "PROMPT:", full(title, kind, body), "", "-" * 78, ""]
-L += [bar, "B. SAME DESIGN, ONLY ADD TRANSPARENCY", bar, "",
-      "The art is approved. Regenerate or re-export the same image with a real transparent background, keeping the "
-      "same design. Add this sentence to the end of the original prompt (docs/ASSET_PROMPTS.txt):", "", ALPHA, ""]
-L += [f"  - {aid} - {t}" for aid, t in SAME]
-L += ["", bar, "C. NO NEW PROMPT NEEDED - RESOLUTION ONLY", bar, "",
-      "These backgrounds are approved but 1672x941; the target is 3840x2160. Run them through an AI upscaler "
-      "(2.3x) or regenerate at the highest resolution your tool allows. Same image, no design change:", "",
-      "  - BG-MAIN, BG-HEIST, BG-ESCAPE, BG-VAULT, BG-GARAGE, BG-LOADING, BG-INTRO", "",
-      bar, "D. RE-SEND AS FILES (no change)", bar, "",
-      "These arrived only as chat previews, so no file was saved: UI-SETTINGS, UI-TURBO, UI-INFO, SYM-WILD.", ""]
+BY_ID = {x[1]: x for x in ap.ASSETS}
+HIRES = ("Resolution: render at 3840x2160 px (16:9) or the highest native resolution available; if your tool's "
+         "maximum is lower, generate at that maximum and upscale with an AI upscaler to 3840x2160 keeping all detail sharp. "
+         "Keep the same composition, lighting and colours as the approved version.")
+n = len(FIXES)
+L += [bar, "B. SAME DESIGN, REAL TRANSPARENCY", bar, ""]
+for aid, _ in SAME:
+    _, _, title, kind, body = BY_ID[aid]
+    n += 1
+    L += [f"[{n:02d}] {aid} - {title}", "WHAT WAS WRONG: The design is approved; only the background was not transparent.",
+          "PROMPT:", full(title, kind, body + " Keep the same design as the approved version. " + ALPHA), "", "-" * 78, ""]
+L += [bar, "C. SAME DESIGN, HIGHER RESOLUTION", bar, ""]
+for aid in ["BG-MAIN", "BG-HEIST", "BG-ESCAPE", "BG-VAULT", "BG-GARAGE", "BG-LOADING", "BG-INTRO"]:
+    _, _, title, kind, body = BY_ID[aid]
+    n += 1
+    L += [f"[{n:02d}] {aid} - {title}", "WHAT WAS WRONG: The design is approved; it was 1672x941 instead of 3840x2160.",
+          "PROMPT:", full(title, kind, body + " " + HIRES), "", "-" * 78, ""]
+L += [bar, "D. RE-SEND AS FILES (no new prompt)", bar, "",
+      "These arrived only as chat previews, so no file was saved. Send the same images again as attachments:",
+      "UI-SETTINGS, UI-TURBO, UI-INFO, SYM-WILD.", ""]
 out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "docs", "ASSET_PROMPTS_FIXES.txt")
 open(out, "w", encoding="UTF-8").write("\n".join(L))
 print("wrote", out, len(FIXES), "prompts")
