@@ -19,20 +19,22 @@
 	import { SYMBOL_SIZE } from '../game/constants';
 
 	const context = getContext();
-	let active = $state<{ positions: Position[]; color: number }[]>([]);
+	let active = $state<{ id: number; positions: Position[]; color: number }[]>([]);
+	let nextId = 0;
 
 	context.eventEmitter.subscribeOnMount({
 		cellHighlight: async (e) => {
-			const entry = { positions: e.positions, color: e.color };
-			active = [...active, entry];
+			// Remove by id: $state wraps stored objects in proxies, so identity comparison never matches.
+			const id = nextId++;
+			active = [...active, { id, positions: e.positions, color: e.color }];
 			await new Promise((r) => setTimeout(r, (e.ms ?? 700) * (stateBet.isTurbo ? 0.4 : 1)));
-			active = active.filter((a) => a !== entry);
+			active = active.filter((a) => a.id !== id);
 		},
 	});
 </script>
 
 <BoardContainer>
-	{#each active as group}
+	{#each active as group (group.id)}
 		{#each group.positions as p}
 			<Rectangle
 				anchor={0.5}

@@ -11,7 +11,7 @@ let sessionID;
 let playUrl;
 const CASES = {
 	base: { force: null, waitMs: 12000 },
-	pbp: { force: showcase.perfectlyBadPlan[0], waitMs: 45000 },
+	pbp: { force: showcase.perfectlyBadPlan[1], waitMs: 300000 },
 	respin4: { force: showcase.respin_chain_4[0], waitMs: 60000 },
 	heist: { force: showcase.bonus_heist[0], waitMs: 240000 },
 	escape: { force: showcase.bonus_escape[0], waitMs: 360000 },
@@ -60,7 +60,7 @@ const force = (bookId) =>
 		await force(c.force);
 		const before = (await lgs(`/lgs/sessions/${sessionID}`)).lastBet?.id ?? 0;
 		const errorsBefore = errors.length;
-		await page.keyboard.press('Space');
+		await page.mouse.click(731, 742); // shared UI BET button (desktop layout)
 		const t0 = Date.now();
 		let shot = 0;
 		let done = false;

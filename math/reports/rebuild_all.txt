@@ -1,2 +1,8 @@
 ..............................                                           [100%]
 30 passed in 0.95s
+P(basegame)=0.991488  P(heist)=1/125.4  P(escape)=1/1857.4
+basegame  n=  3000000 mean=   0.4132 sd=    3.973 se=0.0023 rtp+=40.965%  hit=0.1791 max=810.00 caps=0
+heist     n=   400000 mean=  42.6149 sd=  241.032 se=0.3811 rtp+=33.980%  hit=0.9720 max=12000.00 caps=39
+escape    n=   150000 mean= 433.6697 sd= 1103.655 se=2.8496 rtp+=23.348%  hit=0.9982 max=12000.00 caps=381
+contributions: ordinary_base=29.993%, crew_base=11.131%, heist=33.828%, escape=23.340%, final_escape=1.666%
+RTP = 98.2929%  (95% CI 97.4904 - 99.0953)  [1118s]

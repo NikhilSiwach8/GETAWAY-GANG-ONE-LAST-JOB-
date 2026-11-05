@@ -139,7 +139,7 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		winLevelSoundsStop();
 		eventEmitter.broadcast({ type: 'freeSpinOutroHide' });
 		eventEmitter.broadcast({ type: 'freeSpinCounterHide' });
-		stateGame.hud = { ...stateGame.hud, bonus: null, lootPoints: 0, levels: { R: 1, B: 1, T: 1, F: 1 } };
+		resetHud(); // bonus progression ends with the bonus; the round is about to settle
 		await eventEmitter.broadcastAsync({ type: 'transition' });
 		await eventEmitter.broadcastAsync({ type: 'uiShow' });
 		await eventEmitter.broadcastAsync({ type: 'drawerUnfold' });
