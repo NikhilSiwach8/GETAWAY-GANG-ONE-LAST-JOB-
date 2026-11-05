@@ -9,7 +9,7 @@
 
 import config from './config';
 
-export const TEMP_ART_BANNER = 'TEMPORARY ART — NOT FOR RELEASE';
+export const TEMP_ART_BANNER = 'PRE-RELEASE — PLACEHOLDER EFFECTS, CINEMATICS & AUDIO';
 
 export const PALETTE = {
 	roxy: 0xff4c36,

@@ -1,6 +1,8 @@
+import { GG_ASSETS } from './ggAssets';
 // TEMPORARY: generic web-sdk sample assets (MIT) kept as stand-ins for loader, win counters,
 // free-spin panels, fonts, coins, transition and sound. Every one is replaced per docs/ASSET_PROMPTS.md.
 export default {
+	...GG_ASSETS,
 	loader: {
 		type: 'spine',
 		src: {

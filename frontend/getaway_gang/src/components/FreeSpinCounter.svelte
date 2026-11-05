@@ -6,17 +6,23 @@
 </script>
 
 <script lang="ts">
-	/** TEMPORARY ART free-spin counter (UI-FS-COUNTER). */
-	import { Container, Rectangle, Text } from 'pixi-svelte';
+	/** UI-FS-COUNTER with live label, counter and bonus name drawn into its empty plates. */
+	import { Container, Sprite, Text } from 'pixi-svelte';
 	import { getContext } from '../game/context';
 	import { PALETTE } from '../game/tempArt';
+	import { GG_LAYOUT } from '../game/ggAssets';
+	import { frameRect } from '../game/frameLayout';
 
 	const context = getContext();
 	let show = $state(false);
 	let current = $state(0);
 	let total = $state(0);
 	const layout = $derived(context.stateGameDerived.boardLayout());
+	const frame = $derived(frameRect(layout));
+	const W = 230;
+	const H = (W * GG_LAYOUT['UI-FS-COUNTER'].height) / GG_LAYOUT['UI-FS-COUNTER'].width;
 	const bonusName = $derived(context.stateGame.hud.bonus === 'escape' ? 'THE PERFECT ESCAPE' : 'THE HEIST');
+	const font = (size: number, fill: number) => ({ fontFamily: 'proxima-nova, Arial, sans-serif', fontWeight: '900' as const, fontSize: size, fill });
 
 	context.eventEmitter.subscribeOnMount({
 		freeSpinCounterShow: () => (show = true),
@@ -29,10 +35,10 @@
 </script>
 
 {#if show}
-	<Container x={layout.x - layout.width / 2 - 250} y={layout.y - layout.height / 2 - 18}>
-		<Rectangle width={210} height={96} borderRadius={14} backgroundColor={0x0b1a3a} backgroundAlpha={0.9} borderColor={0xffffff} borderWidth={2} />
-		<Text x={105} y={12} anchor={{ x: 0.5, y: 0 }} text={bonusName} style={{ fontFamily: 'proxima-nova, Arial, sans-serif', fontSize: 14, fontWeight: '800', fill: PALETTE.gold }} />
-		<Text x={105} y={36} anchor={{ x: 0.5, y: 0 }} text={`FREE SPIN ${current} / ${total}`} style={{ fontFamily: 'proxima-nova, Arial, sans-serif', fontSize: 24, fontWeight: '900', fill: 0xffffff }} />
-		<Text x={105} y={74} anchor={{ x: 0.5, y: 0 }} text="TEMP · UI-FS-COUNTER" style={{ fontFamily: 'monospace', fontSize: 9, fill: 0xffffff }} alpha={0.5} />
+	<Container x={layout.x - frame.width / 2 - 6 - W} y={layout.y - frame.height / 2 + 150} zIndex={5}>
+		<Sprite key="UI-FS-COUNTER" width={W} height={H} />
+		<Text anchor={0.5} x={W / 2} y={H * 0.16} text="FREE SPINS" style={font(14, PALETTE.gold)} />
+		<Text anchor={0.5} x={W / 2} y={H * 0.51} text={`${current} / ${total}`} style={{ ...font(34, 0xffffff), stroke: { color: 0x0a1633, width: 4 } }} />
+		<Text anchor={0.5} x={W / 2} y={H * 0.8} text={bonusName} style={font(13, 0xffffff)} />
 	</Container>
 {/if}

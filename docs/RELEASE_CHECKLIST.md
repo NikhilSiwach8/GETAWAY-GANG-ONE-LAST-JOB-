@@ -25,7 +25,10 @@ Status key: ✅ done and verified · ⬜ open · ⛔ blocks submission
   - `pixi-svelte` `preloadFont()` loads a Typekit kit (`use.typekit.net`) on every start. Replace it with bundled font files
   - `components-ui-html` modals reference images on `staging-1-0.twist-game.app` and an S3 bucket. Replace them with bundled assets
   - (`src/app.html` Typekit link: ✅ removed)
-- ⛔ **Temporary art.** Replace every `TEMP · <ID>` placeholder and every web-sdk sample asset per `docs/ASSET_PROMPTS.md`, then remove `TempWatermark`
+- ✅ **Production art integrated (round 1):** all 14 symbols + full-reel Wild, BG-MAIN/HEIST/ESCAPE, reel frame and backing, logo, Getaway Meter, Loot Meter, Crew Upgrades, Chaos Re-spins, multiplier badge, free-spin counter, Balance/Win/Bet panels, spin/autoplay/turbo/sound/settings/info/± buttons (`art/process_assets.py` → `frontend/getaway_gang/static/assets/gg`)
+- ⛔ **Still placeholder:** feature/combo/bonus title cards (ANIM-*, FX-*, CIN-*), symbol land/win/transform animations, win celebrations (WIN-*), bonus intro/outro screens (SCR-*), loading screen, all music/SFX/voice; then remove `TempWatermark`
+- ⬜ Backgrounds are 1672×941 Lanczos-upscaled to 2560×1440; run an AI upscaler (e.g. Real-ESRGAN) on `art/delivery/backgrounds` for the final build
+- ⬜ UI-RESPIN art has two locks drawn gold; an all-grey version would let the lit state come only from code
 - ⛔ **Audio.** Replace the sample sounds with MUS-, SFX- and VO- assets, with separate music and SFX volume controls
 
 ## Dev-only items (not shipped)

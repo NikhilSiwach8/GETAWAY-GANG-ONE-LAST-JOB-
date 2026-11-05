@@ -4,7 +4,8 @@
 	 * Final build: replace with Sprite (static) + Spine (land/win/transform) keyed by `art.assetId`.
 	 */
 	import { onDestroy } from 'svelte';
-	import { Container, Rectangle, Text } from 'pixi-svelte';
+	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
+	import { hasArt } from '../game/ggAssets';
 	import { stateBet } from 'state-shared';
 
 	import { getSymbolInfo } from '../game/utils';
@@ -40,7 +41,15 @@
 	onDestroy(() => clearTimeout(timer));
 </script>
 
-{#if art}
+{#if art && hasArt(art.assetId)}
+	<!-- Production art (art/delivery), win = scale pulse + glow until Spine animations arrive -->
+	<Container x={props.x} y={props.y} scale={isWin ? 1.12 : 1}>
+		{#if isWin}
+			<Rectangle anchor={0.5} width={size} height={size} borderRadius={18} backgroundColor={0xf7c947} backgroundAlpha={0.28} borderColor={0xfff1a8} borderWidth={5} />
+		{/if}
+		<Sprite key={art.assetId} anchor={0.5} width={SYMBOL_SIZE} height={SYMBOL_SIZE} />
+	</Container>
+{:else if art}
 	<Container x={props.x} y={props.y} scale={isWin ? 1.08 : 1}>
 		<Rectangle
 			anchor={0.5}

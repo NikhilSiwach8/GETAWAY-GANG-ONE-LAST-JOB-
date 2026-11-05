@@ -4,7 +4,7 @@
 	import { EnablePixiExtension } from 'components-pixi';
 	import { EnableHotkey } from 'components-shared';
 	import { MainContainer } from 'components-layout';
-	import { App, Text, REM } from 'pixi-svelte';
+	import { App, Sprite } from 'pixi-svelte';
 	import { stateModal } from 'state-shared';
 
 	import { UiGameName } from 'components-ui-pixi';
@@ -30,6 +30,7 @@
 	import FeatureBanner from './FeatureBanner.svelte';
 	import CellHighlights from './CellHighlights.svelte';
 	import TempWatermark from './TempWatermark.svelte';
+	import WildReels from './WildReels.svelte';
 
 	const context = getContext();
 
@@ -68,6 +69,7 @@
 		<MainContainer>
 			<Board />
 			<Anticipations />
+			<WildReels />
 			<CellHighlights />
 			<Hud />
 			<FeatureBanner />
@@ -78,17 +80,7 @@
 				<UiGameName name="GETAWAY GANG" />
 			{/snippet}
 			{#snippet logo()}
-				<Text
-					anchor={{ x: 1, y: 0 }}
-					text="ONE LAST JOB! · TEMP LOGO (UI-LOGO)"
-					style={{
-						fontFamily: 'proxima-nova',
-						fontSize: REM * 1.5,
-						fontWeight: '600',
-						lineHeight: REM * 2,
-						fill: 0xffffff,
-					}}
-				/>
+				<Sprite key="UI-LOGO" anchor={{ x: 1, y: 0 }} width={240} height={120} />
 			{/snippet}
 		</GameUI>
 		<Win />

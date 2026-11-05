@@ -1,0 +1,192 @@
+{
+ "SYM-H1": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-H2": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-H3": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-H4": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-L1": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-L2": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-L3": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-L4": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-WILD": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-SCATTER": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-ROXY": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-BYTE": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-TANK": {
+  "width": 256,
+  "height": 256
+ },
+ "SYM-FUSE": {
+  "width": 256,
+  "height": 256
+ },
+ "BG-MAIN": {
+  "width": 2560,
+  "height": 1440
+ },
+ "BG-HEIST": {
+  "width": 2560,
+  "height": 1440
+ },
+ "BG-ESCAPE": {
+  "width": 2560,
+  "height": 1440
+ },
+ "BG-LOADING": {
+  "width": 2560,
+  "height": 1440
+ },
+ "UI-LOGO": {
+  "width": 1100,
+  "height": 550
+ },
+ "UI-REEL-FRAME": {
+  "width": 1536,
+  "height": 1024,
+  "window": {
+   "x": 0.08723958333333333,
+   "y": 0.17578125,
+   "w": 0.826171875,
+   "h": 0.6748046875
+  }
+ },
+ "UI-REEL-BG": {
+  "width": 1200,
+  "height": 800
+ },
+ "UI-METER-GETAWAY": {
+  "width": 1000,
+  "height": 334
+ },
+ "UI-METER-LOOT": {
+  "width": 1000,
+  "height": 334
+ },
+ "UI-CREW-LEVELS": {
+  "width": 1000,
+  "height": 500
+ },
+ "UI-FS-COUNTER": {
+  "width": 640,
+  "height": 427
+ },
+ "UI-MULT": {
+  "width": 520,
+  "height": 347
+ },
+ "UI-RESPIN": {
+  "width": 800,
+  "height": 267
+ },
+ "CHR-ROXY-POSE": {
+  "width": 900,
+  "height": 900
+ },
+ "CHR-BYTE-POSE": {
+  "width": 600,
+  "height": 900
+ },
+ "CHR-TANK-POSE": {
+  "width": 900,
+  "height": 900
+ },
+ "CHR-FUSE-POSE": {
+  "width": 900,
+  "height": 900
+ },
+ "UI-SPIN-0": {
+  "width": 255,
+  "height": 256
+ },
+ "UI-SPIN-1": {
+  "width": 255,
+  "height": 256
+ },
+ "UI-TURBO-0": {
+  "width": 252,
+  "height": 256
+ },
+ "UI-TURBO-1": {
+  "width": 252,
+  "height": 256
+ },
+ "UI-SOUND-0": {
+  "width": 254,
+  "height": 256
+ },
+ "UI-SOUND-1": {
+  "width": 253,
+  "height": 256
+ },
+ "UI-AUTOPLAY-0": {
+  "width": 240,
+  "height": 256
+ },
+ "UI-SETTINGS-0": {
+  "width": 247,
+  "height": 256
+ },
+ "UI-INFO-0": {
+  "width": 250,
+  "height": 256
+ },
+ "UI-BET-MINUS": {
+  "width": 256,
+  "height": 256
+ },
+ "UI-BET-PLUS": {
+  "width": 256,
+  "height": 256
+ },
+ "UI-BET-PANEL": {
+  "width": 512,
+  "height": 322
+ },
+ "UI-BALANCE-PANEL": {
+  "width": 512,
+  "height": 171
+ },
+ "UI-WIN-PANEL": {
+  "width": 512,
+  "height": 171
+ },
+ "SYM-WILD-REEL": {
+  "width": 256,
+  "height": 1024
+ }
+}

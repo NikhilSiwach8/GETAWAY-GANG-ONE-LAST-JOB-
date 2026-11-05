@@ -1,92 +1,99 @@
 <script lang="ts">
 	/**
-	 * TEMPORARY ART HUD (UI-METER-GETAWAY, UI-METER-LOOT, UI-CREW-LEVELS, UI-MULT, UI-RESPIN).
-	 * Pure display of math state carried by book events -- it never computes an outcome.
+	 * HUD on the delivered frames (UI-METER-GETAWAY, UI-METER-LOOT, UI-CREW-LEVELS, UI-RESPIN, UI-MULT).
+	 * Live state (fill, lit locks/stars, numbers) is drawn in code inside the empty plates; positions
+	 * are fractions of each image measured from the art. Display only: values come from book events.
 	 */
-	import { Container, Rectangle, Text } from 'pixi-svelte';
+	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
 	import { getContext } from '../game/context';
-	import {
-		CREW_INFO,
-		METER_THRESHOLDS,
-		METER_STAGE_REWARDS,
-		LOOT_THRESHOLDS,
-		LOOT_REWARDS,
-		PALETTE,
-		type CrewKey,
-	} from '../game/tempArt';
-	import config from '../game/config';
+	import { METER_THRESHOLDS, LOOT_THRESHOLDS, PALETTE, CREW_INFO, type CrewKey } from '../game/tempArt';
+	import { GG_LAYOUT } from '../game/ggAssets';
+	import { frameRect } from '../game/frameLayout';
 
 	const context = getContext();
 	const hud = $derived(context.stateGame.hud);
 	const layout = $derived(context.stateGameDerived.boardLayout());
+	const frame = $derived(frameRect(layout));
 	const W = 230;
-	const x = $derived(layout.x + layout.width / 2 + 40);
-	const top = $derived(layout.y - layout.height / 2 - 18);
+	const top = $derived(layout.y - frame.height / 2 + 150); // below the logo
+	const rightX = $derived(layout.x + frame.width / 2 + 6);
+	const leftX = $derived(layout.x - frame.width / 2 - 6 - W);
+	const h = (id: keyof typeof GG_LAYOUT, w = W) => (w * GG_LAYOUT[id].height) / GG_LAYOUT[id].width;
 	const maxMeter = METER_THRESHOLDS[METER_THRESHOLDS.length - 1];
 	const maxLoot = LOOT_THRESHOLDS[LOOT_THRESHOLDS.length - 1];
-	const crewKeys: CrewKey[] = ['R', 'B', 'T', 'F'];
-	const small = { fontFamily: 'proxima-nova, Arial, sans-serif', fontSize: 13, fill: 0xffffff };
-	const head = { fontFamily: 'proxima-nova, Arial, sans-serif', fontSize: 16, fontWeight: '800' as const, fill: PALETTE.gold };
+	const crew: CrewKey[] = ['R', 'B', 'T', 'F'];
+	const numStyle = (size: number) => ({
+		fontFamily: 'proxima-nova, Arial, sans-serif',
+		fontWeight: '900' as const,
+		fontSize: size,
+		fill: PALETTE.gold,
+		stroke: { color: 0x2a1600, width: 4 },
+	});
+	// bar channels measured from the art (fractions of image width/height)
+	const GBAR = { x0: 0.149, x1: 0.955, y0: 0.527, y1: 0.701 };
+	const LBAR = { x0: 0.181, x1: 0.951, y0: 0.539, y1: 0.722 };
+	const LOCKS = [0.35, 0.49, 0.683, 0.825];
+	const STARS = [0.17, 0.39, 0.61, 0.83];
+	const mH = $derived(h('UI-METER-GETAWAY'));
+	const rH = $derived(h('UI-RESPIN'));
+	const multW = 150;
 </script>
 
-<Container {x} y={top} zIndex={5}>
-	<!-- Getaway Meter -->
-	<Rectangle width={W} height={196} borderRadius={14} backgroundColor={0x0b0f1c} backgroundAlpha={0.85} borderColor={PALETTE.gold} borderWidth={2} />
-	<Text x={12} y={8} text="GETAWAY METER" style={head} />
-	<Text x={W - 12} y={10} anchor={{ x: 1, y: 0 }} text={`${hud.meterPoints}/${maxMeter}`} style={small} />
-	<Rectangle x={12} y={34} width={W - 24} height={12} borderRadius={6} backgroundColor={0x2a2f3d} />
-	<Rectangle x={12} y={34} width={Math.max(1, ((W - 24) * hud.meterPoints) / maxMeter)} height={12} borderRadius={6} backgroundColor={PALETTE.gold} />
-	{#each METER_STAGE_REWARDS as reward, i}
-		<Text
-			x={12}
-			y={56 + i * 26}
-			text={`${hud.meterStage > i ? '●' : '○'} ${i + 1} · ${METER_THRESHOLDS[i]}pt  ${reward}`}
-			style={{ ...small, fill: hud.meterStage > i ? PALETTE.gold : 0x9aa3b5 }}
-		/>
-	{/each}
+<!-- right column: Getaway Meter, Chaos Re-spins, multiplier -->
+<Container x={rightX} y={top} zIndex={5}>
+	<Rectangle
+		x={W * GBAR.x0}
+		y={mH * GBAR.y0}
+		width={Math.max(0.01, (W * (GBAR.x1 - GBAR.x0) * hud.meterPoints) / maxMeter)}
+		height={mH * (GBAR.y1 - GBAR.y0)}
+		borderRadius={6}
+		backgroundColor={PALETTE.gold}
+	/>
+	<Sprite key="UI-METER-GETAWAY" width={W} height={mH} />
+	<Text anchor={0.5} x={W * (GBAR.x0 + GBAR.x1) / 2} y={mH * (GBAR.y0 + GBAR.y1) / 2} text={`${hud.meterPoints} / ${maxMeter}`} style={numStyle(13)} />
 
-	<!-- Multiplier + re-spin chain -->
-	<Container y={206}>
-		<Rectangle width={W} height={58} borderRadius={14} backgroundColor={0x0b0f1c} backgroundAlpha={0.85} borderColor={PALETTE.metal} borderWidth={2} />
-		<Text x={12} y={8} text={`WIN MULTIPLIER  ×${hud.multiplier}`} style={{ ...head, fill: hud.multiplier > 1 ? PALETTE.gold : 0x9aa3b5 }} />
-		<Text
-			x={12}
-			y={32}
-			text={`CHAOS RE-SPIN ${hud.respinChain}/${config.features.maxRespinsPerChain}${hud.respinRemaining ? ` (+${hud.respinRemaining} queued)` : ''}`}
-			style={small}
-		/>
+	<Container y={mH + 10}>
+		<Sprite key="UI-RESPIN" width={W} height={rH} />
+		{#each LOCKS as fx, i}
+			{#if i < hud.respinChain}
+				<Rectangle anchor={0.5} x={W * fx} y={rH * 0.525} width={W * 0.125} height={rH * 0.43} borderRadius={6} backgroundColor={PALETTE.gold} backgroundAlpha={0.45} />
+			{:else}
+				<Rectangle anchor={0.5} x={W * fx} y={rH * 0.525} width={W * 0.125} height={rH * 0.43} borderRadius={6} backgroundColor={0x000000} backgroundAlpha={0.55} />
+			{/if}
+		{/each}
 	</Container>
 
-	{#if hud.bonus === 'heist'}
-		<Container y={274}>
-			<Rectangle width={W} height={150} borderRadius={14} backgroundColor={0x1c1405} backgroundAlpha={0.9} borderColor={PALETTE.vault} borderWidth={2} />
-			<Text x={12} y={8} text="LOOT METER" style={head} />
-			<Text x={W - 12} y={10} anchor={{ x: 1, y: 0 }} text={`${hud.lootPoints}/${maxLoot}`} style={small} />
-			<Rectangle x={12} y={34} width={W - 24} height={12} borderRadius={6} backgroundColor={0x2a2f3d} />
-			<Rectangle x={12} y={34} width={Math.max(1, ((W - 24) * Math.min(hud.lootPoints, maxLoot)) / maxLoot)} height={12} borderRadius={6} backgroundColor={PALETTE.vault} />
-			{#each LOOT_REWARDS as reward, i}
-				<Text
-					x={12}
-					y={56 + i * 22}
-					text={`${hud.lootPoints >= LOOT_THRESHOLDS[i] ? '●' : '○'} ${LOOT_THRESHOLDS[i]}pt  ${reward}`}
-					style={{ ...small, fill: hud.lootPoints >= LOOT_THRESHOLDS[i] ? PALETTE.gold : 0x9aa3b5 }}
-				/>
-			{/each}
+	{#if hud.multiplier > 1}
+		<Container x={(W - multW) / 2} y={mH + rH + 20}>
+			<Sprite key="UI-MULT" width={multW} height={h('UI-MULT', multW)} />
+			<Text anchor={0.5} x={multW * 0.495} y={h('UI-MULT', multW) * 0.455} text={`×${hud.multiplier}`} style={numStyle(30)} />
+			<Text anchor={0.5} x={multW * 0.5} y={h('UI-MULT', multW) * 0.75} text="WIN MULTIPLIER" style={{ ...numStyle(10), fill: 0xffffff, stroke: undefined }} />
 		</Container>
 	{/if}
+</Container>
 
+<!-- left column (bonus only): Loot Meter or Crew Upgrades, below the free-spin counter -->
+<Container x={leftX} y={top + h('UI-FS-COUNTER') + 14} zIndex={5}>
+	{#if hud.bonus === 'heist'}
+		<Rectangle
+			x={W * LBAR.x0}
+			y={h('UI-METER-LOOT') * LBAR.y0}
+			width={Math.max(0.01, (W * (LBAR.x1 - LBAR.x0) * Math.min(hud.lootPoints, maxLoot)) / maxLoot)}
+			height={h('UI-METER-LOOT') * (LBAR.y1 - LBAR.y0)}
+			borderRadius={6}
+			backgroundColor={PALETTE.gold}
+		/>
+		<Sprite key="UI-METER-LOOT" width={W} height={h('UI-METER-LOOT')} />
+		<Text anchor={0.5} x={W * (LBAR.x0 + LBAR.x1) / 2} y={h('UI-METER-LOOT') * (LBAR.y0 + LBAR.y1) / 2} text={`${hud.lootPoints} / ${maxLoot}`} style={numStyle(13)} />
+	{/if}
 	{#if hud.bonus === 'escape'}
-		<Container y={274}>
-			<Rectangle width={W} height={150} borderRadius={14} backgroundColor={0x120424} backgroundAlpha={0.9} borderColor={PALETTE.fuse} borderWidth={2} />
-			<Text x={12} y={8} text="CREW UPGRADES" style={head} />
-			{#each crewKeys as c, i}
-				<Text
-					x={12}
-					y={36 + i * 26}
-					text={`${CREW_INFO[c].name.padEnd(5)}  LEVEL ${hud.levels[c]}/3  ${'★'.repeat(hud.levels[c])}${'☆'.repeat(3 - hud.levels[c])}`}
-					style={{ ...small, fontSize: 14, fill: CREW_INFO[c].color }}
-				/>
+		<Sprite key="UI-CREW-LEVELS" width={W} height={h('UI-CREW-LEVELS')} />
+		{#each crew as c, ci}
+			{#each [0, 1, 2] as s}
+				{#if hud.levels[c] > s}
+					<Text anchor={0.5} x={W * (STARS[ci] + (s - 1) * 0.048)} y={h('UI-CREW-LEVELS') * 0.795} text="★" style={{ fontSize: 15, fill: CREW_INFO[c].color, stroke: { color: 0xfff1a8, width: 2 } }} />
+				{/if}
 			{/each}
-		</Container>
+		{/each}
 	{/if}
 </Container>
