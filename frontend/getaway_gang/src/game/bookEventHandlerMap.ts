@@ -166,16 +166,7 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	bonusStart: async (bookEvent: BookEventOfType<'bonusStart'>) => {
 		resetHud();
 		stateGame.hud.bonus = bookEvent.bonus;
-		const heist = bookEvent.bonus === 'heist';
-		await banner(
-			heist ? 'THE HEIST' : 'THE PERFECT ESCAPE',
-			heist ? PALETTE.gold : PALETTE.fuse,
-			heist
-				? `${bookEvent.totalFs} free spins · Loot Meter active`
-				: `${bookEvent.totalFs} free spins · Crew upgrades persist`,
-			heist ? 'SCR-HEIST-INTRO' : 'SCR-ESCAPE-INTRO',
-			2200,
-		);
+		// The bonus intro screen (SCR-HEIST-INTRO / SCR-ESCAPE-INTRO) already played on freeSpinTrigger.
 	},
 	crewLanded: async (bookEvent: BookEventOfType<'crewLanded'>) => {
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_multiplier_landing' });

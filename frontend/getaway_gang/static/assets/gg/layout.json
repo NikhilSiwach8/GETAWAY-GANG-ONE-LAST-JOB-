@@ -71,6 +71,18 @@
   "width": 2560,
   "height": 1440
  },
+ "SCR-LOADING": {
+  "width": 1920,
+  "height": 1080
+ },
+ "SCR-HEIST-INTRO": {
+  "width": 1920,
+  "height": 1080
+ },
+ "SCR-ESCAPE-INTRO": {
+  "width": 1920,
+  "height": 1080
+ },
  "UI-LOGO": {
   "width": 1100,
   "height": 550

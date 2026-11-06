@@ -1,55 +1,49 @@
 <script lang="ts">
-	import { SpineProvider, SpineTrack, Container, Sprite } from 'pixi-svelte';
-	import { FadeContainer, LoadingProgress } from 'components-pixi';
-	import { MainContainer } from 'components-layout';
+	/** SCR-LOADING (preloaded) with live progress drawn in the art's road-shaped bar. */
+	import { Rectangle, Sprite } from 'pixi-svelte';
+	import { FadeContainer } from 'components-pixi';
+	import { OnHotkey } from 'components-shared';
+	import { OnPressFullScreen } from 'components-layout';
 
 	import { getContext } from '../game/context';
 	import TransitionAnimation from './TransitionAnimation.svelte';
-	import PressToContinue from './PressToContinue.svelte';
 
-	type Props = {
-		onloaded: () => void;
-	};
-
+	type Props = { onloaded: () => void };
 	const props: Props = $props();
 	const context = getContext();
-
 	let loadingType = $state<'start' | 'transition'>('start');
+
+	const sizes = $derived(context.stateLayoutDerived.canvasSizes());
+	const cover = $derived.by(() => {
+		const s = Math.max(sizes.width / 1920, sizes.height / 1080);
+		return { width: 1920 * s, height: 1080 * s, x: (sizes.width - 1920 * s) / 2, y: (sizes.height - 1080 * s) / 2 };
+	});
+	// bar track inside the art (fractions of the image)
+	const BAR = { x0: 0.272, x1: 0.735, y0: 0.857, y1: 0.891 };
+	const bar = $derived({
+		x: cover.x + cover.width * BAR.x0,
+		y: cover.y + cover.height * BAR.y0,
+		width: cover.width * (BAR.x1 - BAR.x0),
+		height: cover.height * (BAR.y1 - BAR.y0),
+	});
+	const progress = $derived(context.stateApp.loaded ? 1 : context.stateApp.loadingProgress / 100);
+	const proceed = () => {
+		if (context.stateApp.loaded && loadingType === 'start') loadingType = 'transition';
+	};
 </script>
 
-<!-- logo and loading progress -->
 <FadeContainer show={loadingType === 'start'}>
-	<MainContainer>
-		<Container
-			x={context.stateLayoutDerived.mainLayout().width * 0.5}
-			y={context.stateLayoutDerived.mainLayout().height * 0.5}
-		>
-			<SpineProvider key="loader" width={300}>
-				<SpineTrack trackIndex={0} animationName={'title_screen'} loop timeScale={3} />
-			</SpineProvider>
-			{#if !context.stateApp.loaded}
-				<LoadingProgress y={250} width={1967 * 0.2} height={346 * 0.2}>
-					{#snippet background(sizes)}
-						<Sprite key="progressBarBackground.png" {...sizes} />
-					{/snippet}
-					{#snippet progress(sizes)}
-						<Sprite key="progressBar.png" {...sizes} />
-					{/snippet}
-					{#snippet frame(sizes)}
-						<Sprite key="progressBarFrame.png" {...sizes} />
-					{/snippet}
-				</LoadingProgress>
-			{/if}
-		</Container>
-	</MainContainer>
+	<Rectangle {...sizes} backgroundColor={0x05070f} />
+	<Sprite key="SCR-LOADING" {...cover} />
+	<Rectangle {...bar} borderRadius={bar.height / 2} backgroundColor={0x11182c} />
+	<Rectangle {...bar} width={Math.max(bar.height, bar.width * progress)} borderRadius={bar.height / 2} backgroundColor={0xf7c947} />
 </FadeContainer>
 
-<!-- press to continue -->
-<FadeContainer show={loadingType === 'start' && context.stateApp.loaded}>
-	<PressToContinue onpress={() => (loadingType = 'transition')} />
-</FadeContainer>
+{#if loadingType === 'start' && context.stateApp.loaded}
+	<OnHotkey hotkey="Space" onpress={proceed} />
+	<OnPressFullScreen onpress={proceed} />
+{/if}
 
-<!-- transition between the loading screen and the game -->
 <FadeContainer show={loadingType === 'transition'}>
 	<TransitionAnimation oncomplete={props.onloaded} />
 </FadeContainer>

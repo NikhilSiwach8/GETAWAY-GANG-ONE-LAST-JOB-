@@ -19,6 +19,7 @@ PLAN = {
     **{s: (256, 256) for s in ["SYM-H1", "SYM-H2", "SYM-H3", "SYM-H4", "SYM-L1", "SYM-L2", "SYM-L3", "SYM-L4",
                                "SYM-WILD", "SYM-SCATTER", "SYM-ROXY", "SYM-BYTE", "SYM-TANK", "SYM-FUSE"]},
     **{b: (2560, 1440) for b in ["BG-MAIN", "BG-HEIST", "BG-ESCAPE", "BG-LOADING"]},
+    **{s: (1920, 1080) for s in ["SCR-LOADING", "SCR-HEIST-INTRO", "SCR-ESCAPE-INTRO"]},
     "UI-LOGO": (1100, None),
     "UI-REEL-FRAME": (1536, None),
     "UI-REEL-BG": (1200, 800),
@@ -106,7 +107,8 @@ def write_ts(layout):
              "export const GG_LAYOUT = " + json.dumps(layout, indent="\t") + " as const;", "",
              "export const GG_ASSETS = {"]
     for aid in sorted(layout):
-        lines.append(f"\t'{aid}': {{ type: 'sprite', src: new URL('../../assets/gg/{aid}.webp', import.meta.url).href }},")
+        pre = ", preload: true" if aid == "SCR-LOADING" else ""  # shown while everything else loads
+        lines.append(f"\t'{aid}': {{ type: 'sprite', src: new URL('../../assets/gg/{aid}.webp', import.meta.url).href{pre} }},")
     lines += ["} as const;", "", "export const hasArt = (id: string) => id in GG_ASSETS;", ""]
     open(ts, "w", encoding="UTF-8").write("\n".join(lines))
 

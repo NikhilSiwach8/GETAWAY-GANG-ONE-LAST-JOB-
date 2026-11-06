@@ -72,6 +72,18 @@ export const GG_LAYOUT = {
 		"width": 2560,
 		"height": 1440
 	},
+	"SCR-LOADING": {
+		"width": 1920,
+		"height": 1080
+	},
+	"SCR-HEIST-INTRO": {
+		"width": 1920,
+		"height": 1080
+	},
+	"SCR-ESCAPE-INTRO": {
+		"width": 1920,
+		"height": 1080
+	},
 	"UI-LOGO": {
 		"width": 1100,
 		"height": 550
@@ -201,6 +213,9 @@ export const GG_ASSETS = {
 	'CHR-FUSE-POSE': { type: 'sprite', src: new URL('../../assets/gg/CHR-FUSE-POSE.webp', import.meta.url).href },
 	'CHR-ROXY-POSE': { type: 'sprite', src: new URL('../../assets/gg/CHR-ROXY-POSE.webp', import.meta.url).href },
 	'CHR-TANK-POSE': { type: 'sprite', src: new URL('../../assets/gg/CHR-TANK-POSE.webp', import.meta.url).href },
+	'SCR-ESCAPE-INTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-ESCAPE-INTRO.webp', import.meta.url).href },
+	'SCR-HEIST-INTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-HEIST-INTRO.webp', import.meta.url).href },
+	'SCR-LOADING': { type: 'sprite', src: new URL('../../assets/gg/SCR-LOADING.webp', import.meta.url).href, preload: true },
 	'SYM-BYTE': { type: 'sprite', src: new URL('../../assets/gg/SYM-BYTE.webp', import.meta.url).href },
 	'SYM-FUSE': { type: 'sprite', src: new URL('../../assets/gg/SYM-FUSE.webp', import.meta.url).href },
 	'SYM-H1': { type: 'sprite', src: new URL('../../assets/gg/SYM-H1.webp', import.meta.url).href },

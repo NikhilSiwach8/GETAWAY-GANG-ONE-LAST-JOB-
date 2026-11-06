@@ -68,7 +68,7 @@ const force = (bookId) =>
 		while (Date.now() - t0 < c.waitMs) {
 			await page.waitForTimeout(2500);
 			const s = await lgs(`/lgs/sessions/${sessionID}`);
-			if (shot < 30 && (Date.now() - t0) > shot * 15000) {
+			if (shot < 40 && (Date.now() - t0) > shot * (Number(process.env.SHOT_MS) || 15000)) {
 				await page.screenshot({ path: path.join(outDir, `${name}_${String(shot).padStart(2, '0')}.png`) });
 				shot++;
 			}

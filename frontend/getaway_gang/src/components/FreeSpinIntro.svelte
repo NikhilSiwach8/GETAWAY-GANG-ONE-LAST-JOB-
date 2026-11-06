@@ -6,76 +6,44 @@
 </script>
 
 <script lang="ts">
-	import { CanvasSizeRectangle } from 'components-layout';
-	import { stateUrlDerived } from 'state-shared';
+	/** Bonus intro: SCR-HEIST-INTRO (10 free spins) or SCR-ESCAPE-INTRO (12). Press anywhere to continue. */
+	import { Rectangle, Sprite } from 'pixi-svelte';
 	import { FadeContainer } from 'components-pixi';
+	import { OnHotkey } from 'components-shared';
+	import { OnPressFullScreen } from 'components-layout';
 	import { waitForResolve } from 'utils-shared/wait';
-	import { BitmapText, SpineProvider, SpineSlot, SpineTrack, Sprite } from 'pixi-svelte';
-
 	import { getContext } from '../game/context';
-	import PressToContinue from './PressToContinue.svelte';
-	import FreeSpinAnimation from './FreeSpinAnimation.svelte';
-
-	type AnimationName = 'intro' | 'idle';
 
 	const context = getContext();
-
 	let show = $state(false);
-	let animationName = $state<AnimationName>('intro');
-	let freeSpinsFromEvent = $state(0);
+	let waiting = $state(false);
+	let totalFs = $state(0);
 	let oncomplete = $state(() => {});
+	const sizes = $derived(context.stateLayoutDerived.canvasSizes());
+	const cover = $derived.by(() => {
+		const s = Math.max(sizes.width / 1920, sizes.height / 1080);
+		return { width: 1920 * s, height: 1080 * s, x: (sizes.width - 1920 * s) / 2, y: (sizes.height - 1080 * s) / 2 };
+	});
+	// The base-game trigger awards 10 FS for 3 Scatters (The Heist) and 12 for 4+ (The Perfect Escape).
+	const key = $derived(totalFs >= 12 ? 'SCR-ESCAPE-INTRO' : 'SCR-HEIST-INTRO');
 
 	context.eventEmitter.subscribeOnMount({
 		freeSpinIntroShow: () => (show = true),
 		freeSpinIntroHide: () => (show = false),
-		freeSpinIntroUpdate: async (emitterEvent) => {
-			// if (emitterEvent.extraSpins) {
-			// 	context.eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_fs_respins' });
-			// }
-			// freeSpinsFromEvent = emitterEvent.extraSpins ?? emitterEvent.totalFreeSpins;
-			freeSpinsFromEvent = emitterEvent.totalFreeSpins;
+		freeSpinIntroUpdate: async (e) => {
+			totalFs = e.totalFreeSpins;
+			waiting = true;
 			await waitForResolve((resolve) => (oncomplete = resolve));
+			waiting = false;
 		},
 	});
 </script>
 
-<FadeContainer {show}>
-	<CanvasSizeRectangle backgroundColor={0x000000} backgroundAlpha={0.5} />
-
-	<FreeSpinAnimation>
-		{#snippet children({ sizes })}
-			<Sprite
-				anchor={{ x: 0.5, y: 1.2 }}
-				width={500 * 2.2}
-				height={156 * 2.2}
-				key="freespins_{stateUrlDerived.lang()}.png"
-			/>
-
-			<SpineProvider key="fsIntroNumber" width={sizes.width * 0.3}>
-				<SpineTrack
-					trackIndex={0}
-					{animationName}
-					loop={animationName === 'idle'}
-					listener={{
-						complete: () => (animationName = 'idle'),
-					}}
-				/>
-				<SpineSlot slotName="slot_number">
-					<BitmapText
-						anchor={{ x: 0.5, y: 0.5 }}
-						text={freeSpinsFromEvent}
-						style={{
-							fontFamily: 'gold',
-							fontSize: sizes.width * 0.1,
-							fontWeight: 'bold',
-						}}
-					/>
-				</SpineSlot>
-			</SpineProvider>
-
-			<Sprite anchor={{ x: 0.5, y: -3 }} width={183 * 2.2} height={42 * 2.2} key="freespins.png" />
-		{/snippet}
-	</FreeSpinAnimation>
-
-	<PressToContinue onpress={() => oncomplete()} />
+<FadeContainer {show} zIndex={30}>
+	<Rectangle {...sizes} backgroundColor={0x000000} />
+	<Sprite {key} {...cover} />
 </FadeContainer>
+{#if waiting}
+	<OnHotkey hotkey="Space" onpress={() => oncomplete()} />
+	<OnPressFullScreen onpress={() => oncomplete()} />
+{/if}
