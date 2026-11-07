@@ -117,3 +117,65 @@ def write_published_lut(config, mode="base"):
     print(f"[LUT] {mode}: natural sample RTP {info['natural_rtp_of_book_sample']*100:.4f}% -> table RTP "
           f"{info['table_rtp']*100:.4f}% (zero-win trim x{info['zero_win_trim_factor']:.5f})")
     return info
+
+
+# --------------------------------------------------------------------------------------------- bonus buys
+MAX_TRIM_BUY = 0.10
+
+
+def build_buy_weights(config, mode):
+    """Bonus-buy modes are a single stratum (every book is a forced trigger), so every book's natural
+    weight is equal.  RTP = mean payout / cost.  The price is rounded to a whole multiple of the bet, so a
+    single factor `f` on the books paying less than the price moves the table to exactly TARGET_RTP."""
+    rows = read_rows(config, mode)
+    cost = Fraction(next(b for b in config.bet_modes if b.get_name() == mode).get_cost()).limit_denominator(1000)
+    lo = [i for i, r in rows.items() if r["payout"] < cost * 100]
+    hi = [i for i, r in rows.items() if r["payout"] >= cost * 100]
+    s_lo = Fraction(sum(rows[i]["payout"] for i in lo), 100)
+    s_hi = Fraction(sum(rows[i]["payout"] for i in hi), 100)
+    natural_rtp = (s_lo + s_hi) / (len(rows) * cost)
+    t = TARGET_RTP * cost
+    f = (s_hi - t * len(hi)) / (t * len(lo) - s_lo)
+    if f <= 0 or abs(float(f) - 1) > MAX_TRIM_BUY:
+        raise RuntimeError(
+            f"[{mode}] trim factor {float(f):.4f} outside +/-{MAX_TRIM_BUY}: re-price the buy "
+            f"(natural RTP {float(natural_rtp):.5f} at {float(cost)}x)"
+        )
+    unit = Fraction(TOTAL_WEIGHT, len(rows))
+    w_lo, w_hi = int(unit * f), int(unit)
+    lo_set = set(lo)
+    weights = {i: (w_lo if i in lo_set else w_hi) for i in rows}
+    lo_sorted = sorted(lo, key=lambda i: rows[i]["payout"])
+    tw = sum(weights.values())
+    tp = sum(weights[i] * rows[i]["payout"] for i in weights)
+    k = 0
+    while Fraction(tp, 100 * tw) / cost > TARGET_RTP:
+        j = lo_sorted[k % len(lo_sorted)]
+        weights[j] += 1000
+        tw += 1000
+        tp += 1000 * rows[j]["payout"]
+        k += 1
+    for i, w in weights.items():
+        assert w > 0, f"book {i} has zero weight"
+    return rows, weights, {
+        "cost": float(cost),
+        "books": len(rows),
+        "natural_rtp_of_book_sample": float(natural_rtp),
+        "mean_payout_x_bet": float((s_lo + s_hi) / len(rows)),
+        "table_rtp": float(Fraction(tp, 100 * tw) / cost),
+        "below_price_trim_factor": float(f),
+        "max_win_books": sum(r["payout"] >= config.wincap * 100 for r in rows.values()),
+    }
+
+
+def write_buy_lut(config, mode):
+    rows, weights, info = build_buy_weights(config, mode)
+    out = os.path.join(config.publish_path, f"lookUpTable_{mode}_0.csv")
+    with open(out, "w", encoding="UTF-8", newline="") as f:
+        for i in sorted(weights):
+            f.write(f"{i},{weights[i]},{rows[i]['payout']}\n")
+    with open(os.path.join(config.library_path, f"lut_weighting_{mode}.json"), "w", encoding="UTF-8") as f:
+        json.dump(info, f, indent=1)
+    print(f"[LUT] {mode}: {info['cost']}x, natural RTP {info['natural_rtp_of_book_sample']*100:.4f}% -> table RTP "
+          f"{info['table_rtp']*100:.4f}% (below-price trim x{info['below_price_trim_factor']:.5f})")
+    return info

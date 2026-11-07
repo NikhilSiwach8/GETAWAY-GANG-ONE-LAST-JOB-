@@ -8,7 +8,7 @@ const overridesDir = path.join(here, 'src', 'gg-overrides');
 
 // Game-specific visual overrides for shared web-sdk UI components (logic stays in the shared code).
 // Any import of these files inside components-ui-pixi resolves to src/gg-overrides/<same name>.
-const OVERRIDES = ['UiButton.svelte', 'ButtonBet.svelte', 'LabelBalance.svelte', 'LabelWin.svelte', 'LabelBet.svelte'];
+const OVERRIDES = ['UiButton.svelte', 'ButtonBet.svelte', 'ButtonBuyBonus.svelte', 'LabelBalance.svelte', 'LabelWin.svelte', 'LabelBet.svelte'];
 
 const ggUiOverrides = {
 	name: 'gg-ui-overrides',

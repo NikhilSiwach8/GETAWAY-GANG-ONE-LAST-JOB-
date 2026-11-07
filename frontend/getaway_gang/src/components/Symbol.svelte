@@ -55,18 +55,21 @@
 
 {#if art && hasArt(art.assetId)}
 	<!-- Production art (art/delivery), win = scale pulse + glow until Spine animations arrive -->
+	{#snippet still()}
+		<Container scale={isWin ? 1.12 : 1}>
+			{#if isWin}
+				<Rectangle anchor={0.5} width={size} height={size} borderRadius={18} backgroundColor={0xf7c947} backgroundAlpha={0.28} borderColor={0xfff1a8} borderWidth={5} />
+			{/if}
+			<Sprite key={art.assetId} anchor={0.5} width={SYMBOL_SIZE} height={SYMBOL_SIZE} />
+		</Container>
+	{/snippet}
 	<Container x={props.x} y={props.y}>
 		{#if isWin && winClip}
-			<ClipSprite id={winClip} channel="sym" width={clipSize} height={clipSize} />
+			<ClipSprite id={winClip} channel="sym" width={clipSize} height={clipSize} fallback={still} />
 		{:else if props.state === 'land' && landClip}
-			<ClipSprite id={landClip} channel="sym-land" width={clipSize} height={clipSize} />
+			<ClipSprite id={landClip} channel="sym-land" width={clipSize} height={clipSize} fadeMs={0} fallback={still} />
 		{:else}
-			<Container scale={isWin ? 1.12 : 1}>
-				{#if isWin}
-					<Rectangle anchor={0.5} width={size} height={size} borderRadius={18} backgroundColor={0xf7c947} backgroundAlpha={0.28} borderColor={0xfff1a8} borderWidth={5} />
-				{/if}
-				<Sprite key={art.assetId} anchor={0.5} width={SYMBOL_SIZE} height={SYMBOL_SIZE} />
-			</Container>
+			{@render still()}
 		{/if}
 	</Container>
 {:else if art}

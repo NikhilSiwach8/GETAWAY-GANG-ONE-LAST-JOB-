@@ -1,6 +1,6 @@
 <!--
-  Copy of web-sdk components-ui-pixi UIDefault.svelte with the Buy Bonus button removed
-  (GETAWAY GANG has a single 'base' bet mode). Everything else is the shared Stake UI.
+  Copy of web-sdk components-ui-pixi UIDefault.svelte (import paths only). The Buy Bonus button opens
+  ModalGGBuyBonus (THE HEIST / THE PERFECT ESCAPE).
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
@@ -19,6 +19,7 @@
 	import ButtonPayTable from 'components-ui-pixi/src/components/ButtonPayTable.svelte';
 	import ButtonGameRules from 'components-ui-pixi/src/components/ButtonGameRules.svelte';
 	import ButtonSettings from 'components-ui-pixi/src/components/ButtonSettings.svelte';
+	import ButtonBuyBonus from '../gg-overrides/ButtonBuyBonus.svelte';
 	import ButtonBet from 'components-ui-pixi/src/components/ButtonBet.svelte';
 	import ButtonTurbo from 'components-ui-pixi/src/components/ButtonTurbo.svelte';
 	import ButtonAutoSpin from 'components-ui-pixi/src/components/ButtonAutoSpin.svelte';
@@ -71,8 +72,9 @@
 			<LabelBet {...labelProps} />
 		{/snippet}
 
-		<!-- No bonus-buy bet mode in this game: the shared UI's Buy Bonus slot is left empty. -->
-		{#snippet buttonBuyBonus()}{/snippet}
+		{#snippet buttonBuyBonus(buttonProps)}
+			<ButtonBuyBonus {...buttonProps} />
+		{/snippet}
 
 		{#snippet buttonBet(buttonProps)}
 			<ButtonBet {...buttonProps} />

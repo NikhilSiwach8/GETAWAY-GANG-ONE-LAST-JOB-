@@ -187,3 +187,60 @@ Win distribution for escape rounds (share of rounds):
 | [5000,12000) | 0.9353% |
 | [12000,1000000000.0) | 0.2540% |
 
+<!-- BUY-REPORT:START -->
+
+## Bonus buy modes
+
+Exact statistics of the published buy tables (`lookUpTable_heist_0.csv`, `lookUpTable_escape_0.csv`).
+
+### THE HEIST — `heist`, price 43× bet
+
+| Metric | Value |
+|---|---|
+| Books | 300,000 |
+| **RTP** (mean payout / price) | **96.0000%** |
+| Mean payout | 41.28× bet |
+| Standard deviation (× price) | 4.91 |
+| P(pays less than the price) | 83.8% |
+| P(pays 0) | 2.32% |
+| P(max win 12,000×) | 1 in 20,981 (14 books) |
+| Natural RTP of the book sample (before trim) | 94.4392% |
+| Below-price re-weighting factor (RTP trim) | ×0.97517 |
+
+| Payout (× bet) | Probability |
+|---|---:|
+| exactly 0 | 2.324% |
+| 0.0001 – 21.5 | 70.328% |
+| 21.5 – 43 | 11.119% |
+| 43 – 86 | 7.683% |
+| 86 – 215 | 5.245% |
+| 215 – 5,000 | 3.269% |
+| 5,000 – 1.2e+04 | 0.027% |
+| exactly 12,000 | 0.005% |
+
+### THE PERFECT ESCAPE — `escape`, price 450× bet
+
+| Metric | Value |
+|---|---|
+| Books | 150,000 |
+| **RTP** (mean payout / price) | **96.0000%** |
+| Mean payout | 432.00× bet |
+| Standard deviation (× price) | 2.44 |
+| P(pays less than the price) | 79.4% |
+| P(pays 0) | 0.21% |
+| P(max win 12,000×) | 1 in 403 (369 books) |
+| Natural RTP of the book sample (before trim) | 95.3101% |
+| Below-price re-weighting factor (RTP trim) | ×0.98792 |
+
+| Payout (× bet) | Probability |
+|---|---:|
+| exactly 0 | 0.210% |
+| 0.0001 – 225 | 66.544% |
+| 225 – 450 | 12.680% |
+| 450 – 900 | 9.431% |
+| 900 – 2,250 | 7.289% |
+| 2,250 – 5,000 | 2.672% |
+| 5,000 – 1.2e+04 | 0.926% |
+| exactly 12,000 | 0.248% |
+
+<!-- BUY-REPORT:END -->

@@ -1,0 +1,483 @@
+GETAWAY GANG: ONE LAST JOB! - ASSET PROMPTS, ROUND 2
+74 assets still needed after the bonus-buy, paytable and rules update.
+Each prompt is complete on its own: copy the text under PROMPT. Save files with the Asset ID as the name
+(e.g. UI-BUY-BONUS.png) and send them like before; they are swapped in by ID.
+Animations and clips are NOT in this list: they are rendered from your art by video/ (Remotion).
+
+Highest priority for Stake approval: section 3 (sample-asset replacements) and sections 5-7 (audio).
+
+==============================================================================
+1. BONUS BUY (new feature)
+==============================================================================
+
+[001] UI-BUY-BONUS - Buy Bonus button
+PROMPT:
+Create the asset "Buy Bonus button" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). A wide pill-shaped button in the steel-and-gold UI family: a gold bar ingot face with bevelled edges, a small cartoon money-bag icon on the left and the words BUY BONUS in bold white display lettering with a dark outline; idle has a slow gold sheen, hover brightens, pressed sinks 4 px, disabled is desaturated grey. It sits beside the spin button, so it must read at phone size. Size: 300×200 px @2x (aspect 3:2). Art style: chunky, tactile premium slot-game UI in the same stylized-3D world as the game: bevelled brushed steel, polished gold trim and rivets, deep-navy tinted glass panels, soft inner glow, crisp edges, subtle noise-free gradients. Readable at phone size; numbers use a bold tabular display face. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP at @2x and @1x on a transparent background (real alpha, no baked checkerboard or white box), with idle, hover, pressed and disabled states where it is a button; layered source file. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[002] BUY-HEIST-CARD - Buy Bonus card art — THE HEIST
+PROMPT:
+Create the asset "Buy Bonus card art — THE HEIST" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). Card illustration for buying THE HEIST: the four crew (Roxy red, Byte purple, Tank orange, Fuse blue) squeezing through a freshly drilled hole into a glowing bank vault packed with gold bars, money bags and diamonds; Tank's drill still smoking, Byte's hologram showing a vault schematic, warm gold light spilling out. Leave the top 22% calm for the title and the bottom 25% darker for the price text overlay. No text in the image. Size: 1600×900 px (16:9), full-bleed. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP on a transparent background where noted, otherwise full-bleed; real alpha, no baked checkerboard; layered or 3D source. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[003] BUY-ESCAPE-CARD - Buy Bonus card art — THE PERFECT ESCAPE
+PROMPT:
+Create the asset "Buy Bonus card art — THE PERFECT ESCAPE" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). Card illustration for buying THE PERFECT ESCAPE: the red-and-white getaway van mid-drift on a rain-slick neon city highway at night, Roxy at the wheel, Byte, Tank and Fuse hanging out of the windows cheering, money bills streaming from the back doors, magenta and cyan neon reflections. Leave the top 22% calm for the title and the bottom 25% darker for the price text overlay. No text in the image. Size: 1600×900 px (16:9), full-bleed. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP on a transparent background where noted, otherwise full-bleed; real alpha, no baked checkerboard; layered or 3D source. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[004] UI-VOLATILITY - Volatility indicator icons
+PROMPT:
+Create the asset "Volatility indicator icons" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). Two small icons for a 5-step volatility row: a chunky lit lightning bolt (gold #F7C947 with a white hot core and soft glow) and the same bolt unlit (dark charcoal with a thin steel outline). Identical silhouette and size so they line up. Size: 64×64 px @2x each, two files. Art style: chunky, tactile premium slot-game UI in the same stylized-3D world as the game: bevelled brushed steel, polished gold trim and rivets, deep-navy tinted glass panels, soft inner glow, crisp edges, subtle noise-free gradients. Readable at phone size; numbers use a bold tabular display face. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP at @2x and @1x on a transparent background (real alpha, no baked checkerboard or white box), with idle, hover, pressed and disabled states where it is a button; layered source file. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[005] UI-BUY-PANEL - Buy Bonus / modal panel frame (9-slice)
+PROMPT:
+Create the asset "Buy Bonus / modal panel frame (9-slice)" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). A modal window frame styled as a bank-vault door panel: brushed steel border with rivets and gold corner brackets, deep-navy tinted glass centre at 85% opacity, a gold header plate area at the top. Must 9-slice cleanly: corners 96 px, edges tile without seams, centre plain. Size: 1200×900 px @2x plus the 9-slice guides. Art style: chunky, tactile premium slot-game UI in the same stylized-3D world as the game: bevelled brushed steel, polished gold trim and rivets, deep-navy tinted glass panels, soft inner glow, crisp edges, subtle noise-free gradients. Readable at phone size; numbers use a bold tabular display face. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP at @2x and @1x on a transparent background (real alpha, no baked checkerboard or white box), with idle, hover, pressed and disabled states where it is a button; layered source file. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+==============================================================================
+2. PAYTABLE & GAME RULES
+==============================================================================
+
+[006] UI-PAYTABLE-BTN - Paytable button
+PROMPT:
+Create the asset "Paytable button" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). A round secondary button in the steel-and-gold family with a white coin-stack-and-list glyph, clearly different from the 'i' info button so players can tell paytable from rules. Size: 176×176 px @2x. Art style: chunky, tactile premium slot-game UI in the same stylized-3D world as the game: bevelled brushed steel, polished gold trim and rivets, deep-navy tinted glass panels, soft inner glow, crisp edges, subtle noise-free gradients. Readable at phone size; numbers use a bold tabular display face. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP at @2x and @1x on a transparent background (real alpha, no baked checkerboard or white box), with idle, hover, pressed and disabled states where it is a button; layered source file. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[007] UI-INFO-HEADER - Paytable / rules header banner
+PROMPT:
+Create the asset "Paytable / rules header banner" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). A wide gold header banner for the PAYTABLE and HOW TO PLAY pages: a blueprint-paper ribbon with gold trim, rolled ends and a small vault-dial emblem in the centre; plain area in the middle for the page title text (no text in the art). Size: 1600×240 px @2x. Art style: chunky, tactile premium slot-game UI in the same stylized-3D world as the game: bevelled brushed steel, polished gold trim and rivets, deep-navy tinted glass panels, soft inner glow, crisp edges, subtle noise-free gradients. Readable at phone size; numbers use a bold tabular display face. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP at @2x and @1x on a transparent background (real alpha, no baked checkerboard or white box), with idle, hover, pressed and disabled states where it is a button; layered source file. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[008] RULE-CREW-CHAOS - Rules illustration — Crew Chaos
+PROMPT:
+Create the asset "Rules illustration — Crew Chaos" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). A small explainer illustration: a 6×4 reel grid seen at a slight angle with the four crew symbols lit up and comic-style arrows showing them acting on the board (a swapped reel, cloned diamonds, an open vault, upgraded symbols). Clear, diagrammatic, readable when small. No text. Size: 800×450 px, transparent background. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP on a transparent background where noted, otherwise full-bleed; real alpha, no baked checkerboard; layered or 3D source. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[009] RULE-RESPIN - Rules illustration — Chaos Re-spin
+PROMPT:
+Create the asset "Rules illustration — Chaos Re-spin" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). A reel grid where every Getaway Van Wild is locked with a glowing gold padlock outline while the other cells blur in a spin; a circular re-spin arrow badge in the corner. No text. Size: 800×450 px, transparent background. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP on a transparent background where noted, otherwise full-bleed; real alpha, no baked checkerboard; layered or 3D source. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[010] RULE-METER - Rules illustration — Getaway Meter
+PROMPT:
+Create the asset "Rules illustration — Getaway Meter" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). The Getaway Meter as a horizontal fuel-gauge with 5 numbered stage notches, the needle pushing into the final 'CLEAN GETAWAY' zone, a chequered-flag icon at the end. Matches the delivered UI-METER-GETAWAY. No text other than the stage numbers 1–5. Size: 800×300 px, transparent background. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP on a transparent background where noted, otherwise full-bleed; real alpha, no baked checkerboard; layered or 3D source. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[011] RULE-LOOT-METER - Rules illustration — Loot Meter
+PROMPT:
+Create the asset "Rules illustration — Loot Meter" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). The Loot Meter as a vertical money-bag filling with gold coins, with 4 milestone markers (4, 8, 12, 16) and small reward icons beside them: +1 spin, ×2, +1 spin, ×3. Matches the delivered UI-METER-LOOT. No other text. Size: 500×700 px, transparent background. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP on a transparent background where noted, otherwise full-bleed; real alpha, no baked checkerboard; layered or 3D source. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[012] RULE-PBP - Rules illustration — Perfectly Bad Plan
+PROMPT:
+Create the asset "Rules illustration — Perfectly Bad Plan" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). All four crew piled on top of each other in a comedic heap on the reels, each mid-mistake (Roxy reversing, Byte's laptop smoking, Tank drilling the wrong wall, Fuse's early explosion), with a big gold ×3 burst behind them. No text except the ×3. Size: 800×450 px, transparent background. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP on a transparent background where noted, otherwise full-bleed; real alpha, no baked checkerboard; layered or 3D source. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[013] RULE-FINAL-ESCAPE - Rules illustration — Final Escape
+PROMPT:
+Create the asset "Rules illustration — Final Escape" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). The getaway van bursting through a paper banner at a city-limits sign at dawn, four crew level badges (gold LV3 stars in each crew colour) flying out of the windows. No text except the LV3 badges. Size: 800×450 px, transparent background. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP on a transparent background where noted, otherwise full-bleed; real alpha, no baked checkerboard; layered or 3D source. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+==============================================================================
+3. REPLACE THE WEB-SDK SAMPLE ASSETS (required for Stake approval)
+==============================================================================
+
+[014] FONT-WIN - Win counter bitmap font
+PROMPT:
+Create the asset "Win counter bitmap font" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). A complete bitmap font sheet for the win counter: digits 0–9 plus , . × $ € £ + and space, chunky rounded display numerals in polished treasure gold with a dark-brown outline, warm top highlight and soft bottom shadow; all digits equal width (tabular). Replaces the sample 'mm_gold' font. Size: glyph height 160 px @2x. Art style: chunky, tactile premium slot-game UI in the same stylized-3D world as the game: bevelled brushed steel, polished gold trim and rivets, deep-navy tinted glass panels, soft inner glow, crisp edges, subtle noise-free gradients. Readable at phone size; numbers use a bold tabular display face. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: BMFont package (.fnt or .xml + .png atlas) with kerning, plus each glyph as a separate transparent PNG; real alpha. Embedded text is expected for this asset. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[015] FONT-COUNTER - Free-spin / meter counter bitmap font
+PROMPT:
+Create the asset "Free-spin / meter counter bitmap font" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). Same character set as FONT-WIN in brushed silver-white with a navy outline and a cool rim light, for the free-spin counter and meter numbers. Replaces the sample silver and purple fonts. Size: glyph height 96 px @2x. Art style: chunky, tactile premium slot-game UI in the same stylized-3D world as the game: bevelled brushed steel, polished gold trim and rivets, deep-navy tinted glass panels, soft inner glow, crisp edges, subtle noise-free gradients. Readable at phone size; numbers use a bold tabular display face. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: BMFont package (.fnt or .xml + .png atlas) plus each glyph as a separate transparent PNG; real alpha. Embedded text is expected for this asset. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[016] UI-LOADING-BAR - Loading bar
+PROMPT:
+Create the asset "Loading bar" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). A loading bar styled as a vault-door bolt track: a steel frame with rivets and a gold liquid-metal fill that glows at its leading edge; supplied as separate frame and fill layers so the fill can be scaled. Size: 1000×80 px @2x (frame) and 960×48 px (fill). Art style: chunky, tactile premium slot-game UI in the same stylized-3D world as the game: bevelled brushed steel, polished gold trim and rivets, deep-navy tinted glass panels, soft inner glow, crisp edges, subtle noise-free gradients. Readable at phone size; numbers use a bold tabular display face. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: PNG/WebP at @2x and @1x on a transparent background (real alpha, no baked checkerboard or white box), with idle, hover, pressed and disabled states where it is a button; layered source file. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[017] UI-PRESS-CONTINUE - 'Tap anywhere to continue' text graphic
+PROMPT:
+Create the asset "'Tap anywhere to continue' text graphic" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). The words TAP ANYWHERE TO CONTINUE in bold white comic display lettering with a navy outline and a soft gold glow, on one line; also a second version reading PRESS ANYWHERE TO CONTINUE. Replaces the sample 'press anywhere' sprite. Size: 1400×160 px @2x. Art style: chunky, tactile premium slot-game UI in the same stylized-3D world as the game: bevelled brushed steel, polished gold trim and rivets, deep-navy tinted glass panels, soft inner glow, crisp edges, subtle noise-free gradients. Readable at phone size; numbers use a bold tabular display face. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: two transparent PNG/WebP files; real alpha. Embedded text is expected for this asset. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[018] FX-ANTICIPATION - Reel anticipation effect
+PROMPT:
+Create the asset "Reel anticipation effect" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). A vertical looping effect that frames one reel when a bonus is close: swirling gold sparks and blueprint-blue light streaks running up the reel edges, an electric shimmer, intensity pulsing once per second. Replaces the sample anticipation Spine. Size: 300×1000 px per frame, 30 fps, 1 s seamless loop. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: WebM VP9 with alpha (or transparent PNG sequence), seamless loop, real alpha; plus the first frame as a still. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[019] FX-COINS - Coin and cash particle sprites
+PROMPT:
+Create the asset "Coin and cash particle sprites" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). Particle sheet for win showers: a spinning gold coin with a vault-dial engraving (8 rotation frames), a green banknote fluttering (8 frames), a small diamond sparkle (4 frames) and a gold star twinkle (4 frames). Replaces the sample coin sprites. Size: 128×128 px per frame. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: one transparent PNG atlas per particle plus a JSON frame list (TexturePacker/Pixi format); real alpha. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[020] FX-TRANSITION - Scene transition wipe
+PROMPT:
+Create the asset "Scene transition wipe" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). A 1.2 s full-screen transition: the getaway van screeches across the screen from left to right trailing a thick wall of cartoon smoke and confetti that fully covers the frame at the midpoint (frames 16–20) and clears to transparent by the end. Used between the base game and the bonuses. Replaces the sample transition Spine. Size: 1920×1080 px, 30 fps, 36 frames. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: WebM VP9 with alpha (or transparent PNG sequence); the covered midpoint must be fully opaque. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+==============================================================================
+4. BONUS END SCREENS (redo)
+==============================================================================
+
+[021] SCR-HEIST-OUTRO - THE HEIST end screen
+PROMPT:
+Create the asset "THE HEIST end screen" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). The Heist end screen: the crew lounging on a mountain of gold inside the vault, a large total-win counter in gold numerals and a Loot Meter summary showing the milestones reached. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: 1920×1080 px landscape and 1080×1920 px portrait layouts as layered source plus Spine/WebM animation, with all text on separate layers for localisation and a clear 'press anywhere to continue' area. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+[022] SCR-ESCAPE-OUTRO - THE PERFECT ESCAPE end screen
+PROMPT:
+Create the asset "THE PERFECT ESCAPE end screen" for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot). The Perfect Escape end screen: the getaway van parked on a cliff above the city at sunrise, the crew celebrating on its roof, each character's final level shown as stars, and a large total-win counter. Art style: premium stylized 3D, the look of a high-end animated feature film crossed with comic-book action-comedy energy. Slightly exaggerated cartoon proportions, big expressive faces, clean readable silhouettes, rich physically-based materials (fabric weave, worn leather, brushed and painted metal, glossy plastic, cut gems with real refraction). Cinematic three-point lighting: warm gold key light from upper left, cool blue-navy rim light from lower right, soft global illumination and subtle ambient occlusion. Family-friendly: no realistic weapons, no blood, no menace. Ultra-detailed, sharp focus, 4K render quality. Colour palette: deep night navy #0D1530, charcoal #1C1F26 and brushed metallic grey for environments; warm treasure gold #F7C947 for loot, highlights and key light; character accent colours used consistently everywhere: Roxy red #FF4C36, Byte purple #A34BFF, Tank orange #FFA12B, Fuse blue #28B9EF. Deliverable: 1920×1080 px landscape and 1080×1920 px portrait layouts as layered source plus Spine/WebM animation, with all text on separate layers for localisation and a clear 'press anywhere to continue' area. Avoid: flat vector clip-art, anime style, photoreal humans, gore, guns or realistic weapons, horror, embedded text or watermarks (unless the asset is a text/logo asset), signatures, blur, low-poly, noise, oversaturation, inconsistent lighting, extra fingers or limbs, cropped heads, and any resemblance to characters, logos or artwork from existing slot games, films or brands.
+
+------------------------------------------------------------------------------
+
+==============================================================================
+5. MUSIC (none delivered yet — the build still uses the sample's audio)
+==============================================================================
+
+[023] MUS-INTRO - Intro and loading theme
+PROMPT:
+Original music for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): a 20-second cinematic version of the main theme that builds from a lone clavinet to the full band and ends on a big horn hit. Must stay instrumental (no lyrics), feel like a premium animated heist comedy, and mix cleanly under sound effects. Deliverable: 48 kHz 24-bit WAV master plus OGG and M4A, loudness −16 LUFS integrated, true peak −1 dBTP, seamless loop points trimmed at zero crossings with no click, stems supplied separately.
+
+------------------------------------------------------------------------------
+
+[024] MUS-MAIN - Base-game music
+PROMPT:
+Original music for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): a funky heist-caper instrumental: clavinet riffs, wah-wah guitar, slap bass, a tight horn section and brushed drums, 96–104 BPM, cool and confident with a wink of comedy; 2:00 seamless loop with stems for rhythm, bass, horns and percussion so intensity can rise during features. Must stay instrumental (no lyrics), feel like a premium animated heist comedy, and mix cleanly under sound effects. Deliverable: 48 kHz 24-bit WAV master plus OGG and M4A, loudness −16 LUFS integrated, true peak −1 dBTP, seamless loop points trimmed at zero crossings with no click, stems supplied separately.
+
+------------------------------------------------------------------------------
+
+[025] MUS-HEIST - THE HEIST bonus music
+PROMPT:
+Original music for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): a bigger, tenser funk-orchestral hybrid: staccato strings, brass stabs every 8 bars, a ticking-clock percussion bed and a sneaky bass line, 110 BPM; 1:30 seamless loop. Must stay instrumental (no lyrics), feel like a premium animated heist comedy, and mix cleanly under sound effects. Deliverable: 48 kHz 24-bit WAV master plus OGG and M4A, loudness −16 LUFS integrated, true peak −1 dBTP, seamless loop points trimmed at zero crossings with no click, stems supplied separately.
+
+------------------------------------------------------------------------------
+
+[026] MUS-ESCAPE - THE PERFECT ESCAPE bonus music
+PROMPT:
+Original music for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): a high-energy synth-funk chase: driving bass, retro synth arpeggios, punchy drums and a playful siren-like lead (never alarming), 124 BPM; 1:30 seamless loop. Must stay instrumental (no lyrics), feel like a premium animated heist comedy, and mix cleanly under sound effects. Deliverable: 48 kHz 24-bit WAV master plus OGG and M4A, loudness −16 LUFS integrated, true peak −1 dBTP, seamless loop points trimmed at zero crossings with no click, stems supplied separately.
+
+------------------------------------------------------------------------------
+
+[027] MUS-WIN-BIG - Big Win stinger
+PROMPT:
+Original music for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): a 4-second celebratory funk stinger with horns and a cymbal swell, in the key of the main theme. Must stay instrumental (no lyrics), feel like a premium animated heist comedy, and mix cleanly under sound effects. Deliverable: 48 kHz 24-bit WAV master plus OGG and M4A, loudness −16 LUFS integrated, true peak −1 dBTP, seamless loop points trimmed at zero crossings with no click, stems supplied separately.
+
+------------------------------------------------------------------------------
+
+[028] MUS-WIN-SUPER - Super Win stinger
+PROMPT:
+Original music for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): a 5-second stinger one step up in key with added guitar licks. Must stay instrumental (no lyrics), feel like a premium animated heist comedy, and mix cleanly under sound effects. Deliverable: 48 kHz 24-bit WAV master plus OGG and M4A, loudness −16 LUFS integrated, true peak −1 dBTP, seamless loop points trimmed at zero crossings with no click, stems supplied separately.
+
+------------------------------------------------------------------------------
+
+[029] MUS-WIN-MEGA - Mega Win stinger
+PROMPT:
+Original music for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): a 6-second stinger with full horns, choir 'hey!' shouts and a drum fill. Must stay instrumental (no lyrics), feel like a premium animated heist comedy, and mix cleanly under sound effects. Deliverable: 48 kHz 24-bit WAV master plus OGG and M4A, loudness −16 LUFS integrated, true peak −1 dBTP, seamless loop points trimmed at zero crossings with no click, stems supplied separately.
+
+------------------------------------------------------------------------------
+
+[030] MUS-WIN-EPIC - Epic Win stinger
+PROMPT:
+Original music for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): an 8-second triumphant stinger with orchestra and band together and a rising key change. Must stay instrumental (no lyrics), feel like a premium animated heist comedy, and mix cleanly under sound effects. Deliverable: 48 kHz 24-bit WAV master plus OGG and M4A, loudness −16 LUFS integrated, true peak −1 dBTP, seamless loop points trimmed at zero crossings with no click, stems supplied separately.
+
+------------------------------------------------------------------------------
+
+[031] MUS-WIN-MAX - Maximum Win fanfare
+PROMPT:
+Original music for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): a 12-second all-out fanfare: full brass, choir, timpani rolls and a final sustained chord with fireworks-like percussion hits. Must stay instrumental (no lyrics), feel like a premium animated heist comedy, and mix cleanly under sound effects. Deliverable: 48 kHz 24-bit WAV master plus OGG and M4A, loudness −16 LUFS integrated, true peak −1 dBTP, seamless loop points trimmed at zero crossings with no click, stems supplied separately.
+
+------------------------------------------------------------------------------
+
+==============================================================================
+6. SOUND EFFECTS — from the master list (not delivered yet)
+==============================================================================
+
+[032] SFX-SPIN - Reel spin start
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Reel spin start — a mechanical whoosh with a light vault-dial click, stereo, 0.5 s, 3 variations. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[033] SFX-REEL-STOP - Reel stop
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Reel stop — a short metallic thunk with a gold ting, mono, 0.25 s, 3 variations. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[034] SFX-LAND-PREMIUM - Premium symbol land
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Premium symbol land — a bright gem or coin chime, mono, 0.4 s, one variant per premium symbol. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[035] SFX-LAND-WILD - Wild land
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Wild land — a cartoon van horn honk with a tyre chirp, stereo, 0.6 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[036] SFX-LAND-SCATTER - Scatter land (1–6)
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Scatter land (1–6) — a crisp paper blueprint snap followed by a rising chime, six versions rising in pitch for the 1st to 6th Scatter, mono, 0.6 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[037] SFX-ROXY - Roxy ability
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Roxy ability — an engine rev, a long tyre screech and a gear shift clunk, stereo, 1.8 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[038] SFX-BYTE - Byte ability
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Byte ability — a frantic keyboard flurry, a digital glitch stutter and a scanning 'bweep', stereo, 1.8 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[039] SFX-TANK - Tank ability
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Tank ability — a drill whine winding up, metal clanks, bolts popping off and a heavy vault-door creak, stereo, 2.0 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[040] SFX-FUSE - Fuse ability
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Fuse ability — a fuse sizzle, a cartoon 'ka-POW' with a confetti pop and a sparkly tail, stereo, 1.8 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[041] SFX-COMBO-RB - Combo Hot-Wired Clone
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Combo Hot-Wired Clone — an engine rev glitched through a digital filter, ending on a copy 'bweep' chord, stereo, 1.6 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[042] SFX-COMBO-BT - Combo Vault Clone
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Combo Vault Clone — a heavy vault creak overlaid with a scanning beam and two duplicate chimes, stereo, 1.6 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[043] SFX-COMBO-TF - Combo Golden Vault
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Combo Golden Vault — a pressure blast from inside a metal vault with golden shimmer and coin rattle, stereo, 1.6 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[044] SFX-COMBO-FR - Combo Blast Drift
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Combo Blast Drift — a cartoon explosion that turns into a long tyre drift, stereo, 1.6 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[045] SFX-COMBO-RT - Combo Armored Getaway
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Combo Armored Getaway — a chain snapping taut, an engine roar and metal dragging on asphalt with sparks, stereo, 1.8 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[046] SFX-PBP - Perfectly Bad Plan
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Perfectly Bad Plan — a record scratch, a comedic multi-layer crash (car horn, cash register, confetti pop) and a triumphant horn hit, stereo, 3.0 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[047] SFX-RESPIN - Chaos Re-spin
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Chaos Re-spin — a chain-lock clink and a quick rising whoosh, stereo, 0.8 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[048] SFX-METER-STAGE - Getaway Meter stage (1–5)
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Getaway Meter stage (1–5) — rising gauge dings, five versions climbing in pitch; stage 5 adds an engine roar and a big chime, stereo, 0.8–1.5 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[049] SFX-LOOT-MILESTONE - Loot Meter milestone
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Loot Meter milestone — a cascade of gold coins with a cash-register 'ka-ching', stereo, 1.2 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[050] SFX-WIN-COUNT - Win counter loop
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Win counter loop — a seamless coin-counting tick loop for the win ticker, mono, 2 s loop. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[051] SFX-UI-CLICK - UI button press
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): UI button press — a soft tactile steel click, mono, 0.1 s, 3 variations. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+==============================================================================
+7. SOUND EFFECTS — new
+==============================================================================
+
+[052] SFX-CREW-CHAOS - Crew Chaos sting
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Crew Chaos sting — a comic brass hit with a cartoon crash and a crowd 'whoa', stereo, 1.0 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[053] SFX-ANTICIPATION - Reel anticipation loop
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Reel anticipation loop — a rising tense string tremolo with a ticking clock, stereo, 1.0 s seamless loop. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[054] SFX-BONUS-TRIGGER - Bonus triggered
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Bonus triggered — a vault alarm 'whoop' turning into a triumphant horn fanfare, stereo, 2.0 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[055] SFX-RETRIGGER - Free-spins retrigger
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Free-spins retrigger — a quick ascending horn riff with a coin cascade, stereo, 1.2 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[056] SFX-TRANSITION - Scene transition
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Scene transition — a van engine rev, tyre screech and whoosh, stereo, 1.2 s, synced to FX-TRANSITION. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[057] SFX-CELL-CLONE - Clone-in
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Clone-in — a digital glitch blip with a sparkle, mono, 0.4 s, 3 variations. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[058] SFX-CELL-UPGRADE - Symbol upgrade
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Symbol upgrade — a short rising magical 'bling', mono, 0.4 s, 3 variations. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[059] SFX-CELL-VAULT - Vault loot reveal
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Vault loot reveal — a heavy bolt clunk followed by a gold glitter, mono, 0.5 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[060] SFX-CELL-WILD - Wild stamp
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Wild stamp — a rubber-stamp thump with a van horn honk, mono, 0.4 s, 3 variations. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[061] SFX-CELL-EXIT - Crew exit
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Crew exit — a cartoon zip-away whoosh, mono, 0.3 s, 3 variations. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[062] SFX-WIN-SMALL - Small win
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Small win — a bright two-note coin chime, mono, 0.6 s, 3 variations. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[063] SFX-WIN-COUNT-END - Win counter end
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Win counter end — a satisfying cash-register 'ka-ching' that ends the count-up, stereo, 0.8 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[064] SFX-FINAL-ESCAPE - Final Escape
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Final Escape — a long van peel-out into an orchestral 'made it!' hit, stereo, 3.0 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[065] SFX-MAX-WIN - Maximum win
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Maximum win — a huge orchestral and brass climax with fireworks and a cheering crowd, stereo, 4.0 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[066] SFX-BUY-OPEN - Buy Bonus panel open
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Buy Bonus panel open — a vault-door creak opening into a soft gold shimmer, stereo, 0.6 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[067] SFX-BUY-CONFIRM - Bonus bought
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Bonus bought — a heavy cash-drawer slam and a short heist-theme horn sting, stereo, 1.0 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[068] SFX-UI-OPEN - Menu / paytable open
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Menu / paytable open — a soft paper-blueprint unroll, mono, 0.3 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+[069] SFX-UI-CLOSE - Menu / paytable close
+PROMPT:
+Original sound effect for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): Menu / paytable close — a soft paper roll-up, mono, 0.3 s. Cartoon-punchy, premium and family-friendly, matched in loudness to the rest of the set. Deliverable: 48 kHz 24-bit WAV plus OGG and M4A, mono or stereo as noted, peak −3 dBFS, tight start with no silence, short natural tail, 3 variations where noted to avoid repetition.
+
+------------------------------------------------------------------------------
+
+==============================================================================
+8. VOICE LINES (optional)
+==============================================================================
+
+[070] VO-ROXY - Roxy voice lines
+PROMPT:
+Character voice recording for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): a confident, sarcastic woman in her late twenties with a quick, playful drawl. Lines: "Everybody hold on!"; "Lane change!"; "Who needs brakes?". Comedic animated-film performance, clear diction, no profanity; voice lines are optional in game settings. Deliverable: dry studio recording, 48 kHz 24-bit WAV plus OGG and M4A, no music or reverb, 3 takes per line, family-friendly delivery, each line trimmed with 50 ms head and tail.
+
+------------------------------------------------------------------------------
+
+[071] VO-BYTE - Byte voice lines
+PROMPT:
+Character voice recording for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): a nervous, fast-talking young man whose voice cracks when excited. Lines: "I may have opened the wrong account!"; "Copy that… literally."; "Okay, okay, don't panic!". Comedic animated-film performance, clear diction, no profanity; voice lines are optional in game settings. Deliverable: dry studio recording, 48 kHz 24-bit WAV plus OGG and M4A, no music or reverb, 3 takes per line, family-friendly delivery, each line trimmed with 50 ms head and tail.
+
+------------------------------------------------------------------------------
+
+[072] VO-TANK - Tank voice lines
+PROMPT:
+Character voice recording for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): a big, booming, warm baritone who sounds impatient but lovable. Lines: "That's definitely not the right vault!"; "Stand back!"; "Shiny!". Comedic animated-film performance, clear diction, no profanity; voice lines are optional in game settings. Deliverable: dry studio recording, 48 kHz 24-bit WAV plus OGG and M4A, no music or reverb, 3 takes per line, family-friendly delivery, each line trimmed with 50 ms head and tail.
+
+------------------------------------------------------------------------------
+
+[073] VO-FUSE - Fuse voice lines
+PROMPT:
+Character voice recording for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): an energetic, mischievous young woman who giggles mid-sentence. Lines: "Good news. The door is gone!"; "Oops. Big oops!"; "Ka-boom!". Comedic animated-film performance, clear diction, no profanity; voice lines are optional in game settings. Deliverable: dry studio recording, 48 kHz 24-bit WAV plus OGG and M4A, no music or reverb, 3 takes per line, family-friendly delivery, each line trimmed with 50 ms head and tail.
+
+------------------------------------------------------------------------------
+
+[074] VO-CREW-PBP - All-crew Perfectly Bad Plan line
+PROMPT:
+Character voice recording for the original online video slot game "GETAWAY GANG: ONE LAST JOB!" (a 6-reel × 4-row, 4,096-ways action-comedy heist slot): all four crew voices together, surprised and delighted. Lines: "That… actually worked?!". Comedic animated-film performance, clear diction, no profanity; voice lines are optional in game settings. Deliverable: dry studio recording, 48 kHz 24-bit WAV plus OGG and M4A, no music or reverb, 3 takes per line, family-friendly delivery, each line trimmed with 50 ms head and tail.
+
+------------------------------------------------------------------------------

@@ -112,46 +112,54 @@ const ABILITY_LINES: Record<CrewKey, string> = {
 	F: 'THE DOOR IS GONE!',
 };
 
-/** ANIM-<CREW>-ABILITY-FX: character enters, signature effect plays, ability plate (transparent overlay). */
+/** ANIM-<CREW>-ABILITY-FX: character enters, signature effect plays, ability plate holds (transparent overlay).
+ * 3.6 s: slow enough to read who acted and what the ability is, ends with a 0.4 s fade so the next clip
+ * (or the board) takes over without a cut. */
+export const ABILITY_SECONDS = 3.6;
 export const AbilityFx: React.FC<{crew: CrewKey}> = ({crew}) => {
+	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	const c = CREW[crew];
 	const fromLeft = crew === 'R' || crew === 'T';
 	const charX = fromLeft ? 360 : 1560;
-	const end = Math.round(2 * fps);
+	const end = Math.round(ABILITY_SECONDS * fps);
+	const at = (f: number) => Math.round(f * 1.5); // entrance paced 1.5x slower than the 2 s cut
+	const fadeOut = interpolate(frame, [end - 12, end - 1], [1, 0], clamp);
 	const body = (
-		<AbsoluteFill>
-			<Rays color={c.color} from={2} opacity={0.35} />
+		<AbsoluteFill style={{opacity: fadeOut}}>
+			<Rays color={c.color} from={at(2)} opacity={0.35} />
 			{crew === 'R' && (
 				<>
-					<SpeedLines from={4} to={end} color="#ffffff" />
-					<Burst at={6} count={26} kind="smoke" x={charX + (fromLeft ? 260 : -260)} y={960} angle={fromLeft ? 0 : 180} spread={50} speed={22} life={45} seed="rs" size={0.6} />
-					<Burst at={10} count={20} kind="spark" x={charX + 200} y={880} angle={-30} spread={70} seed="rk" colors={['#FF4C36', '#ffffff']} />
+					<SpeedLines from={at(4)} to={end} color="#ffffff" />
+					<Burst at={at(6)} count={26} kind="smoke" x={charX + (fromLeft ? 260 : -260)} y={960} angle={fromLeft ? 0 : 180} spread={50} speed={22} life={60} seed="rs" size={0.6} />
+					<Burst at={at(10)} count={20} kind="spark" x={charX + 200} y={880} angle={-30} spread={70} seed="rk" colors={['#FF4C36', '#ffffff']} />
+					<Burst at={at(30)} count={16} kind="spark" x={charX + 260} y={900} angle={-20} spread={60} seed="rk2" colors={['#FF4C36', '#F7C947']} />
 				</>
 			)}
-			{crew === 'B' && <ScanBeams from={8} />}
+			{crew === 'B' && <ScanBeams from={at(8)} />}
 			{crew === 'T' && (
 				<>
-					<VaultRing from={8} />
-					<Burst at={12} count={36} kind="spark" x={960} y={540} seed="ts" colors={['#FFA12B', '#F7C947', '#ffffff']} speed={34} />
-					<Burst at={20} count={12} kind="debris" x={960} y={540} seed="td" speed={28} />
+					<VaultRing from={at(8)} />
+					<Burst at={at(12) + 6} count={36} kind="spark" x={960} y={540} seed="ts" colors={['#FFA12B', '#F7C947', '#ffffff']} speed={34} />
+					<Burst at={at(20) + 6} count={12} kind="debris" x={960} y={540} seed="td" speed={28} />
+					<Burst at={at(28) + 6} count={24} kind="coin" x={960} y={540} seed="tc" speed={30} />
 				</>
 			)}
 			{crew === 'F' && (
 				<>
-					<Flash at={14} color="#cdefff" />
-					<Shockwave at={14} color="#28B9EF" />
-					<Shockwave at={18} color="#F7C947" />
-					<Burst at={14} count={80} kind="confetti" seed="fc" speed={40} />
-					<Burst at={14} count={20} kind="smoke" seed="fs" speed={18} life={55} />
-					<Burst at={16} count={24} kind="star" seed="fst" speed={30} colors={['#F7C947', '#28B9EF']} />
+					<Flash at={at(14)} color="#cdefff" />
+					<Shockwave at={at(14)} color="#28B9EF" />
+					<Shockwave at={at(18)} color="#F7C947" />
+					<Burst at={at(14)} count={80} kind="confetti" seed="fc" speed={40} life={70} />
+					<Burst at={at(14)} count={20} kind="smoke" seed="fs" speed={18} life={70} />
+					<Burst at={at(16)} count={24} kind="star" seed="fst" speed={30} colors={['#F7C947', '#28B9EF']} />
 				</>
 			)}
-			<Prop id={c.pose} at={0} out={end - 10} x={charX} y={600} h={860} from={fromLeft ? 'left' : 'right'} bob={6} />
-			<Title text={c.name} at={6} out={end - 8} size={130} y={-330} accent={c.color} />
-			<Plate text={c.ability} at={10} color={c.color} y={-200} />
-			<Title text={ABILITY_LINES[crew]} at={16} out={end - 8} size={64} y={380} accent={c.color} tilt={-2} />
+			<Prop id={c.pose} at={0} x={charX} y={600} h={860} from={fromLeft ? 'left' : 'right'} bob={6} />
+			<Title text={c.name} at={at(6)} size={130} y={-330} accent={c.color} />
+			<Plate text={c.ability} at={at(10)} color={c.color} y={-200} />
+			<Title text={ABILITY_LINES[crew]} at={at(16)} size={64} y={380} accent={c.color} tilt={-2} />
 		</AbsoluteFill>
 	);
-	return crew === 'T' ? <Shake at={10} strength={22} length={24}>{body}</Shake> : body;
+	return crew === 'T' ? <Shake at={at(10)} strength={22} length={24}>{body}</Shake> : body;
 };

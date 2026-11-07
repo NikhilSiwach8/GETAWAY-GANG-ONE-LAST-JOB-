@@ -7,9 +7,10 @@ The `Stake upload release` workflow rejoins them and publishes the full files on
 To rejoin locally instead:
 
     cat parts/getaway_gang_frontend.zip.part* > getaway_gang_frontend.zip
-    cat parts/books_base.jsonl.zst.part*      > books_base.jsonl.zst
-    cp parts/index.json parts/lookUpTable_base_0.csv .
+    for m in base heist escape; do cat parts/books_$m.jsonl.zst.part* > books_$m.jsonl.zst; done
+    cp parts/index.json parts/lookUpTable_*_0.csv .
     sha256sum -c SHA256SUMS.txt
 
 Upload to Stake Engine: frontend = contents of `getaway_gang_frontend.zip`;
-math = `index.json`, `lookUpTable_base_0.csv`, `books_base.jsonl.zst`.
+math = `index.json` plus `lookUpTable_<mode>_0.csv` and `books_<mode>.jsonl.zst` for the modes
+`base` (1×), `heist` (43× bonus buy) and `escape` (450× bonus buy).

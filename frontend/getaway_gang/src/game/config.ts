@@ -21,6 +21,20 @@ export default {
 			"buyBonus": false,
 			"rtp": 0.96,
 			"max_win": 12000
+		},
+		"heist": {
+			"cost": 43,
+			"feature": false,
+			"buyBonus": true,
+			"rtp": 0.96,
+			"max_win": 12000
+		},
+		"escape": {
+			"cost": 450,
+			"feature": false,
+			"buyBonus": true,
+			"rtp": 0.96,
+			"max_win": 12000
 		}
 	},
 	"symbols": {
@@ -213,6 +227,12 @@ export default {
 			"3": 3
 		},
 		"heistMaxFs": 30,
-		"escapeMaxFs": 40
+		"escapeMaxFs": 40,
+		"heistFs": 10,
+		"escapeFs": 12,
+		"retriggerFs": 5,
+		"finalEscapePerMaster": 30,
+		"finalEscapeAllMasters": 300,
+		"pbpMultiplier": 3
 	}
 } as const;

@@ -5,11 +5,12 @@
 	import { EnableHotkey } from 'components-shared';
 	import { MainContainer } from 'components-layout';
 	import { App, Sprite } from 'pixi-svelte';
-	import { stateModal } from 'state-shared';
 
 	import { UiGameName } from 'components-ui-pixi';
 	import GameUI from './GameUI.svelte';
-	import { GameVersion, Modals } from 'components-ui-html';
+	import { GameVersion } from 'components-ui-html';
+	import GameModals from './GameModals.svelte';
+	import { installMeta } from '../game/meta';
 
 	import { getContext } from '../game/context';
 	import EnableSound from './EnableSound.svelte';
@@ -37,17 +38,13 @@
 	import { prefetchClips } from '../game/clips.svelte';
 
 	const context = getContext();
+	installMeta(); // bet modes (bonus buys) for the shared UI
 
 	onMount(() => {
 		context.stateLayout.showLoadingScreen = true;
 		prefetchClips();
 	});
 
-	context.eventEmitter.subscribeOnMount({
-		buyBonusConfirm: () => {
-			stateModal.modal = { name: 'buyBonusConfirm' };
-		},
-	});
 </script>
 
 <App>
@@ -105,8 +102,8 @@
 	<TempWatermark />
 </App>
 
-<Modals>
+<GameModals>
 	{#snippet version()}
 		<GameVersion version="0.0.0" />
 	{/snippet}
-</Modals>
+</GameModals>

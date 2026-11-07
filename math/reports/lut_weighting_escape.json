@@ -1,0 +1,9 @@
+{
+ "cost": 450.0,
+ "books": 150000,
+ "natural_rtp_of_book_sample": 0.9531013007407407,
+ "mean_payout_x_bet": 428.8955853333333,
+ "table_rtp": 0.9599999999452934,
+ "below_price_trim_factor": 0.9879220032039351,
+ "max_win_books": 369
+}

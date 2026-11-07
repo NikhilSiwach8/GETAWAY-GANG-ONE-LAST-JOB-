@@ -19,7 +19,6 @@ for s in PAYING:
 for prop, names in c.special_symbols.items():
     for n in names:
         symbols.setdefault(n, {"paytable": None, "special_properties": []})["special_properties"].append(prop)
-bm = c.bet_modes[0]
 cfg = {
     "providerName": "getaway_gang_studio",
     "gameName": "getaway_gang",
@@ -28,7 +27,10 @@ cfg = {
     "numReels": c.num_reels,
     "numRows": c.num_rows,
     "wincap": c.wincap,
-    "betModes": {bm.get_name(): {"cost": bm.get_cost(), "feature": True, "buyBonus": False, "rtp": c.rtp, "max_win": c.wincap}},
+    "betModes": {
+        bm.get_name(): {"cost": bm.get_cost(), "feature": bm.get_feature(), "buyBonus": bm.get_buybonus(), "rtp": bm.get_rtp(), "max_win": bm.get_wincap()}
+        for bm in c.bet_modes
+    },
     "symbols": symbols,
     "paddingReels": {"basegame": "", "freegame": ""},
     "features": {
@@ -38,6 +40,12 @@ cfg = {
         "escapeLevelUpAt": gc.ESCAPE_LEVEL_UP_AT,
         "heistMaxFs": gc.HEIST_MAX_FS,
         "escapeMaxFs": gc.ESCAPE_MAX_FS,
+        "heistFs": c.freespin_triggers[c.basegame_type][3],
+        "escapeFs": c.freespin_triggers[c.basegame_type][4],
+        "retriggerFs": c.freespin_triggers[c.freegame_type][3],
+        "finalEscapePerMaster": gc.FINAL_ESCAPE_PER_MASTER,
+        "finalEscapeAllMasters": gc.FINAL_ESCAPE_ALL_MASTERS,
+        "pbpMultiplier": gc.PBP_MULTIPLIER,
     },
 }
 out = os.path.join(ROOT, "frontend", "getaway_gang", "src", "game", "config.ts")

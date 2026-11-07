@@ -9,10 +9,11 @@
 | Path | What |
 |---|---|
 | `getaway_gang/` | The game app (Svelte 5 + PixiJS 8), built from the web-sdk `ways` sample. It lives here and is registered in the `vendor/web-sdk` pnpm workspace by `setup.sh` |
-| `getaway_gang/src/game/config.ts` | **Generated** from the math (`tools/gen_config.py`): paytable, grid, bet mode, meter thresholds |
+| `getaway_gang/src/game/config.ts` | **Generated** from the math (`tools/gen_config.py`): paytable, grid, bet modes and bonus-buy prices, meter thresholds |
 | `getaway_gang/src/game/bookEventHandlerMap.ts` | One handler per book event. Every board change is copied from the book; the frontend never computes an outcome |
 | `getaway_gang/src/game/tempArt.ts` | All placeholder colours, labels and asset IDs, in one place |
-| `getaway_gang/src/components/` | `Symbol` (temp tiles), `FeatureBanner` (title cards standing in for cinematics), `CellHighlights`, `Hud` (meters, levels, multiplier, re-spins), `FreeSpinCounter`, `Background`, `BoardFrame`, `TempWatermark`, `GameUI` (shared Stake UI without Buy Bonus) |
+| `getaway_gang/src/components/` | `Symbol` (temp tiles), `FeatureBanner` (title cards standing in for cinematics), `CellHighlights`, `Hud` (meters, levels, multiplier, re-spins), `FreeSpinCounter`, `Background`, `BoardFrame`, `TempWatermark`, `GameUI` (shared Stake UI), `GameModals` + `ModalGGBuyBonus` / `ModalGGPayTable` / `ModalGGRules` (game-specific Buy Bonus, Paytable and How to Play; every number read from config.ts), `ClipLayer` / `ClipSprite` (animation clips: in-memory Blob downloads, at most 14 live players, cross-fades) |
+| `getaway_gang/src/game/meta.ts` | Bet modes for the shared UI: BASE plus the buy modes HEIST (43×) and ESCAPE (450×) |
 | `dev-rgs/` | Local Stake-API RGS (`@slot-engine/lgs`) serving the real published books. HTTPS on :7771 |
 | `tests/playthrough.cjs` | Playwright end-to-end play-through with forced feature books |
 
@@ -59,6 +60,9 @@ curl -X PUT localhost:7770/lgs/sessions/<sessionID>/force -H 'content-type: appl
 ```
 
 Send `{"force":null}` to go back to weighted draws.
+
+The server also serves the bonus-buy modes (`heist`, `escape`) with prices from the published
+`index.json`; their dev books are a 3,000-book sample of each buy table (`build_dev_books.py --buy-only`).
 
 The dev book set is a stratified sample of the published 1M books, with weights rescaled per
 stratum. Its RTP has sampling noise, roughly ±1.5%. The published table is exactly 96.00%.

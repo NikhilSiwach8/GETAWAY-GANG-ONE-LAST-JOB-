@@ -37,16 +37,19 @@ const Link: React.FC<{from: number; color: string; dashed?: boolean; height?: nu
 	);
 };
 
-/** FX-COMBO-*: two crew members, a unique interaction per pair (transparent overlay). */
+/** FX-COMBO-*: two crew members, a unique interaction per pair (transparent overlay). Ends on a fade. */
+export const COMBO_SECONDS = 3;
 export const Combo: React.FC<{combo: ComboId}> = ({combo}) => {
+	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	const {title, a, b} = COMBOS[combo];
 	const A = CREW[a];
 	const B = CREW[b];
-	const end = Math.round(2 * fps);
+	const end = Math.round(COMBO_SECONDS * fps);
+	const fadeOut = interpolate(frame, [end - 12, end - 1], [1, 0], clamp);
 	return (
 		<Shake at={14} strength={combo === 'RT' || combo === 'TF' ? 20 : 8}>
-			<AbsoluteFill>
+			<AbsoluteFill style={{opacity: fadeOut}}>
 				<Halftone color={A.color} opacity={0.18} />
 				<Rays color={GOLD} from={10} opacity={0.35} />
 				<Prop id={A.pose} at={0} out={end - 10} x={360} y={600} h={820} from="left" />

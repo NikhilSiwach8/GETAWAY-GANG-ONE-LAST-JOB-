@@ -26,16 +26,16 @@ const PORT = Number(process.env.PORT ?? 7771);
 const HTTP_PORT = Number(process.env.HTTP_PORT ?? 7770);
 const FRONTEND = process.env.FRONTEND_URL ?? 'http://localhost:3010';
 
-async function loadBooks() {
+async function loadBooks(mode = 'base') {
 	const books = new Map();
-	const rl = readline.createInterface({ input: fs.createReadStream(path.join(DATA, 'books_base.jsonl')) });
+	const rl = readline.createInterface({ input: fs.createReadStream(path.join(DATA, `books_${mode}.jsonl`)) });
 	for await (const line of rl) {
 		if (!line) continue;
 		const b = JSON.parse(line);
 		books.set(b.id, b.events);
 	}
 	const rows = fs
-		.readFileSync(path.join(DATA, 'lookUpTable_base_0.csv'), 'utf8')
+		.readFileSync(path.join(DATA, `lookUpTable_${mode}_0.csv`), 'utf8')
 		.trim()
 		.split('\n')
 		.map((l) => l.split(',').map(Number))
@@ -78,7 +78,23 @@ function createMath({ books, rows }) {
 	};
 }
 
-const data = await loadBooks();
+// Bet modes and prices from the published math index.json (base + the bonus buys).
+const INDEX = path.join(HERE, '../../math/games/getaway_gang/library/publish_files/index.json');
+const MODES = Object.fromEntries(
+	(fs.existsSync(INDEX) ? JSON.parse(fs.readFileSync(INDEX, 'utf8')).modes : [{ name: 'base', cost: 1 }]).map((m) => [
+		m.name,
+		{ cost: m.cost, buy: m.name !== 'base' },
+	]),
+);
+const perMode = {};
+for (const m of Object.keys(MODES)) {
+	if (fs.existsSync(path.join(DATA, `books_${m}.jsonl`))) perMode[m] = createMath(await loadBooks(m));
+}
+for (const m of Object.keys(perMode)) console.log(`mode ${m}: loaded`);
+const math = {
+	pick: (mode, force) => (perMode[String(mode).toLowerCase()] ?? perMode.base).pick(mode, force),
+	read: (mode, bookId) => (perMode[String(mode).toLowerCase()] ?? perMode.base).read(mode, bookId),
+};
 const lgs = new EngineLgs({
 	storage: new InMemoryStorage(),
 	port: HTTP_PORT,
@@ -91,11 +107,14 @@ lgs.registerGame({
 	id: 'getaway_gang',
 	name: 'Getaway Gang: One Last Job!',
 	// The web-sdk client sends the mode key upper-cased ("BASE"); the math publishes "base".
-	modes: {
-		base: { name: 'base', cost: 1, rtp: 0.96, isBonusBuy: false, isFeature: true },
-		BASE: { name: 'BASE', cost: 1, rtp: 0.96, isBonusBuy: false, isFeature: true },
-	},
-	math: createMath(data),
+	modes: Object.fromEntries(
+		Object.entries(MODES)
+			.filter(([m]) => perMode[m])
+			.flatMap(([m, v]) =>
+				[m, m.toUpperCase()].map((k) => [k, { name: k, cost: v.cost, rtp: 0.96, isBonusBuy: v.buy, isFeature: !v.buy }]),
+			),
+	),
+	math,
 });
 await lgs.start();
 
@@ -127,7 +146,7 @@ const res = await fetch(`http://localhost:${HTTP_PORT}/lgs/sessions`, {
 	body: JSON.stringify({ gameId: 'getaway_gang' }),
 });
 const session = await res.json();
-console.log(`Loaded ${data.books.size} books.`);
+console.log(`Modes: ${Object.keys(perMode).join(', ')}`);
 console.log(`Session: ${session.sessionID}`);
 console.log(`HTTPS RGS on https://localhost:${PORT} (plain http management API on :${HTTP_PORT})`);
 console.log(`Play: ${FRONTEND}/?${session.launchQuery.replace(`localhost%3A${HTTP_PORT}`, `localhost%3A${PORT}`)}`);

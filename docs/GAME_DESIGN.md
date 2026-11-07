@@ -11,6 +11,7 @@
 | Max win | **12,000× total bet**, hard cap per round |
 | Signature mechanic | CREW CHAOS |
 | Bonuses | THE HEIST (3 Scatters), THE PERFECT ESCAPE (4+ Scatters) |
+| Bonus buy | THE HEIST 43×, THE PERFECT ESCAPE 450× (both 96.00% RTP) |
 | Platform | Stake Engine (Python Math SDK, Svelte/PixiJS web-sdk) |
 
 Every rule in this document is implemented in `math/games/getaway_gang/`. Every number comes from
@@ -227,6 +228,23 @@ pays **30× bet**, or **300×** in total if all four reached Level 3. This is th
 award. It is in the math and the books, and the cinematic only displays it.
 
 **Effective multiplier ceiling.** ×3 (PBP) × ×5 (meter) × ×3 (loot) = ×45. The code asserts this ceiling on every reveal.
+
+## 9a. BONUS BUY
+
+Two bet modes start a bonus straight away. The price is a multiple of the bet; wins are paid in
+multiples of the bet, exactly like a natural trigger.
+
+| Mode | Buys | Price | RTP | Max win | Books | Max-win frequency |
+|---|---|---|---|---|---|---|
+| `heist` | THE HEIST (3 Scatters, 10 FS) | **43×** | 96.00% | 12,000× | 300,000 | 1 in ~21,000 buys |
+| `escape` | THE PERFECT ESCAPE (4+ Scatters, 12 FS) | **450×** | 96.00% | 12,000× | 150,000 | 1 in ~400 buys |
+
+A bought round runs the same code path as a natural trigger: the initial board is forced to show the
+trigger Scatters (3 for the Heist; 4/5/6 in their natural ratio for the Escape), its base-game reveal
+plays out, then the bonus. Prices are the bonus' simulated mean value / 0.96, rounded to a whole
+multiple. `game_lut.py` then moves each table to exactly 96.0000% with one factor on the books that pay
+less than the price (Heist ×0.975, Escape ×0.988), the same kind of single, bounded trim used for the
+base table. All three modes therefore have identical RTP, inside Stake's ±0.5% rule.
 
 ## 10. Maximum win
 

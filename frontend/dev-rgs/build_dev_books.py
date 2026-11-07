@@ -49,6 +49,29 @@ def features(book):
     return tags
 
 
+def build_buy_mode(mode, n, seed):
+    """Seeded random sample of a bonus-buy mode's published books; published weights kept (same RTP in expectation)."""
+    lut = os.path.join(LIB, "publish_files", f"lookUpTable_{mode}_0.csv")
+    if not os.path.exists(lut):
+        print(f"no {mode} mode published, skipped")
+        return
+    rows = {}
+    with open(lut, encoding="UTF-8") as f:
+        for i, w, p in csv.reader(f):
+            rows[int(i)] = (int(w), int(p))
+    keep = set(random.Random(seed).sample(sorted(rows), min(n, len(rows))))
+    reader = zstd.ZstdDecompressor().stream_reader(open(os.path.join(LIB, "publish_files", f"books_{mode}.jsonl.zst"), "rb"))
+    with open(os.path.join(OUT, f"books_{mode}.jsonl"), "w", encoding="UTF-8") as out:
+        for line in io.TextIOWrapper(reader, encoding="UTF-8"):
+            if json.loads(line)["id"] in keep:
+                out.write(line if line.endswith("\n") else line + "\n")
+    with open(os.path.join(OUT, f"lookUpTable_{mode}_0.csv"), "w", encoding="UTF-8") as f:
+        for i in sorted(keep):
+            f.write(f"{i},{rows[i][0]},{rows[i][1]}\n")
+    tw = sum(rows[i][0] for i in keep)
+    print(f"dev {mode}: {len(keep)} books, mean payout {sum(rows[i][0] * rows[i][1] for i in keep) / tw / 100:.2f}x")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", type=int, default=12000)
@@ -56,7 +79,13 @@ def main():
     ap.add_argument("--escape", type=int, default=8000)
     ap.add_argument("--seed", type=int, default=2026)
     ap.add_argument("--lut-only", action="store_true", help="recompute weights for already-extracted books")
+    ap.add_argument("--buy", type=int, default=3000, help="books sampled per bonus-buy mode")
+    ap.add_argument("--buy-only", action="store_true", help="only (re)build the bonus-buy mode sets")
     args = ap.parse_args()
+    for mode in ("heist", "escape"):
+        build_buy_mode(mode, args.buy, args.seed)
+    if args.buy_only:
+        return
     want = {"basegame": args.base, "heist": args.heist, "escape": args.escape}
 
     crit, weight, payout = {}, {}, {}

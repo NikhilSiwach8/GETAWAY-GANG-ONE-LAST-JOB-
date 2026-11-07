@@ -1,8 +1,8 @@
 import './lib/font';
 import React from 'react';
 import {Composition, Folder} from 'remotion';
-import {AbilityFx, CrewChaos} from './clips/Abilities';
-import {CleanGetaway, Combo, PerfectlyBadPlan} from './clips/Combos';
+import {ABILITY_SECONDS, AbilityFx, CrewChaos} from './clips/Abilities';
+import {COMBO_SECONDS, CleanGetaway, Combo, PerfectlyBadPlan} from './clips/Combos';
 import {LootMilestone, MeterStage, Respin, Retrigger} from './clips/Feature';
 import {MaxWin, WinBig, WinEpic, WinMega, WinSuper} from './clips/Wins';
 import {BgEscapeLoop, BgMainLoop, FinalEscape} from './clips/Loops';
@@ -19,7 +19,7 @@ const CHAR = {fps: FPS, width: 1024, height: 1024} as const;
 
 const CHARACTER_ACTIONS: {action: CharacterAction; seconds: number}[] = [
 	{action: 'IDLE', seconds: 4},
-	{action: 'ABILITY', seconds: 2},
+	{action: 'ABILITY', seconds: 3.6},
 	{action: 'COMPLETE', seconds: 0.8},
 	{action: 'WIN', seconds: 1.2},
 	{action: 'LOSE', seconds: 1},
@@ -39,21 +39,21 @@ export const RemotionRoot: React.FC = () => {
 		<>
 			<Folder name="Feature-effects">
 				<Composition id="FX-CREW-CHAOS" component={CrewChaos} durationInFrames={36} {...HD} />
-				<Composition id="ANIM-ROXY-ABILITY-FX" component={AbilityFx} durationInFrames={60} {...HD} defaultProps={{crew: 'R' as const}} />
-				<Composition id="ANIM-BYTE-ABILITY-FX" component={AbilityFx} durationInFrames={60} {...HD} defaultProps={{crew: 'B' as const}} />
-				<Composition id="ANIM-TANK-ABILITY-FX" component={AbilityFx} durationInFrames={60} {...HD} defaultProps={{crew: 'T' as const}} />
-				<Composition id="ANIM-FUSE-ABILITY-FX" component={AbilityFx} durationInFrames={60} {...HD} defaultProps={{crew: 'F' as const}} />
+				<Composition id="ANIM-ROXY-ABILITY-FX" component={AbilityFx} durationInFrames={Math.round(ABILITY_SECONDS * FPS)} {...HD} defaultProps={{crew: 'R' as const}} />
+				<Composition id="ANIM-BYTE-ABILITY-FX" component={AbilityFx} durationInFrames={Math.round(ABILITY_SECONDS * FPS)} {...HD} defaultProps={{crew: 'B' as const}} />
+				<Composition id="ANIM-TANK-ABILITY-FX" component={AbilityFx} durationInFrames={Math.round(ABILITY_SECONDS * FPS)} {...HD} defaultProps={{crew: 'T' as const}} />
+				<Composition id="ANIM-FUSE-ABILITY-FX" component={AbilityFx} durationInFrames={Math.round(ABILITY_SECONDS * FPS)} {...HD} defaultProps={{crew: 'F' as const}} />
 				<Composition id="FX-RESPIN" component={Respin} durationInFrames={36} {...HD} />
 				<Composition id="FX-RETRIGGER" component={Retrigger} durationInFrames={45} {...HD} />
 				<Composition id="FX-METER-STAGE" component={MeterStage} durationInFrames={30} {...HD} />
 				<Composition id="FX-LOOT-MILESTONE" component={LootMilestone} durationInFrames={40} {...HD} />
 			</Folder>
 			<Folder name="Combination-cinematics">
-				<Composition id="FX-COMBO-RB" component={Combo} durationInFrames={60} {...HD} defaultProps={{combo: 'RB' as const}} />
-				<Composition id="FX-COMBO-BT" component={Combo} durationInFrames={60} {...HD} defaultProps={{combo: 'BT' as const}} />
-				<Composition id="FX-COMBO-TF" component={Combo} durationInFrames={60} {...HD} defaultProps={{combo: 'TF' as const}} />
-				<Composition id="FX-COMBO-FR" component={Combo} durationInFrames={60} {...HD} defaultProps={{combo: 'FR' as const}} />
-				<Composition id="FX-COMBO-RT" component={Combo} durationInFrames={60} {...HD} defaultProps={{combo: 'RT' as const}} />
+				<Composition id="FX-COMBO-RB" component={Combo} durationInFrames={Math.round(COMBO_SECONDS * FPS)} {...HD} defaultProps={{combo: 'RB' as const}} />
+				<Composition id="FX-COMBO-BT" component={Combo} durationInFrames={Math.round(COMBO_SECONDS * FPS)} {...HD} defaultProps={{combo: 'BT' as const}} />
+				<Composition id="FX-COMBO-TF" component={Combo} durationInFrames={Math.round(COMBO_SECONDS * FPS)} {...HD} defaultProps={{combo: 'TF' as const}} />
+				<Composition id="FX-COMBO-FR" component={Combo} durationInFrames={Math.round(COMBO_SECONDS * FPS)} {...HD} defaultProps={{combo: 'FR' as const}} />
+				<Composition id="FX-COMBO-RT" component={Combo} durationInFrames={Math.round(COMBO_SECONDS * FPS)} {...HD} defaultProps={{combo: 'RT' as const}} />
 				<Composition id="CIN-PERFECTLY-BAD-PLAN" component={PerfectlyBadPlan} durationInFrames={90} {...HD} />
 				<Composition id="CIN-CLEAN-GETAWAY" component={CleanGetaway} durationInFrames={60} {...HD} />
 			</Folder>

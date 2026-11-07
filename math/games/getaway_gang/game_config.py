@@ -107,6 +107,10 @@ ESCAPE_MAX_FS = 40
 FINAL_ESCAPE_PER_MASTER = 30  # x bet paid at bonus end for each character at level 3
 FINAL_ESCAPE_ALL_MASTERS = 300  # x bet paid instead if all four are level 3
 
+# BONUS BUY prices, in multiples of the base bet (the books pay in base-bet multiples).
+# Each is the bonus' mean value / 0.96; game_lut.py trims the table to exactly 96.00% RTP.
+BUY_COST = {"heist": 43, "escape": 450}
+
 MAX_TOTAL_MULTIPLIER = 45  # PBP(3) x meter(5) x loot(3); asserted, never exceeded
 
 
@@ -214,6 +218,28 @@ class GameConfig(Config):
         # Re-spin strip used for each initial strip (Scatter-free copy).
         self.respin_reels = {"BR0": "BR0S", "FRH": "FRHS", "FRE": "FRES", "FRCAP": "FRCAPS"}
 
+        heist_dist = lambda quota: Distribution(  # noqa: E731
+            criteria="heist",
+            quota=quota,
+            conditions={
+                "reel_weights": {self.basegame_type: {"BR0": 1}, self.freegame_type: {"FRH": 1}},
+                "force_wincap": False,
+                "force_freegame": True,
+                "scatter_triggers": {3: 1},
+            },
+        )
+        escape_dist = lambda quota: Distribution(  # noqa: E731
+            criteria="escape",
+            quota=quota,
+            conditions={
+                "reel_weights": {self.basegame_type: {"BR0": 1}, self.freegame_type: {"FRE": 1}},
+                "force_wincap": False,
+                "force_freegame": True,
+                # Natural conditional split of 4/5/6 scatters, from the BR0 scatter density.
+                "scatter_triggers": {k: v / sum(escape_split.values()) for k, v in escape_split.items()},
+            },
+        )
+
         self.bet_modes = [
             BetMode(
                 name="base",
@@ -224,33 +250,8 @@ class GameConfig(Config):
                 is_feature=True,
                 is_buybonus=False,
                 distributions=[
-                    Distribution(
-                        criteria="escape",
-                        quota=0.15,
-                        conditions={
-                            "reel_weights": {
-                                self.basegame_type: {"BR0": 1},
-                                self.freegame_type: {"FRE": 1},
-                            },
-                            "force_wincap": False,
-                            "force_freegame": True,
-                            # Natural conditional split of 4/5/6 scatters, from the BR0 scatter density.
-                            "scatter_triggers": {k: v / sum(escape_split.values()) for k, v in escape_split.items()},
-                        },
-                    ),
-                    Distribution(
-                        criteria="heist",
-                        quota=0.25,
-                        conditions={
-                            "reel_weights": {
-                                self.basegame_type: {"BR0": 1},
-                                self.freegame_type: {"FRH": 1},
-                            },
-                            "force_wincap": False,
-                            "force_freegame": True,
-                            "scatter_triggers": {3: 1},
-                        },
-                    ),
+                    escape_dist(0.15),
+                    heist_dist(0.25),
                     Distribution(
                         criteria="basegame",
                         quota=0.60,
@@ -261,5 +262,26 @@ class GameConfig(Config):
                         },
                     ),
                 ],
+            ),
+            # BONUS BUYS: the round starts on a trigger board, exactly like a natural trigger.
+            BetMode(
+                name="heist",
+                cost=BUY_COST["heist"],
+                rtp=self.rtp,
+                max_win=self.wincap,
+                auto_close_disabled=False,
+                is_feature=False,
+                is_buybonus=True,
+                distributions=[heist_dist(1.0)],
+            ),
+            BetMode(
+                name="escape",
+                cost=BUY_COST["escape"],
+                rtp=self.rtp,
+                max_win=self.wincap,
+                auto_close_disabled=False,
+                is_feature=False,
+                is_buybonus=True,
+                distributions=[escape_dist(1.0)],
             ),
         ]

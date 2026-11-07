@@ -5,6 +5,18 @@
             "cost": 1.0,
             "events": "books_base.jsonl.zst",
             "weights": "lookUpTable_base_0.csv"
+        },
+        {
+            "name": "heist",
+            "cost": 43.0,
+            "events": "books_heist.jsonl.zst",
+            "weights": "lookUpTable_heist_0.csv"
+        },
+        {
+            "name": "escape",
+            "cost": 450.0,
+            "events": "books_escape.jsonl.zst",
+            "weights": "lookUpTable_escape_0.csv"
         }
     ]
 }
