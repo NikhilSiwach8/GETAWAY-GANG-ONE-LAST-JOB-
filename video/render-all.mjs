@@ -30,7 +30,9 @@ for (const comp of comps) {
 		browserExecutable: BROWSER,
 		imageFormat: transparent ? 'png' : 'jpeg',
 		pixelFormat: transparent ? 'yuva420p' : 'yuv420p',
-		crf: 30,
+		// render at the size the game displays: HD clips at 720p, character clips 512px, symbol clips 256px
+		scale: comp.width === 1920 ? 2 / 3 : 0.5,
+		crf: comp.width === 1920 ? Number(process.env.HD_CRF ?? 42) : 32,
 		concurrency: 4,
 		logLevel: 'error',
 	});

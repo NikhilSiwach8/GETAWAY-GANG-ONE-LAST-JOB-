@@ -2,7 +2,7 @@
 	/** A clip as a Pixi sprite. Restarts from frame 0 when mounted; calls onended when a one-shot finishes. */
 	import { onDestroy, onMount } from 'svelte';
 	import { BaseSprite } from 'pixi-svelte';
-	import { getClip, playVideo } from '../game/clips.svelte';
+	import { getClip, playVideo, whenReady } from '../game/clips.svelte';
 
 	type Props = {
 		id: string;
@@ -21,8 +21,13 @@
 	const props: Props = $props();
 	const clip = getClip(props.id, props.channel ?? props.id);
 
-	onMount(() => {
-		if (!clip || props.autoplay === false) return;
+	// only shown once the video has a frame (no empty flash while downloading)
+	let ready = $state(false);
+	onMount(async () => {
+		if (!clip) return;
+		if (!(await whenReady(clip.video))) return props.onended?.(false);
+		ready = true;
+		if (props.autoplay === false) return;
 		playVideo(clip, props.loop).then((ok) => !props.loop && props.onended?.(ok));
 	});
 	onDestroy(() => {
@@ -30,7 +35,7 @@
 	});
 </script>
 
-{#if clip}
+{#if clip && ready}
 	<BaseSprite
 		texture={clip.texture}
 		x={props.x}

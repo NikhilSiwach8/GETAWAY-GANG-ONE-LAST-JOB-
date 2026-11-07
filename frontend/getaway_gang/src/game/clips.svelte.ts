@@ -43,7 +43,7 @@ export const getClip = (id: string, channel = 'main'): Clip | undefined => {
  * Wait until the video knows its size and has a frame. Pixi 8.8's VideoSource recurses forever
  * (_onPlayStart <-> _mediaReady) if play() starts while videoWidth is still 0, so never play before this.
  */
-const whenReady = (v: HTMLVideoElement, timeoutMs = 8000): Promise<boolean> =>
+export const whenReady = (v: HTMLVideoElement, timeoutMs = 8000): Promise<boolean> =>
 	new Promise((resolve) => {
 		if (v.readyState >= 2 && v.videoWidth > 0) return resolve(true);
 		const finish = (ok: boolean) => {
@@ -106,6 +106,8 @@ export const clipLayer = $state({
 export const playClip = async (id: string): Promise<boolean> => {
 	const clip = getClip(id, 'layer');
 	if (!clip) return false;
+	// never show an empty/black layer while a clip is still downloading
+	if (!(await whenReady(clip.video))) return false;
 	clipLayer.id = id;
 	clipLayer.texture = clip.texture;
 	clipLayer.fullFrame = FULL_FRAME.has(id);
@@ -122,12 +124,37 @@ export const playClip = async (id: string): Promise<boolean> => {
 	return ok;
 };
 
-/** Warm up the clips that play most often so the first showing does not stall. */
+/**
+ * Warm up clips in the background after the game loads (most frequent first), on the same channels the
+ * game plays them on, so the first showing does not wait for a download.
+ */
 export const prefetchClips = () => {
 	if (!clipsSupported) return;
-	['FX-CREW-CHAOS', 'ANIM-ROXY-ABILITY-FX', 'ANIM-BYTE-ABILITY-FX', 'ANIM-TANK-ABILITY-FX', 'ANIM-FUSE-ABILITY-FX', 'FX-RESPIN'].forEach(
-		(id) => getClip(id, 'layer'),
-	);
+	const layer = [
+		'FX-CREW-CHAOS', 'ANIM-ROXY-ABILITY-FX', 'ANIM-BYTE-ABILITY-FX', 'ANIM-TANK-ABILITY-FX', 'ANIM-FUSE-ABILITY-FX',
+		'FX-RESPIN', 'FX-METER-STAGE', 'FX-COMBO-RB', 'FX-COMBO-BT', 'FX-COMBO-TF', 'FX-COMBO-FR', 'FX-COMBO-RT',
+		'FX-LOOT-MILESTONE', 'FX-RETRIGGER', 'CIN-PERFECTLY-BAD-PLAN', 'CIN-CLEAN-GETAWAY', 'CIN-FINAL-ESCAPE', 'CIN-MAX-WIN',
+	];
+	const symbols = ['H1', 'H2', 'H3', 'H4', 'L1', 'L2', 'L3', 'L4', 'WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'];
+	const jobs: [string, string][] = [
+		['BG-MAIN-LOOP', 'bg'],
+		...layer.slice(0, 6).map((id) => [id, 'layer'] as [string, string]),
+		...symbols.map((s) => [`SYM-${s}-ANIM-WIN`, 'sym'] as [string, string]),
+		...['CLONE-IN', 'UPGRADE-IN', 'VAULT-REVEAL', 'WILD-STAMP', 'CREW-EXIT'].map((k) => [`SYM-FX-${k}`, 'cell'] as [string, string]),
+		...['WIN-BIG', 'WIN-SUPER', 'WIN-MEGA', 'WIN-EPIC'].map((id) => [id, 'win'] as [string, string]),
+		...layer.slice(6).map((id) => [id, 'layer'] as [string, string]),
+		['BG-ESCAPE-LOOP', 'bg'],
+	];
+	// a few at a time so the first ones are ready quickly
+	let i = 0;
+	const next = () => {
+		if (i >= jobs.length) return;
+		const [id, channel] = jobs[i++];
+		const clip = getClip(id, channel);
+		if (clip) whenReady(clip.video, 20000).then(next);
+		else next();
+	};
+	for (let k = 0; k < 3; k++) next();
 };
 
 // ------------------------------------------------------------------ crew mascot beside the reels
