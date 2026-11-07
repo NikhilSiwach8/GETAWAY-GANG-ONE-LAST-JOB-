@@ -66,6 +66,7 @@ If you cloned without `--recurse-submodules`, run `npm run vendor:init` first.
 Project-scoped skills that load automatically in Claude Code sessions opened in this repo:
 
 - **From `stake-engine-skills`:** `stake-math-sdk`, `stake-web-sdk`
+- **From [`remotion-dev/remotion`](https://github.com/remotion-dev/remotion) (`packages/skills/skills`, commit d38623d):** 13 Remotion skills for making videos in React: `remotion-best-practices` (router), `remotion-create`, `remotion-markup`, `remotion-studio`, `remotion-render`, `remotion-captions`, `remotion-multimedia`, `remotion-interactivity`, `remotion-maps`, `remotion-saas`, `remotion-docs`, `remotion-upgrade`, `remotion-license`. Not a submodule (the Remotion monorepo is very large); re-copy that folder to update.
 - **From `Slot-Casino-Game-Developer-Skills-for-Stake-Engine`:** 34 skills, including `stake-game-developer`, `game-math-director`, `senior-game-math-engineer`, `rtp-optimizer`, `book-generator`, `slot-mechanics-designer`, `pixi-svelte-integrator`, `slot-qa-engineer`, and more.
 
 To update the skills, pull the submodules and copy the skill folders again:
