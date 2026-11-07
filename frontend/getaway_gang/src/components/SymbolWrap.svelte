@@ -19,9 +19,10 @@
 	const show = $derived(
 		(boardContext.animate && props.animating) || (!boardContext.animate && !props.animating),
 	);
-	const top = 0;
-	const bottom = SYMBOL_SIZE * BOARD_DIMENSIONS.y;
-	const inFrame = $derived(props.y >= top && props.y <= bottom);
+	// only symbols that overlap the visible rows are drawn (centre within half a symbol of the window)
+	const top = -SYMBOL_SIZE * 0.5;
+	const bottom = SYMBOL_SIZE * BOARD_DIMENSIONS.y + SYMBOL_SIZE * 0.5;
+	const inFrame = $derived(props.y > top && props.y < bottom);
 </script>
 
 {#if props.debug || (show && inFrame)}

@@ -48,7 +48,7 @@ export const isDownloaded = (id: string) => blobs.has(id);
 
 // ---------------------------------------------------------------- players
 // At most MAX_PLAYERS <video> elements exist; the least recently used idle one is released first.
-const MAX_PLAYERS = 14;
+const MAX_PLAYERS = 20;
 const release = (key: string, clip: Clip) => {
 	clip.video.pause();
 	clip.video.removeAttribute('src');
@@ -77,7 +77,9 @@ export const getClip = (id: string, channel = 'main'): Clip | undefined => {
 		const local = blobs.get(id);
 		if (local) video.src = local;
 		else download(id).then((url) => (video.src = url ?? CLIP_URLS[id]));
-		const source = new PIXI.VideoSource({ resource: video, autoPlay: false, autoLoad: true, updateFPS: 30 });
+		// the background loops are slow parallax: half the texture uploads of the effect clips
+		const updateFPS = channel === 'bg' ? 15 : 30;
+		const source = new PIXI.VideoSource({ resource: video, autoPlay: false, autoLoad: true, updateFPS });
 		clip = { video, texture: new PIXI.Texture({ source }), lastUsed: 0, refs: 0 };
 		cache.set(key, clip);
 	}
@@ -174,6 +176,9 @@ export const playClip = async (id: string): Promise<boolean> => {
 	const clip = getClip(id, 'layer');
 	if (!clip || !(await whenReady(clip.video, 1500))) return false;
 	retain(clip);
+	// only one HD video at a time: hold the background loop while a full-screen clip plays
+	const heldBg = [...cache.entries()].filter(([k, c]) => k.endsWith('|bg') && !c.video.paused).map(([, c]) => c);
+	heldBg.forEach((c) => c.video.pause());
 	const slot: LayerSlot = { key: layerKey++, id, texture: clip.texture, fullFrame: FULL_FRAME.has(id) };
 	clipLayer.current = slot;
 	const skipped = new Promise<boolean>((resolve) => {
@@ -192,6 +197,10 @@ export const playClip = async (id: string): Promise<boolean> => {
 		if (clipLayer.outgoing?.key === slot.key) clipLayer.outgoing = null;
 		unretain(clip);
 	}, LAYER_FADE_OUT_MS + 60);
+	// resume the background unless another full-screen clip has started meanwhile
+	setTimeout(() => {
+		if (!clipLayer.current) heldBg.forEach((c) => c.refs > 0 && c.video.play().catch(() => {}));
+	}, 120);
 	return ok;
 };
 

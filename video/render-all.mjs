@@ -34,7 +34,7 @@ for (const comp of comps) {
 		imageFormat: transparent ? 'png' : 'jpeg',
 		pixelFormat: transparent ? 'yuva420p' : 'yuv420p',
 		// render at the size the game displays: HD clips at 720p, character clips 512px, symbol clips 256px
-		scale: NATIVE.has(comp.id) ? 1 : comp.width === 1920 ? 2 / 3 : 0.5,
+		scale: NATIVE.has(comp.id) ? 1 : comp.id.startsWith('BG-') && comp.id.endsWith('-LOOP') ? 0.5 : comp.width === 1920 ? 2 / 3 : 0.5,
 		crf: comp.width === 1920 ? Number(process.env.HD_CRF ?? 42) : 32,
 		concurrency: 4,
 		logLevel: 'error',

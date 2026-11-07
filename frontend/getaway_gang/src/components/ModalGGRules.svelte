@@ -8,10 +8,15 @@
 	import { BUY_MODES, costOf } from '../game/meta';
 	import { COMBO_INFO, CREW_INFO, LOOT_REWARDS, METER_STAGE_REWARDS, TEMP_SYMBOL_ART, type CrewKey } from '../game/tempArt';
 	import config from '../game/config';
+	import { stateBet } from 'state-shared';
+	import { numberToCurrencyString } from 'utils-shared/amount';
+	import BetStepper from './BetStepper.svelte';
 
 	const props: { children?: Snippet } = $props();
 	const art = ggUrl;
 	const f = config.features;
+	// money at the current bet, shown next to every multiple of the bet
+	const money = (x: number) => numberToCurrencyString(x * stateBet.betAmount);
 	const rtp = `${(config.rtp * 100).toFixed(2)}%`;
 	const cap = config.wincap.toLocaleString();
 	const CREW: CrewKey[] = ['R', 'B', 'T', 'F'];
@@ -29,6 +34,7 @@
 	<Popup zIndex={zIndex.modal} onclose={() => (stateModal.modal = null)}>
 		<div class="wrap">
 			<div class="banner" style="--banner:url({ggUrl('UI-INFO-HEADER')})"><h2>HOW TO PLAY</h2></div>
+			<BetStepper />
 			<nav>
 				{#each SECTIONS as s (s)}
 					<button class:on={tab === s} onclick={() => (tab = s)}>{s}</button>
@@ -151,7 +157,7 @@
 					<img class="rule small" src={art('RULE-FINAL-ESCAPE')} alt="Final Escape" />
 					<p>
 						<b>Final Escape:</b> when the last free spin ends, each crew member at Level 3 pays
-						<b>{f.finalEscapePerMaster}× bet</b>, or <b>{f.finalEscapeAllMasters}×</b> in total if all four reached
+						<b>{f.finalEscapePerMaster}× bet ({money(f.finalEscapePerMaster)})</b>, or <b>{f.finalEscapeAllMasters}× ({money(f.finalEscapeAllMasters)})</b> in total if all four reached
 						Level 3.
 					</p>
 				</section>
@@ -165,7 +171,7 @@
 					<table class="wide">
 						<tbody>
 							{#each BUY_MODES as b (b.key)}
-								<tr><td><b>{b.title}</b></td><td>{costOf(b.mode)}× bet</td><td>RTP {rtp}</td></tr>
+								<tr><td><b>{b.title}</b></td><td>{costOf(b.mode)}× bet = {money(costOf(b.mode))}</td><td>RTP {rtp}</td></tr>
 							{/each}
 						</tbody>
 					</table>
@@ -178,7 +184,7 @@
 				<section>
 					<ul>
 						<li>Theoretical RTP: <b>{rtp}</b> for the base game and for each bonus buy.</li>
-						<li>Maximum win: <b>{cap}× bet</b> per round. When it is reached the round ends immediately and all remaining features are forfeited.</li>
+						<li>Maximum win: <b>{cap}× bet</b> ({money(config.wincap)} at the current bet) per round. When it is reached the round ends immediately and all remaining features are forfeited.</li>
 						<li>Volatility: high.</li>
 						<li>Every outcome is decided by the server before the round is shown; animations and skipping never change it.</li>
 						<li>An interrupted round is resumed when the game is reopened.</li>

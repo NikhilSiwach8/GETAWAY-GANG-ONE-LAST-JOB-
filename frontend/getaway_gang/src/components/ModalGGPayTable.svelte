@@ -8,6 +8,7 @@
 	import { ggUrl } from '../game/ggAssets';
 	import { CREW_INFO, TEMP_SYMBOL_ART, type CrewKey } from '../game/tempArt';
 	import config from '../game/config';
+	import BetStepper from './BetStepper.svelte';
 
 	const props: { children?: Snippet } = $props();
 	const art = ggUrl;
@@ -35,7 +36,8 @@
 	<Popup zIndex={zIndex.modal} onclose={() => (stateModal.modal = null)}>
 		<div class="wrap">
 			<div class="banner" style="--banner:url({ggUrl('UI-INFO-HEADER')})"><h2>PAYTABLE</h2></div>
-			<p class="sub">Values for your current bet of <b>{numberToCurrencyString(stateBet.betAmount)}</b>, paid per way.</p>
+			<BetStepper />
+			<p class="sub">Win values at this bet, paid per way. Change the bet here or with − / + to update them.</p>
 
 			<div class="grid">
 				{#each paying as s (s)}
@@ -87,7 +89,7 @@
 			</div>
 			<p class="small">
 				4,096 ways: a win needs matching symbols on adjacent reels from the leftmost reel. Only the highest win per
-				symbol is paid; wins of different symbols are added. Max win {config.wincap.toLocaleString()}× bet.
+				symbol is paid; wins of different symbols are added. Max win {config.wincap.toLocaleString()}× bet ({money(config.wincap)}).
 			</p>
 			{@render props.children?.()}
 		</div>
