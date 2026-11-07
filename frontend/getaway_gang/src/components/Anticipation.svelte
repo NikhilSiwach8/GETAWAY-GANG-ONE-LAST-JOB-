@@ -1,10 +1,16 @@
 <script lang="ts">
-	import { SpineProvider, SpineTrack } from 'pixi-svelte';
-	import { stateBetDerived } from 'state-shared';
+	/**
+	 * Reel anticipation: the FX-ANTICIPATION loop framing the reel while a bonus is close. Fades in, and fades
+	 * out once the reel stops. Without clip support it falls back to a pulsing gold frame.
+	 */
+	import { onDestroy } from 'svelte';
+	import { Rectangle } from 'pixi-svelte';
 
 	import { getContext } from '../game/context';
 	import type { Reel } from '../game/stateGame.svelte';
 	import { REEL_PADDING, SYMBOL_SIZE } from '../game/constants';
+	import ClipSprite from './ClipSprite.svelte';
+	import { hasClip } from '../game/clips.svelte';
 
 	type Props = {
 		reel: Reel;
@@ -13,42 +19,48 @@
 
 	const props: Props = $props();
 	const context = getContext();
+	const layout = $derived(context.stateGameDerived.boardLayout());
+	const x = $derived(layout.x - layout.width * 0.5 + (props.reel.reelIndex + REEL_PADDING) * SYMBOL_SIZE);
+	const width = SYMBOL_SIZE * 1.12;
+	const height = SYMBOL_SIZE * 4.25;
 
-	type AnimationName = 'anticipation_intro' | 'anticipation_loop' | 'anticipation_out';
-
-	let animationName = $state<AnimationName>('anticipation_intro');
+	let alpha = $state(0);
+	let t = $state(0);
+	let raf = 0;
+	let stopping = false;
+	const t0 = performance.now();
+	const tick = (now: number) => {
+		t = (now - t0) / 1000;
+		if (!stopping) alpha = Math.min(1, alpha + 0.08);
+		else {
+			alpha = Math.max(0, alpha - 0.08);
+			if (alpha === 0) return props.oncomplete();
+		}
+		raf = requestAnimationFrame(tick);
+	};
+	raf = requestAnimationFrame(tick);
+	onDestroy(() => cancelAnimationFrame(raf));
 
 	$effect(() => {
-		if (props.reel.reelState.motion === 'stopped') {
-			animationName = 'anticipation_out';
-		}
+		if (props.reel.reelState.motion === 'stopped') stopping = true;
 	});
 </script>
 
-<SpineProvider
-	key="anticipation"
-	width={SYMBOL_SIZE * 0.56}
-	height={SYMBOL_SIZE * 1.6}
-	x={context.stateGameDerived.boardLayout().x -
-		context.stateGameDerived.boardLayout().width * 0.5 +
-		(props.reel.reelIndex + REEL_PADDING) * SYMBOL_SIZE}
-	y={context.stateGameDerived.boardLayout().y - SYMBOL_SIZE * 0.06}
->
-	<SpineTrack
-		trackIndex={0}
-		{animationName}
-		loop={animationName === 'anticipation_loop'}
-		timeScale={stateBetDerived.timeScale()}
-		listener={{
-			complete: () => {
-				if (animationName === 'anticipation_intro') {
-					animationName = 'anticipation_loop';
-				}
-
-				if (animationName === 'anticipation_out') {
-					props.oncomplete();
-				}
-			},
-		}}
+{#if hasClip('FX-ANTICIPATION')}
+	<ClipSprite id="FX-ANTICIPATION" channel="anticipation" loop {x} y={layout.y} {width} {height} {alpha} zIndex={3} />
+{:else}
+	{@const pulse = 0.55 + 0.45 * Math.sin(t * Math.PI * 2)}
+	<Rectangle
+		anchor={0.5}
+		{x}
+		y={layout.y}
+		width={width * 0.92}
+		height={height * 0.95}
+		borderRadius={18}
+		backgroundAlpha={0}
+		borderColor={0xffe27a}
+		borderWidth={8}
+		alpha={alpha * pulse}
+		zIndex={3}
 	/>
-</SpineProvider>
+{/if}

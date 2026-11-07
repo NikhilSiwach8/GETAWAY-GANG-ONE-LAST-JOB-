@@ -11,7 +11,8 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	const session = await lgs('/lgs/sessions', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ gameId: 'getaway_gang' }) });
 	const url = `${frontendUrl}/?${session.launchQuery.replace('localhost%3A7770', 'localhost%3A7771')}`;
 	const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
-	const page = await browser.newPage({ viewport: { width: 1422, height: 800 }, ignoreHTTPSErrors: true });
+	const vp = (process.env.VIEWPORT || '1422x800').split('x').map(Number);
+	const page = await browser.newPage({ viewport: { width: vp[0], height: vp[1] }, ignoreHTTPSErrors: true, hasTouch: !!process.env.TOUCH, isMobile: !!process.env.TOUCH });
 	const errors = [];
 	page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
 	page.on('pageerror', (e) => errors.push('PAGEERROR ' + e.message));
@@ -29,9 +30,12 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	});
 	await page.goto(url);
 	await page.waitForTimeout(20000);
-	await page.mouse.click(711, 400);
+	await page.screenshot({ path: path.join(outDir, '00_loading.png') });
+	await page.mouse.click(vp[0] / 2, vp[1] / 2);
+	await page.waitForTimeout(400);
+	await page.screenshot({ path: path.join(outDir, '00b_transition.png') });
 	await page.waitForTimeout(3000);
-	await page.mouse.click(711, 400);
+	await page.mouse.click(vp[0] / 2, vp[1] / 2);
 	await page.waitForTimeout(6000);
 	await page.screenshot({ path: path.join(outDir, '01_idle.png') });
 	let n = 2;
@@ -56,7 +60,7 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 		for (let i = 0; i < 24; i++) {
 			await page.waitForTimeout(2500);
 			await page.screenshot({ path: path.join(outDir, `play_${String(i).padStart(2, '0')}.png`) });
-			await page.mouse.click(711, 400);
+			await page.mouse.click(vp[0] / 2, vp[1] / 2);
 		}
 		const f = await page.evaluate(() => window.__frames.slice(5));
 		const longs = await page.evaluate(() => window.__long);

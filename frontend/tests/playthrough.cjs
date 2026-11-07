@@ -40,16 +40,17 @@ const force = (bookId) =>
 	playUrl = `${frontendUrl}/?${session.launchQuery.replace('localhost%3A7770', 'localhost%3A7771')}`;
 	const browser = await chromium.launch();
 	// Real https path to the dev RGS TLS proxy (self-signed certificate).
-	const page = await browser.newPage({ viewport: { width: 1422, height: 800 }, ignoreHTTPSErrors: true });
+	const vp = (process.env.VIEWPORT || '1422x800').split('x').map(Number);
+	const page = await browser.newPage({ viewport: { width: vp[0], height: vp[1] }, ignoreHTTPSErrors: true, hasTouch: !!process.env.TOUCH, isMobile: !!process.env.TOUCH });
 	const errors = [];
 	page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
 	page.on('pageerror', (e) => errors.push('PAGEERROR ' + e.message + (process.env.STACK ? ' :: ' + (e.stack || '').slice(0, 1500) : '')));
 	await page.goto(playUrl);
 	await page.waitForTimeout(20000);
 	await page.screenshot({ path: path.join(outDir, '00_loading.png') });
-	await page.mouse.click(711, 400); // "press anywhere to continue"
+	await page.mouse.click(vp[0] / 2, vp[1] / 2); // "press anywhere to continue"
 	await page.waitForTimeout(3000);
-	await page.mouse.click(711, 400);
+	await page.mouse.click(vp[0] / 2, vp[1] / 2);
 	await page.waitForTimeout(1000);
 	await page.waitForTimeout(5000); // UI fades in after the loading screen; earlier clicks are ignored
 	if (process.env.TURBO) await page.mouse.click(842, 742); // shared UI turbo button (desktop layout)
@@ -61,7 +62,8 @@ const force = (bookId) =>
 		await force(c.force);
 		const before = (await lgs(`/lgs/sessions/${sessionID}`)).lastBet?.id ?? 0;
 		const errorsBefore = errors.length;
-		await page.mouse.click(731, 742); // shared UI BET button (desktop layout)
+		if (process.env.SPACE) await page.keyboard.press('Space'); // Stake requirement: spacebar = bet
+		else await page.mouse.click(731, 742); // shared UI BET button (desktop layout)
 		const t0 = Date.now();
 		let shot = 0;
 		let done = false;
@@ -80,7 +82,7 @@ const force = (bookId) =>
 					break;
 				}
 			}
-			await page.mouse.click(711, 400); // dismiss intro/outro "press to continue" screens
+			await page.mouse.click(vp[0] / 2, vp[1] / 2); // dismiss intro/outro "press to continue" screens
 		}
 		await page.screenshot({ path: path.join(outDir, `${name}_end.png`) });
 		const s = await lgs(`/lgs/sessions/${sessionID}`);

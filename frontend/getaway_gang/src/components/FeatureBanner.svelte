@@ -11,8 +11,8 @@
 
 <script lang="ts">
 	/**
-	 * TEMPORARY ART feature title card. Stands in for every character / combo / bonus cinematic
-	 * (assetId points at the real animation in docs/ASSET_PROMPTS.md). Awaitable: the book player
+	 * Feature explanation card: names the exact reward after a feature clip (meter stage, loot milestone,
+	 * re-spin reason...) and stands in for the clip when clips cannot play. Awaitable: the book player
 	 * waits until the card has been shown, so the player always sees *why* something happens.
 	 */
 	import { Container, Rectangle, Text } from 'pixi-svelte';
@@ -49,7 +49,7 @@
 			anchor={0.5}
 			y={banner.subtitle ? -16 : 0}
 			text={banner.title}
-			style={{ fontFamily: 'proxima-nova, Arial, sans-serif', fontWeight: '900', fontSize: 34, fill: banner.color }}
+			style={{ fontFamily: 'Luckiest Guy, proxima-nova, sans-serif', fontSize: 36, fill: banner.color, stroke: { color: 0x0b0f1c, width: 6 }, letterSpacing: 1 }}
 		/>
 		{#if banner.subtitle}
 			<Text
@@ -57,16 +57,6 @@
 				y={24}
 				text={banner.subtitle}
 				style={{ fontFamily: 'proxima-nova, Arial, sans-serif', fontWeight: '600', fontSize: 18, fill: 0xffffff }}
-			/>
-		{/if}
-		{#if banner.assetId}
-			<Text
-				anchor={{ x: 1, y: 1 }}
-				x={layout.width * 0.43 - 10}
-				y={(banner.subtitle ? 52 : 38) - 6}
-				text={`TEMP · ${banner.assetId}`}
-				style={{ fontFamily: 'monospace', fontSize: 10, fill: 0xffffff }}
-				alpha={0.55}
 			/>
 		{/if}
 	</Container>

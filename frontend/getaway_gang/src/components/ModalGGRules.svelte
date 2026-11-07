@@ -4,13 +4,13 @@
 	import { Popup } from 'components-shared';
 	import { zIndex } from 'constants-shared/zIndex';
 	import { stateModal } from 'state-shared';
-	import { GG_ASSETS } from '../game/ggAssets';
+	import { ggUrl } from '../game/ggAssets';
 	import { BUY_MODES, costOf } from '../game/meta';
 	import { COMBO_INFO, CREW_INFO, LOOT_REWARDS, METER_STAGE_REWARDS, TEMP_SYMBOL_ART, type CrewKey } from '../game/tempArt';
 	import config from '../game/config';
 
 	const props: { children?: Snippet } = $props();
-	const art = (id: string) => (GG_ASSETS as Record<string, { src: string }>)[id]?.src ?? '';
+	const art = ggUrl;
 	const f = config.features;
 	const rtp = `${(config.rtp * 100).toFixed(2)}%`;
 	const cap = config.wincap.toLocaleString();
@@ -28,7 +28,7 @@
 {#if stateModal.modal?.name === 'gameRules'}
 	<Popup zIndex={zIndex.modal} onclose={() => (stateModal.modal = null)}>
 		<div class="wrap">
-			<h2>HOW TO PLAY</h2>
+			<div class="banner" style="--banner:url({ggUrl('UI-INFO-HEADER')})"><h2>HOW TO PLAY</h2></div>
 			<nav>
 				{#each SECTIONS as s (s)}
 					<button class:on={tab === s} onclick={() => (tab = s)}>{s}</button>
@@ -60,6 +60,7 @@
 						are never overwritten. After acting, crew symbols leave the reels: they leave an <b>Ace</b> in the base
 						game and a <b>Wild</b> in the bonuses.
 					</p>
+					<img class="rule" src={art('RULE-CREW-CHAOS')} alt="Crew Chaos: each crew member changes the board" />
 					<div class="crew">
 						{#each CREW as c (c)}
 							<div class="crewcard" style="--c:#{CREW_INFO[c].color.toString(16).padStart(6, '0')}">
@@ -85,6 +86,7 @@
 						</tbody>
 					</table>
 					<h3>Perfectly Bad Plan</h3>
+					<img class="rule small" src={art('RULE-PBP')} alt="Perfectly Bad Plan" />
 					<p>
 						All four crew on one reveal: every ability and combo runs, <b>+2 Wilds</b>, every crew symbol leaves a
 						Wild, the reveal's win is multiplied <b>×{f.pbpMultiplier}</b>, and a Chaos Re-spin is awarded.
@@ -93,6 +95,7 @@
 			{:else if tab === 'Re-spins & Meter'}
 				<section>
 					<h3>Chaos Re-spins</h3>
+					<img class="rule small" src={art('RULE-RESPIN')} alt="Chaos Re-spin: Wilds stay locked" />
 					<p>
 						Two or more different crew members acting on one reveal award a <b>Chaos Re-spin</b>. All Wilds stay
 						locked and every other position spins again. Re-spins pay like a normal spin and can activate the crew
@@ -100,6 +103,7 @@
 						board, so re-spins cannot trigger a bonus.
 					</p>
 					<h3>Getaway Meter</h3>
+					<img class="rule meter" src={art('RULE-METER')} alt="Getaway Meter stages 1 to 5" />
 					<p>+1 point per crew activation, +1 per combo, +2 for a Perfectly Bad Plan.</p>
 					<table class="wide">
 						<tbody>
@@ -115,7 +119,7 @@
 				</section>
 			{:else if tab === 'The Heist'}
 				<section>
-					<img class="hero wide" src={art('SCR-HEIST-INTRO')} alt="The Heist" />
+					<img class="hero wide" src={art('BUY-HEIST-CARD')} alt="The Heist" />
 					<p>
 						<b>3 Scatters</b> on the initial board award <b>{f.heistFs} free spins</b> inside the vault. Crew Chaos,
 						Chaos Re-spins and the Getaway Meter stay active. 3 or more Scatters during the bonus add
@@ -123,15 +127,18 @@
 					</p>
 					<h3>Loot Meter</h3>
 					<p>+1 per crew activation, +1 per vault opened, +1 per combo. It lasts for the whole Heist.</p>
-					<table class="wide">
-						<tbody>
-							{#each f.lootThresholds as t, i}<tr><td>{t} points</td><td>{LOOT_REWARDS[i]}</td></tr>{/each}
-						</tbody>
-					</table>
+					<div class="split">
+						<img class="loot" src={art('RULE-LOOT-METER')} alt="Loot Meter milestones" />
+						<table class="wide">
+							<tbody>
+								{#each f.lootThresholds as t, i}<tr><td>{t} points</td><td>{LOOT_REWARDS[i]}</td></tr>{/each}
+							</tbody>
+						</table>
+					</div>
 				</section>
 			{:else if tab === 'Perfect Escape'}
 				<section>
-					<img class="hero wide" src={art('SCR-ESCAPE-INTRO')} alt="The Perfect Escape" />
+					<img class="hero wide" src={art('BUY-ESCAPE-CARD')} alt="The Perfect Escape" />
 					<p>
 						<b>4 or more Scatters</b> on the initial board award <b>{f.escapeFs} free spins</b> on the neon highway,
 						with more crew and Wilds. Retriggers add <b>+{f.retriggerFs}</b>, up to {f.escapeMaxFs} in total.
@@ -141,6 +148,7 @@
 						{f.escapeLevelUpAt['2']} activations and <b>Level 3</b> after {f.escapeLevelUpAt['3']}, and keeps the level
 						for the rest of the bonus.
 					</p>
+					<img class="rule small" src={art('RULE-FINAL-ESCAPE')} alt="Final Escape" />
 					<p>
 						<b>Final Escape:</b> when the last free spin ends, each crew member at Level 3 pays
 						<b>{f.finalEscapePerMaster}× bet</b>, or <b>{f.finalEscapeAllMasters}×</b> in total if all four reached
@@ -149,6 +157,10 @@
 				</section>
 			{:else if tab === 'Buy Bonus'}
 				<section>
+					<div class="cardsrow">
+						<img src={art('BUY-HEIST-CARD')} alt="The Heist" />
+						<img src={art('BUY-ESCAPE-CARD')} alt="The Perfect Escape" />
+					</div>
 					<p>Press <b>BUY BONUS</b> to start a bonus straight away. The price is a multiple of your current bet.</p>
 					<table class="wide">
 						<tbody>
@@ -188,20 +200,40 @@
 		overflow-y: auto;
 		padding: 1.2rem;
 		color: #fff;
-		font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+		font-family: 'proxima-nova', sans-serif;
 		line-height: 1.45;
 	}
-	h2,
 	h3 {
 		text-align: center;
-		font-weight: 900;
+		font-family: 'Luckiest Guy', 'proxima-nova', sans-serif;
+		font-weight: 400;
 		letter-spacing: 0.06em;
 		color: #f7c947;
 		text-shadow: 0 3px 0 #7a4a00;
 		margin: 0.6rem 0 0.4rem;
 	}
-	h2 {
-		font-size: 2rem;
+	.banner {
+		position: relative;
+		width: min(100%, 760px);
+		margin: 0 auto 0.4rem;
+		aspect-ratio: 1400 / 467;
+		background: var(--banner) center / contain no-repeat;
+	}
+	.banner h2 {
+		position: absolute;
+		left: 50%;
+		top: 56%;
+		translate: -50% -50%;
+		margin: 0;
+		font-family: 'Luckiest Guy', 'proxima-nova', sans-serif;
+		font-weight: 400;
+		font-size: clamp(22px, 5vw, 46px);
+		letter-spacing: 0.05em;
+		color: #fff3b0;
+		-webkit-text-stroke: 2px #1c1f26;
+		paint-order: stroke fill;
+		text-shadow: 0 4px 0 #b5470f;
+		white-space: nowrap;
 	}
 	nav {
 		display: flex;
@@ -243,6 +275,45 @@
 		width: 100%;
 		border-radius: 12px;
 		border: 2px solid #f7c947;
+	}
+	.rule {
+		display: block;
+		width: min(100%, 640px);
+		margin: 0.4rem auto 0.6rem;
+	}
+	.rule.small {
+		width: min(100%, 520px);
+	}
+	.rule.meter {
+		width: min(100%, 560px);
+	}
+	.split {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+	}
+	.split .loot {
+		width: min(38%, 220px);
+		flex: none;
+	}
+	.cardsrow {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.6rem;
+		margin-bottom: 0.6rem;
+	}
+	.cardsrow img {
+		width: 100%;
+		border-radius: 10px;
+		border: 2px solid #f7c947;
+	}
+	@media (max-width: 560px) {
+		.split {
+			flex-direction: column;
+		}
+		.split .loot {
+			width: 60%;
+		}
 	}
 	.crew {
 		display: grid;

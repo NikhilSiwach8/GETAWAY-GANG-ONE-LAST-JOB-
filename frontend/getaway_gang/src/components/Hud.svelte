@@ -4,11 +4,12 @@
 	 * Live state (fill, lit locks/stars, numbers) is drawn in code inside the empty plates; positions
 	 * are fractions of each image measured from the art. Display only: values come from book events.
 	 */
-	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
+	import { BitmapText, Container, Rectangle, Sprite, Text } from 'pixi-svelte';
 	import { getContext } from '../game/context';
 	import { METER_THRESHOLDS, LOOT_THRESHOLDS, PALETTE, CREW_INFO, type CrewKey } from '../game/tempArt';
 	import { GG_LAYOUT } from '../game/ggAssets';
 	import { frameRect } from '../game/frameLayout';
+	import { portraitRows } from '../game/hudLayout';
 
 	const context = getContext();
 	const hud = $derived(context.stateGame.hud);
@@ -37,10 +38,13 @@
 	const mH = $derived(h('UI-METER-GETAWAY'));
 	const rH = $derived(h('UI-RESPIN'));
 	const multW = 150;
+	// portrait: the HUD moves into rows above the reels (see game/hudLayout.ts)
+	const portrait = $derived(context.stateLayoutDerived.layoutType() === 'portrait');
+	const pr = $derived(portraitRows(layout, frame, hud.bonus));
 </script>
 
 <!-- right column: Getaway Meter, Chaos Re-spins, multiplier -->
-<Container x={rightX} y={top} zIndex={5}>
+<Container x={portrait ? pr.left : rightX} y={portrait ? pr.row1Y : top} scale={portrait ? pr.s1 : 1} zIndex={5}>
 	<Rectangle
 		x={W * GBAR.x0}
 		y={mH * GBAR.y0}
@@ -52,7 +56,7 @@
 	<Sprite key="UI-METER-GETAWAY" width={W} height={mH} />
 	<Text anchor={0.5} x={W * (GBAR.x0 + GBAR.x1) / 2} y={mH * (GBAR.y0 + GBAR.y1) / 2} text={`${hud.meterPoints} / ${maxMeter}`} style={numStyle(13)} />
 
-	<Container y={mH + 10}>
+	<Container x={portrait ? pr.respinX : 0} y={portrait ? 0 : mH + 10}>
 		<Sprite key="UI-RESPIN" width={W} height={rH} />
 		{#each LOCKS as fx, i}
 			{#if i < hud.respinChain}
@@ -64,16 +68,19 @@
 	</Container>
 
 	{#if hud.multiplier > 1}
-		<Container x={(W - multW) / 2} y={mH + rH + 20}>
-			<Sprite key="UI-MULT" width={multW} height={h('UI-MULT', multW)} />
-			<Text anchor={0.5} x={multW * 0.495} y={h('UI-MULT', multW) * 0.455} text={`×${hud.multiplier}`} style={numStyle(30)} />
-			<Text anchor={0.5} x={multW * 0.5} y={h('UI-MULT', multW) * 0.75} text="WIN MULTIPLIER" style={{ ...numStyle(10), fill: 0xffffff, stroke: undefined }} />
+		{@const mw = portrait ? pr.multW : multW}
+		<Container x={portrait ? pr.multX : (W - multW) / 2} y={portrait ? 0 : mH + rH + 20}>
+			<Sprite key="UI-MULT" width={mw} height={h('UI-MULT', mw)} />
+			{#key hud.multiplier}<BitmapText anchor={0.5} x={mw * 0.495} y={h('UI-MULT', mw) * 0.455} text={`×${hud.multiplier}`} style={{ fontFamily: 'ggGold', fontSize: 40 * (mw / multW) }} />{/key}
+			{#if !portrait}
+				<Text anchor={0.5} x={mw * 0.5} y={h('UI-MULT', mw) * 0.75} text="WIN MULTIPLIER" style={{ ...numStyle(10), fill: 0xffffff, stroke: undefined }} />
+			{/if}
 		</Container>
 	{/if}
 </Container>
 
 <!-- left column (bonus only): Loot Meter or Crew Upgrades, below the free-spin counter -->
-<Container x={leftX} y={top + h('UI-FS-COUNTER') + 14} zIndex={5}>
+<Container x={portrait ? pr.left : leftX} y={portrait ? pr.row2Y : top + h('UI-FS-COUNTER') + 14} scale={portrait ? pr.s2 : 1} zIndex={5}>
 	{#if hud.bonus === 'heist'}
 		<Rectangle
 			x={W * LBAR.x0}

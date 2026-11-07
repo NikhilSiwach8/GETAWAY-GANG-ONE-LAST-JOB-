@@ -141,6 +141,94 @@
   "width": 900,
   "height": 900
  },
+ "BUY-HEIST-CARD": {
+  "width": 1280,
+  "height": 720
+ },
+ "BUY-ESCAPE-CARD": {
+  "width": 1280,
+  "height": 720
+ },
+ "UI-INFO-HEADER": {
+  "width": 1400,
+  "height": 467
+ },
+ "UI-BUY-PANEL": {
+  "width": 1200,
+  "height": 900
+ },
+ "RULE-CREW-CHAOS": {
+  "width": 1100,
+  "height": 619
+ },
+ "RULE-RESPIN": {
+  "width": 1100,
+  "height": 619
+ },
+ "RULE-PBP": {
+  "width": 1100,
+  "height": 619
+ },
+ "RULE-FINAL-ESCAPE": {
+  "width": 1100,
+  "height": 619
+ },
+ "RULE-METER": {
+  "width": 1100,
+  "height": 412
+ },
+ "RULE-LOOT-METER": {
+  "width": 643,
+  "height": 900
+ },
+ "UI-BUY-BONUS-0": {
+  "width": 520,
+  "height": 214
+ },
+ "UI-BUY-BONUS-1": {
+  "width": 520,
+  "height": 214
+ },
+ "UI-BUY-BONUS-2": {
+  "width": 520,
+  "height": 216
+ },
+ "UI-BUY-BONUS-3": {
+  "width": 520,
+  "height": 215
+ },
+ "UI-PAYTABLE-0": {
+  "width": 252,
+  "height": 256
+ },
+ "UI-PAYTABLE-1": {
+  "width": 245,
+  "height": 256
+ },
+ "UI-VOL-ON": {
+  "width": 75,
+  "height": 96
+ },
+ "UI-VOL-OFF": {
+  "width": 77,
+  "height": 96
+ },
+ "UI-LOADING-BAR-FRAME": {
+  "width": 1400,
+  "height": 200
+ },
+ "UI-LOADING-BAR-FILL": {
+  "width": 1300,
+  "height": 116
+ },
+ "UI-PRESS-CONTINUE-TAP": {
+  "width": 1400,
+  "height": 186
+ },
+ "UI-PRESS-CONTINUE-PRESS": {
+  "width": 1400,
+  "height": 184
+ },
  "UI-SPIN-0": {
   "width": 255,
   "height": 256

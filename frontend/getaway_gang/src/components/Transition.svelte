@@ -3,6 +3,7 @@
 </script>
 
 <script lang="ts">
+	/** Scene transition overlay: `await broadcastAsync({ type: 'transition' })` resolves once the screen is covered. */
 	import { waitForResolve } from 'utils-shared/wait';
 
 	import TransitionAnimation from './TransitionAnimation.svelte';
@@ -10,22 +11,21 @@
 
 	const context = getContext();
 
+	let key = $state(0);
 	let transitioning = $state(false);
-	let oncomplete = $state(() => {});
+	let oncovered = $state(() => {});
 
 	context.eventEmitter.subscribeOnMount({
 		transition: async () => {
+			key += 1;
 			transitioning = true;
-			await waitForResolve((resolve) => (oncomplete = resolve));
+			await waitForResolve((resolve) => (oncovered = resolve));
 		},
 	});
 </script>
 
 {#if transitioning}
-	<TransitionAnimation
-		oncomplete={() => {
-			oncomplete();
-			transitioning = false;
-		}}
-	/>
+	{#key key}
+		<TransitionAnimation oncovered={() => oncovered()} onfinished={() => (transitioning = false)} />
+	{/key}
 {/if}

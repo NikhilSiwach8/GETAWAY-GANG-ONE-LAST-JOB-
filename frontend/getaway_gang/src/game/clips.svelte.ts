@@ -202,7 +202,9 @@ export const prefetchClips = () => {
 	if (!clipsSupported) return;
 	const symbols = ['H1', 'H2', 'H3', 'H4', 'L1', 'L2', 'L3', 'L4', 'WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'];
 	const first = [
+		'FX-TRANSITION',
 		'BG-MAIN-LOOP',
+		'FX-ANTICIPATION',
 		...symbols.map((s) => `SYM-${s}-ANIM-WIN`),
 		...['WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'].map((s) => `SYM-${s}-ANIM-LAND`),
 		'FX-CREW-CHAOS', 'ANIM-ROXY-ABILITY-FX', 'ANIM-BYTE-ABILITY-FX', 'ANIM-TANK-ABILITY-FX', 'ANIM-FUSE-ABILITY-FX',
@@ -210,6 +212,7 @@ export const prefetchClips = () => {
 		...['ROXY', 'BYTE', 'TANK', 'FUSE'].flatMap((c) => ['IDLE', 'ABILITY', 'COMPLETE', 'WIN', 'LOSE'].map((a) => `ANIM-${c}-${a}`)),
 		'FX-RESPIN', 'FX-METER-STAGE', 'FX-COMBO-RB', 'FX-COMBO-BT', 'FX-COMBO-TF', 'FX-COMBO-FR', 'FX-COMBO-RT',
 		'WIN-BIG', 'WIN-SUPER', 'WIN-MEGA', 'WIN-EPIC',
+		'SCR-HEIST-OUTRO', 'SCR-ESCAPE-OUTRO',
 	];
 	const rest = Object.keys(CLIP_URLS).filter((id) => !first.includes(id));
 	const queue = [...first, ...rest].filter((id) => id in CLIP_URLS);

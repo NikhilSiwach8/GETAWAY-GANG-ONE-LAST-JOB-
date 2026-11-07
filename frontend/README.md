@@ -1,8 +1,9 @@
 # GETAWAY GANG — Frontend (Stake Engine web-sdk)
 
-> **TEMPORARY ART — NOT FOR RELEASE.** The game plays end to end on the real math, but every
-> game-specific visual is a code-drawn placeholder labelled `TEMP · <asset ID>`. The IDs map to the
-> production prompts in [`docs/ASSET_PROMPTS.md`](../docs/ASSET_PROMPTS.md).
+> Production art throughout: delivered stills (`art/delivery` → `art/process_assets.py`), animation clips
+> rendered with Remotion (`video/` → `art/animations` → `art/sync_clips.py`), bitmap fonts built from the
+> delivered glyph sheets (`art/make_fonts.py`). The only web-sdk sample asset left is the audio set.
+> No external network requests: fonts are bundled (`src/lib/fonts`), sample URLs are stripped at build time.
 
 ## Layout
 
@@ -76,13 +77,14 @@ TURBO=1 NODE_PATH=$(npm root -g) node frontend/tests/playthrough.cjs http://loca
 For each case it creates a fresh session, forces a showcase book, presses Space, and waits for the
 round to settle on the RGS. It writes screenshots and `results.json`, which includes any console errors.
 
-## Replacing temporary art
+## Asset pipeline
 
-Engineers swap assets by ID. No game logic changes:
+| Step | Command | Output |
+|---|---|---|
+| Stills | `python3 art/process_assets.py` | `static/assets/gg/*.webp`, `src/game/ggAssets.ts` (Pixi assets + HTML-only `GG_HTML`) |
+| Fonts | `python3 art/make_fonts.py` | `static/assets/fonts/ggGold`, `ggSilver` (BMFont) |
+| Clips | `cd video && node render-all.mjs`, then `python3 art/sync_clips.py` | `static/assets/clips/*.webm`, `src/game/clipUrls.ts` |
+| Coin particles | `cd video && node render-sprites.mjs`, then `python3 art/pack_sprites.py` | `art/animations/FX-COINS.*` → `static/assets/fx` |
 
-- symbols: `components/Symbol.svelte` becomes Sprite + Spine per `SYM-*`;
-- title cards: `components/FeatureBanner.svelte` becomes the `ANIM-*`, `FX-*` and `CIN-*` animations;
-- HUD, background and frame: `UI-*` and `BG-*`;
-- the web-sdk sample assets still loaded by `game/assets.ts` (loader, free-spin intro and outro, big-win spine, coins, fonts, sounds) become the `SCR-*`, `WIN-*`, `MUS-*` and `SFX-*` assets.
-
-Remove `TempWatermark` for release. The full map is the "Replacement map" section of `docs/ASSET_PROMPTS.md`.
+Clips are cosmetic: when a browser cannot play transparent WebM (Safari/iOS), every clip has a coded
+fallback (title card, fade transition, pulsing frame, drawn win title), so the game is fully playable.

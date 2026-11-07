@@ -142,6 +142,94 @@ export const GG_LAYOUT = {
 		"width": 900,
 		"height": 900
 	},
+	"BUY-HEIST-CARD": {
+		"width": 1280,
+		"height": 720
+	},
+	"BUY-ESCAPE-CARD": {
+		"width": 1280,
+		"height": 720
+	},
+	"UI-INFO-HEADER": {
+		"width": 1400,
+		"height": 467
+	},
+	"UI-BUY-PANEL": {
+		"width": 1200,
+		"height": 900
+	},
+	"RULE-CREW-CHAOS": {
+		"width": 1100,
+		"height": 619
+	},
+	"RULE-RESPIN": {
+		"width": 1100,
+		"height": 619
+	},
+	"RULE-PBP": {
+		"width": 1100,
+		"height": 619
+	},
+	"RULE-FINAL-ESCAPE": {
+		"width": 1100,
+		"height": 619
+	},
+	"RULE-METER": {
+		"width": 1100,
+		"height": 412
+	},
+	"RULE-LOOT-METER": {
+		"width": 643,
+		"height": 900
+	},
+	"UI-BUY-BONUS-0": {
+		"width": 520,
+		"height": 214
+	},
+	"UI-BUY-BONUS-1": {
+		"width": 520,
+		"height": 214
+	},
+	"UI-BUY-BONUS-2": {
+		"width": 520,
+		"height": 216
+	},
+	"UI-BUY-BONUS-3": {
+		"width": 520,
+		"height": 215
+	},
+	"UI-PAYTABLE-0": {
+		"width": 252,
+		"height": 256
+	},
+	"UI-PAYTABLE-1": {
+		"width": 245,
+		"height": 256
+	},
+	"UI-VOL-ON": {
+		"width": 75,
+		"height": 96
+	},
+	"UI-VOL-OFF": {
+		"width": 77,
+		"height": 96
+	},
+	"UI-LOADING-BAR-FRAME": {
+		"width": 1400,
+		"height": 200
+	},
+	"UI-LOADING-BAR-FILL": {
+		"width": 1300,
+		"height": 116
+	},
+	"UI-PRESS-CONTINUE-TAP": {
+		"width": 1400,
+		"height": 186
+	},
+	"UI-PRESS-CONTINUE-PRESS": {
+		"width": 1400,
+		"height": 184
+	},
 	"UI-SPIN-0": {
 		"width": 255,
 		"height": 256
@@ -236,13 +324,23 @@ export const GG_ASSETS = {
 	'UI-BET-MINUS': { type: 'sprite', src: new URL('../../assets/gg/UI-BET-MINUS.webp', import.meta.url).href },
 	'UI-BET-PANEL': { type: 'sprite', src: new URL('../../assets/gg/UI-BET-PANEL.webp', import.meta.url).href },
 	'UI-BET-PLUS': { type: 'sprite', src: new URL('../../assets/gg/UI-BET-PLUS.webp', import.meta.url).href },
+	'UI-BUY-BONUS-0': { type: 'sprite', src: new URL('../../assets/gg/UI-BUY-BONUS-0.webp', import.meta.url).href },
+	'UI-BUY-BONUS-1': { type: 'sprite', src: new URL('../../assets/gg/UI-BUY-BONUS-1.webp', import.meta.url).href },
+	'UI-BUY-BONUS-2': { type: 'sprite', src: new URL('../../assets/gg/UI-BUY-BONUS-2.webp', import.meta.url).href },
+	'UI-BUY-BONUS-3': { type: 'sprite', src: new URL('../../assets/gg/UI-BUY-BONUS-3.webp', import.meta.url).href },
 	'UI-CREW-LEVELS': { type: 'sprite', src: new URL('../../assets/gg/UI-CREW-LEVELS.webp', import.meta.url).href },
 	'UI-FS-COUNTER': { type: 'sprite', src: new URL('../../assets/gg/UI-FS-COUNTER.webp', import.meta.url).href },
 	'UI-INFO-0': { type: 'sprite', src: new URL('../../assets/gg/UI-INFO-0.webp', import.meta.url).href },
+	'UI-LOADING-BAR-FILL': { type: 'sprite', src: new URL('../../assets/gg/UI-LOADING-BAR-FILL.webp', import.meta.url).href, preload: true },
+	'UI-LOADING-BAR-FRAME': { type: 'sprite', src: new URL('../../assets/gg/UI-LOADING-BAR-FRAME.webp', import.meta.url).href, preload: true },
 	'UI-LOGO': { type: 'sprite', src: new URL('../../assets/gg/UI-LOGO.webp', import.meta.url).href },
 	'UI-METER-GETAWAY': { type: 'sprite', src: new URL('../../assets/gg/UI-METER-GETAWAY.webp', import.meta.url).href },
 	'UI-METER-LOOT': { type: 'sprite', src: new URL('../../assets/gg/UI-METER-LOOT.webp', import.meta.url).href },
 	'UI-MULT': { type: 'sprite', src: new URL('../../assets/gg/UI-MULT.webp', import.meta.url).href },
+	'UI-PAYTABLE-0': { type: 'sprite', src: new URL('../../assets/gg/UI-PAYTABLE-0.webp', import.meta.url).href },
+	'UI-PAYTABLE-1': { type: 'sprite', src: new URL('../../assets/gg/UI-PAYTABLE-1.webp', import.meta.url).href },
+	'UI-PRESS-CONTINUE-PRESS': { type: 'sprite', src: new URL('../../assets/gg/UI-PRESS-CONTINUE-PRESS.webp', import.meta.url).href, preload: true },
+	'UI-PRESS-CONTINUE-TAP': { type: 'sprite', src: new URL('../../assets/gg/UI-PRESS-CONTINUE-TAP.webp', import.meta.url).href, preload: true },
 	'UI-REEL-BG': { type: 'sprite', src: new URL('../../assets/gg/UI-REEL-BG.webp', import.meta.url).href },
 	'UI-REEL-FRAME': { type: 'sprite', src: new URL('../../assets/gg/UI-REEL-FRAME.webp', import.meta.url).href },
 	'UI-RESPIN': { type: 'sprite', src: new URL('../../assets/gg/UI-RESPIN.webp', import.meta.url).href },
@@ -256,4 +354,22 @@ export const GG_ASSETS = {
 	'UI-WIN-PANEL': { type: 'sprite', src: new URL('../../assets/gg/UI-WIN-PANEL.webp', import.meta.url).href },
 } as const;
 
+/** HTML-only images (modals): plain URLs, never uploaded as GPU textures. */
+export const GG_HTML: Record<string, string> = {
+	'BUY-ESCAPE-CARD': new URL('../../assets/gg/BUY-ESCAPE-CARD.webp', import.meta.url).href,
+	'BUY-HEIST-CARD': new URL('../../assets/gg/BUY-HEIST-CARD.webp', import.meta.url).href,
+	'RULE-CREW-CHAOS': new URL('../../assets/gg/RULE-CREW-CHAOS.webp', import.meta.url).href,
+	'RULE-FINAL-ESCAPE': new URL('../../assets/gg/RULE-FINAL-ESCAPE.webp', import.meta.url).href,
+	'RULE-LOOT-METER': new URL('../../assets/gg/RULE-LOOT-METER.webp', import.meta.url).href,
+	'RULE-METER': new URL('../../assets/gg/RULE-METER.webp', import.meta.url).href,
+	'RULE-PBP': new URL('../../assets/gg/RULE-PBP.webp', import.meta.url).href,
+	'RULE-RESPIN': new URL('../../assets/gg/RULE-RESPIN.webp', import.meta.url).href,
+	'UI-BUY-PANEL': new URL('../../assets/gg/UI-BUY-PANEL.webp', import.meta.url).href,
+	'UI-INFO-HEADER': new URL('../../assets/gg/UI-INFO-HEADER.webp', import.meta.url).href,
+	'UI-VOL-OFF': new URL('../../assets/gg/UI-VOL-OFF.webp', import.meta.url).href,
+	'UI-VOL-ON': new URL('../../assets/gg/UI-VOL-ON.webp', import.meta.url).href,
+};
+
 export const hasArt = (id: string) => id in GG_ASSETS;
+/** URL of any processed image (Pixi or HTML-only). */
+export const ggUrl = (id: string): string => GG_HTML[id] ?? (GG_ASSETS as Record<string, { src: string }>)[id]?.src ?? '';

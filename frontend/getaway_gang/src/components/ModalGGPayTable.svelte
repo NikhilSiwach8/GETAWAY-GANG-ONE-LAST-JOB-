@@ -5,12 +5,12 @@
 	import { zIndex } from 'constants-shared/zIndex';
 	import { stateBet, stateModal } from 'state-shared';
 	import { numberToCurrencyString } from 'utils-shared/amount';
-	import { GG_ASSETS } from '../game/ggAssets';
+	import { ggUrl } from '../game/ggAssets';
 	import { CREW_INFO, TEMP_SYMBOL_ART, type CrewKey } from '../game/tempArt';
 	import config from '../game/config';
 
 	const props: { children?: Snippet } = $props();
-	const art = (id: string) => (GG_ASSETS as Record<string, { src: string }>)[id]?.src ?? '';
+	const art = ggUrl;
 	const NAMES: Record<string, string> = {
 		H1: 'Diamond', H2: 'Money Bag', H3: 'Gold Bars', H4: 'Luxury Watch',
 		L1: 'Ace', L2: 'King', L3: 'Queen', L4: 'Jack',
@@ -34,7 +34,7 @@
 {#if stateModal.modal?.name === 'payTable'}
 	<Popup zIndex={zIndex.modal} onclose={() => (stateModal.modal = null)}>
 		<div class="wrap">
-			<h2>PAYTABLE</h2>
+			<div class="banner" style="--banner:url({ggUrl('UI-INFO-HEADER')})"><h2>PAYTABLE</h2></div>
 			<p class="sub">Values for your current bet of <b>{numberToCurrencyString(stateBet.betAmount)}</b>, paid per way.</p>
 
 			<div class="grid">
@@ -103,19 +103,39 @@
 		overflow-y: auto;
 		padding: 1.2rem;
 		color: #fff;
-		font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+		font-family: 'proxima-nova', sans-serif;
 	}
-	h2,
 	h3 {
 		text-align: center;
-		font-weight: 900;
+		font-family: 'Luckiest Guy', 'proxima-nova', sans-serif;
+		font-weight: 400;
 		letter-spacing: 0.06em;
 		color: #f7c947;
 		text-shadow: 0 3px 0 #7a4a00;
 		margin: 0.6rem 0 0.3rem;
 	}
-	h2 {
-		font-size: 2rem;
+	.banner {
+		position: relative;
+		width: min(100%, 760px);
+		margin: 0 auto 0.4rem;
+		aspect-ratio: 1400 / 467;
+		background: var(--banner) center / contain no-repeat;
+	}
+	.banner h2 {
+		position: absolute;
+		left: 50%;
+		top: 56%;
+		translate: -50% -50%;
+		margin: 0;
+		font-family: 'Luckiest Guy', 'proxima-nova', sans-serif;
+		font-weight: 400;
+		font-size: clamp(22px, 5vw, 46px);
+		letter-spacing: 0.05em;
+		color: #fff3b0;
+		-webkit-text-stroke: 2px #1c1f26;
+		paint-order: stroke fill;
+		text-shadow: 0 4px 0 #b5470f;
+		white-space: nowrap;
 	}
 	.sub {
 		text-align: center;

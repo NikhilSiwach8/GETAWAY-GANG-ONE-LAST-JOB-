@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<font>
+  <info face="ggSilver" size="160" bold="0" italic="0" charset="" unicode="1" stretchH="100" smooth="1" aa="1" padding="0,0,0,0" spacing="1,1" outline="0"/>
+  <common lineHeight="160" base="160" scaleW="1847" scaleH="208" pages="1" packed="0"/>
+  <pages>
+    <page id="0" file="ggSilver.png"/>
+  </pages>
+  <chars count="18">
+    <char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="48" page="0" chnl="15"/>
+    <char id="48" x="4" y="4" width="132" height="160" xoffset="0" yoffset="0" xadvance="126" page="0" chnl="15"/>
+    <char id="49" x="140" y="4" width="88" height="160" xoffset="0" yoffset="0" xadvance="82" page="0" chnl="15"/>
+    <char id="50" x="232" y="4" width="109" height="160" xoffset="0" yoffset="0" xadvance="103" page="0" chnl="15"/>
+    <char id="51" x="345" y="4" width="106" height="160" xoffset="0" yoffset="0" xadvance="100" page="0" chnl="15"/>
+    <char id="52" x="455" y="4" width="104" height="160" xoffset="0" yoffset="0" xadvance="98" page="0" chnl="15"/>
+    <char id="53" x="563" y="4" width="103" height="160" xoffset="0" yoffset="0" xadvance="97" page="0" chnl="15"/>
+    <char id="54" x="670" y="4" width="107" height="160" xoffset="0" yoffset="0" xadvance="101" page="0" chnl="15"/>
+    <char id="55" x="781" y="4" width="82" height="160" xoffset="0" yoffset="0" xadvance="76" page="0" chnl="15"/>
+    <char id="56" x="867" y="4" width="96" height="160" xoffset="0" yoffset="0" xadvance="90" page="0" chnl="15"/>
+    <char id="57" x="967" y="4" width="109" height="160" xoffset="0" yoffset="0" xadvance="103" page="0" chnl="15"/>
+    <char id="44" x="1080" y="4" width="69" height="150" xoffset="0" yoffset="22" xadvance="63" page="0" chnl="15"/>
+    <char id="46" x="1153" y="4" width="70" height="150" xoffset="0" yoffset="10" xadvance="64" page="0" chnl="15"/>
+    <char id="215" x="1227" y="4" width="118" height="150" xoffset="0" yoffset="5" xadvance="112" page="0" chnl="15"/>
+    <char id="36" x="1349" y="4" width="113" height="150" xoffset="0" yoffset="5" xadvance="107" page="0" chnl="15"/>
+    <char id="8364" x="1466" y="4" width="130" height="150" xoffset="0" yoffset="5" xadvance="124" page="0" chnl="15"/>
+    <char id="163" x="1600" y="4" width="119" height="150" xoffset="0" yoffset="5" xadvance="113" page="0" chnl="15"/>
+    <char id="43" x="1723" y="4" width="120" height="150" xoffset="0" yoffset="5" xadvance="114" page="0" chnl="15"/>
+  </chars>
+</font>

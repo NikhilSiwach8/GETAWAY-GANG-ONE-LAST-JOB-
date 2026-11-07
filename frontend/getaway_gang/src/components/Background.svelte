@@ -26,6 +26,8 @@
 </script>
 
 <Rectangle {...sizes} backgroundColor={0x05070f} zIndex={-3} />
+<!-- the scene art is not preloaded: draw it once the main asset load has finished -->
+{#if context.stateApp.loaded}
 {#each Object.entries(IDS) as [key, id] (id)}
 	<FadeContainer show={scene === key} duration={600} zIndex={-2}>
 		<Sprite key={id} anchor={0.5} {...cover(id)} />
@@ -34,3 +36,4 @@
 		{/if}
 	</FadeContainer>
 {/each}
+{/if}

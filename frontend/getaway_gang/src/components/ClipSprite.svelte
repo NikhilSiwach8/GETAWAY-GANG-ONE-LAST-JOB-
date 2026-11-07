@@ -5,7 +5,7 @@
 	 * Fades in over `fadeMs` (default 120 ms) instead of popping.
 	 */
 	import { onDestroy, onMount, type Snippet } from 'svelte';
-	import { BaseSprite } from 'pixi-svelte';
+	import { BaseSprite, Container } from 'pixi-svelte';
 	import { getClip, playVideo, retain, unretain, whenReady } from '../game/clips.svelte';
 
 	type Props = {
@@ -60,18 +60,20 @@
 	});
 </script>
 
-{#if clip && ready}
-	{#if fade < 1}{@render props.fallback?.()}{/if}
-	<BaseSprite
-		texture={clip.texture}
-		x={props.x}
-		y={props.y}
-		width={props.width}
-		height={props.height}
-		anchor={props.anchor ?? 0.5}
-		zIndex={props.zIndex}
-		alpha={(props.alpha ?? 1) * fade}
-	/>
-{:else}
-	{@render props.fallback?.()}
-{/if}
+<!-- always-mounted wrapper: keeps this clip's place in the draw order even though the video appears later -->
+<Container zIndex={props.zIndex}>
+	{#if clip && ready}
+		{#if fade < 1}{@render props.fallback?.()}{/if}
+		<BaseSprite
+			texture={clip.texture}
+			x={props.x}
+			y={props.y}
+			width={props.width}
+			height={props.height}
+			anchor={props.anchor ?? 0.5}
+			alpha={(props.alpha ?? 1) * fade}
+		/>
+	{:else}
+		{@render props.fallback?.()}
+	{/if}
+</Container>

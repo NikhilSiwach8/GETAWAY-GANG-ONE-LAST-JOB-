@@ -30,7 +30,6 @@
 	import Hud from './Hud.svelte';
 	import FeatureBanner from './FeatureBanner.svelte';
 	import CellHighlights from './CellHighlights.svelte';
-	import TempWatermark from './TempWatermark.svelte';
 	import WildReels from './WildReels.svelte';
 	import ClipLayer from './ClipLayer.svelte';
 	import CrewMascot from './CrewMascot.svelte';
@@ -78,6 +77,7 @@
 			<CellHighlights />
 			<CrewMascot />
 			<Hud />
+			<FreeSpinCounter />
 			<FeatureBanner />
 		</MainContainer>
 
@@ -91,19 +91,16 @@
 		</GameUI>
 		<Win />
 		<FreeSpinIntro />
-		{#if ['desktop', 'landscape'].includes(context.stateLayoutDerived.layoutType())}
-			<FreeSpinCounter />
-		{/if}
 		<FreeSpinOutro />
-		<Transition />
 
 	{/if}
 	<ClipLayer />
-	<TempWatermark />
+	<!-- scene transition: above everything, also used by the loading screen -->
+	<Transition />
 </App>
 
 <GameModals>
 	{#snippet version()}
-		<GameVersion version="0.0.0" />
+		<GameVersion version="1.0.0" />
 	{/snippet}
 </GameModals>
