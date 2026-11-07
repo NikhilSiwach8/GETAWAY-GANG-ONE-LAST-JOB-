@@ -15,3 +15,4 @@ frontend/dev-rgs/data/
 frontend/build.log
 frontend/dev-rgs/build.log
 frontend/dev-rgs/.cert/
+release/
