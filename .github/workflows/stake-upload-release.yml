@@ -1,0 +1,34 @@
+# Rejoins downloads/parts/* into the full Stake Engine upload files and publishes them
+# as assets of the GitHub Release "stake-upload" (single-file download links).
+name: Stake upload release
+on:
+  push:
+    paths: ['downloads/**', '.github/workflows/stake-upload-release.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rejoin and verify
+        run: |
+          mkdir -p out/math
+          cat downloads/parts/getaway_gang_frontend.zip.part* > out/getaway_gang_frontend.zip
+          cat downloads/parts/books_base.jsonl.zst.part* > out/math/books_base.jsonl.zst
+          cp downloads/parts/index.json downloads/parts/lookUpTable_base_0.csv out/math/
+          (cd out && cp math/* . && sha256sum -c ../downloads/SHA256SUMS.txt)
+          (cd out/math && zip -0 -q ../getaway_gang_math.zip index.json lookUpTable_base_0.csv books_base.jsonl.zst)
+          cp downloads/SHA256SUMS.txt out/
+          ls -l out
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=stake-upload
+          gh release delete "$TAG" --yes --cleanup-tag || true
+          gh release create "$TAG" --target "$GITHUB_SHA" --title "Stake Engine upload files" \
+            --notes "Frontend build zip and math publish files (index.json, lookUpTable_base_0.csv, books_base.jsonl.zst) for GETAWAY GANG: ONE LAST JOB!. getaway_gang_math.zip contains the three math files." \
+            out/getaway_gang_frontend.zip out/getaway_gang_math.zip out/index.json \
+            out/lookUpTable_base_0.csv out/books_base.jsonl.zst out/SHA256SUMS.txt
