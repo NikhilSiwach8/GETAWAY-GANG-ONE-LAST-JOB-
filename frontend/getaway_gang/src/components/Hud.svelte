@@ -10,6 +10,7 @@
 	import { GG_LAYOUT } from '../game/ggAssets';
 	import { frameRect } from '../game/frameLayout';
 	import { portraitRows } from '../game/hudLayout';
+	import MeterFill from './MeterFill.svelte';
 
 	const context = getContext();
 	const hud = $derived(context.stateGame.hud);
@@ -33,6 +34,9 @@
 	// bar channels measured from the art (fractions of image width/height)
 	const GBAR = { x0: 0.149, x1: 0.955, y0: 0.527, y1: 0.701 };
 	const LBAR = { x0: 0.181, x1: 0.951, y0: 0.539, y1: 0.722 };
+	// milestone pins on the art (fractions of width): Getaway stages 1-5, Loot 4/8/12/16
+	const GPINS = [0.225, 0.405, 0.578, 0.742, 0.91];
+	const LPINS = [0.29, 0.476, 0.661, 0.86];
 	const LOCKS = [0.35, 0.49, 0.683, 0.825];
 	const STARS = [0.17, 0.39, 0.61, 0.83];
 	const mH = $derived(h('UI-METER-GETAWAY'));
@@ -45,16 +49,8 @@
 
 <!-- right column: Getaway Meter, Chaos Re-spins, multiplier -->
 <Container x={portrait ? pr.left : rightX} y={portrait ? pr.row1Y : top} scale={portrait ? pr.s1 : 1} zIndex={5}>
-	<Rectangle
-		x={W * GBAR.x0}
-		y={mH * GBAR.y0}
-		width={Math.max(0.01, (W * (GBAR.x1 - GBAR.x0) * hud.meterPoints) / maxMeter)}
-		height={mH * (GBAR.y1 - GBAR.y0)}
-		borderRadius={6}
-		backgroundColor={PALETTE.gold}
-	/>
 	<Sprite key="UI-METER-GETAWAY" width={W} height={mH} />
-	<Text anchor={0.5} x={W * (GBAR.x0 + GBAR.x1) / 2} y={mH * (GBAR.y0 + GBAR.y1) / 2} text={`${hud.meterPoints} / ${maxMeter}`} style={numStyle(13)} />
+	<MeterFill points={hud.meterPoints} thresholds={METER_THRESHOLDS} pins={GPINS} {...GBAR} width={W} height={mH} />
 
 	<Container x={portrait ? pr.respinX : 0} y={portrait ? 0 : mH + 10}>
 		<Sprite key="UI-RESPIN" width={W} height={rH} />
@@ -82,16 +78,8 @@
 <!-- left column (bonus only): Loot Meter or Crew Upgrades, below the free-spin counter -->
 <Container x={portrait ? pr.left : leftX} y={portrait ? pr.row2Y : top + h('UI-FS-COUNTER') + 14} scale={portrait ? pr.s2 : 1} zIndex={5}>
 	{#if hud.bonus === 'heist'}
-		<Rectangle
-			x={W * LBAR.x0}
-			y={h('UI-METER-LOOT') * LBAR.y0}
-			width={Math.max(0.01, (W * (LBAR.x1 - LBAR.x0) * Math.min(hud.lootPoints, maxLoot)) / maxLoot)}
-			height={h('UI-METER-LOOT') * (LBAR.y1 - LBAR.y0)}
-			borderRadius={6}
-			backgroundColor={PALETTE.gold}
-		/>
 		<Sprite key="UI-METER-LOOT" width={W} height={h('UI-METER-LOOT')} />
-		<Text anchor={0.5} x={W * (LBAR.x0 + LBAR.x1) / 2} y={h('UI-METER-LOOT') * (LBAR.y0 + LBAR.y1) / 2} text={`${hud.lootPoints} / ${maxLoot}`} style={numStyle(13)} />
+		<MeterFill points={hud.lootPoints} thresholds={LOOT_THRESHOLDS} pins={LPINS} {...LBAR} width={W} height={h('UI-METER-LOOT')} />
 	{/if}
 	{#if hud.bonus === 'escape'}
 		<Sprite key="UI-CREW-LEVELS" width={W} height={h('UI-CREW-LEVELS')} />

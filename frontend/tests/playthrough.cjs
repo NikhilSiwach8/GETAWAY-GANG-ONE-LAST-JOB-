@@ -44,6 +44,13 @@ const force = (bookId) =>
 	const page = await browser.newPage({ viewport: { width: vp[0], height: vp[1] }, ignoreHTTPSErrors: true, hasTouch: !!process.env.TOUCH, isMobile: !!process.env.TOUCH });
 	const errors = [];
 	page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+	page.on('response', async (r) => {
+		if (r.status() >= 400) {
+			let body = '';
+			try { body = (await r.text()).slice(0, 200); } catch {}
+			errors.push(`HTTP ${r.status()} ${r.request().method()} ${r.url().split('?')[0].replace(/^https?:\/\/[^/]+/, '')} ${r.request().postData()?.slice(0, 120) ?? ''} -> ${body}`);
+		}
+	});
 	page.on('pageerror', (e) => errors.push('PAGEERROR ' + e.message + (process.env.STACK ? ' :: ' + (e.stack || '').slice(0, 1500) : '')));
 	await page.goto(playUrl);
 	await page.waitForTimeout(20000);
@@ -58,7 +65,7 @@ const force = (bookId) =>
 
 	const results = [];
 	for (const name of wanted.length ? wanted : ['base', 'pbp']) {
-		const c = CASES[name];
+		const c = CASES[name] ?? (name.startsWith('book') ? { force: Number(name.slice(4)), waitMs: 420000 } : undefined);
 		await force(c.force);
 		const before = (await lgs(`/lgs/sessions/${sessionID}`)).lastBet?.id ?? 0;
 		const errorsBefore = errors.length;
@@ -82,7 +89,10 @@ const force = (bookId) =>
 					break;
 				}
 			}
-			await page.mouse.click(vp[0] / 2, vp[1] / 2); // dismiss intro/outro "press to continue" screens
+			// dismiss intro/outro "press to continue" screens. SPACE_ONLY: never click, so clips are never
+			// skipped and a clip that fails to finish shows up as a stuck round
+			if (process.env.SPACE_ONLY) await page.keyboard.press('Space');
+			else await page.mouse.click(vp[0] / 2, vp[1] / 2);
 		}
 		await page.screenshot({ path: path.join(outDir, `${name}_end.png`) });
 		const s = await lgs(`/lgs/sessions/${sessionID}`);

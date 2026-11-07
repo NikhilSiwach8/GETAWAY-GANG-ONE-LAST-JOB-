@@ -48,7 +48,9 @@ export const isDownloaded = (id: string) => blobs.has(id);
 
 // ---------------------------------------------------------------- players
 // At most MAX_PLAYERS <video> elements exist; the least recently used idle one is released first.
-const MAX_PLAYERS = 20;
+// phones have far fewer hardware video decoders: keep fewer players alive there
+const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+const MAX_PLAYERS = isMobile ? 8 : 20;
 const release = (key: string, clip: Clip) => {
 	clip.video.pause();
 	clip.video.removeAttribute('src');
@@ -114,32 +116,61 @@ export const whenReady = (v: HTMLVideoElement, timeoutMs = 8000): Promise<boolea
 		v.addEventListener('error', onFail);
 	});
 
-/** Start a clip from frame 0. Resolves true when a one-shot clip ends (or a loop starts), false on failure. */
+/**
+ * Start a clip from frame 0. Resolves true when a one-shot clip ends (or a loop starts), false on failure.
+ * Never hangs: the round waits on this, so it also resolves if the video is paused/emptied by anything
+ * else, and after a safety timeout (clip length + 1.5 s). The clip is retained while it plays so the
+ * player pool cannot release it mid-playback.
+ */
 export const playVideo = async (clip: Clip, loop = false): Promise<boolean> => {
-	if (!(await whenReady(clip.video))) return false;
+	retain(clip); // held from here so the pool cannot release it while it loads or plays
+	// the round waits on one-shot clips: give up quickly (the caller shows its fallback) rather than stall
+	if (!(await whenReady(clip.video, loop ? 8000 : 2500))) {
+		unretain(clip);
+		return false;
+	}
 	clip.lastUsed = performance.now();
 	return new Promise((resolve) => {
 		const v = clip.video;
 		v.loop = loop;
-		v.playbackRate = stateBet.isTurbo ? 2 : 1;
+		const rate = stateBet.isTurbo ? 2 : 1;
+		v.playbackRate = rate;
 		try {
 			v.currentTime = 0;
 		} catch {
 			/* not seekable yet */
 		}
+		let settled = false;
+		let timer: ReturnType<typeof setTimeout> | undefined;
 		const done = (ok: boolean) => {
+			if (settled) return;
+			settled = true;
+			clearTimeout(timer);
 			v.removeEventListener('ended', onEnd);
 			v.removeEventListener('error', onErr);
+			v.removeEventListener('emptied', onErr);
+			v.removeEventListener('pause', onPause);
+			unretain(clip);
 			resolve(ok);
 		};
 		const onEnd = () => done(true);
 		const onErr = () => done(false);
+		// a pause before the end (skip, eviction, tab hidden) must not leave the round waiting
+		const onPause = () => {
+			if (!v.ended) done(true);
+		};
 		if (!loop) {
 			v.addEventListener('ended', onEnd);
 			v.addEventListener('error', onErr);
+			v.addEventListener('emptied', onErr);
+			const ms = (Number.isFinite(v.duration) && v.duration > 0 ? v.duration / rate : 10) * 1000 + 1500;
+			timer = setTimeout(() => done(true), ms);
 		}
 		v.play()
-			.then(() => loop && resolve(true))
+			.then(() => {
+				if (loop) return done(true);
+				v.addEventListener('pause', onPause);
+			})
 			.catch(() => done(false));
 	});
 };
