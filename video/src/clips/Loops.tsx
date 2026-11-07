@@ -89,7 +89,7 @@ export const BgEscapeLoop: React.FC = () => {
  * CIN-FINAL-ESCAPE (7 s): the van leaves the bank, each crew member gets a beat. Levels and the award
  * come from the book at runtime, so they are props here; the game overlays its own values if needed.
  */
-export const FinalEscape: React.FC<{levels: Record<CrewKey, number>; award: string}> = ({levels, award}) => {
+export const FinalEscape: React.FC<{levels?: Record<CrewKey, number>; award: string}> = ({levels, award}) => {
 	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	const keys: CrewKey[] = ['R', 'B', 'T', 'F'];
@@ -106,8 +106,8 @@ export const FinalEscape: React.FC<{levels: Record<CrewKey, number>; award: stri
 				return (
 					<React.Fragment key={c}>
 						<Prop id={CREW[c].pose} at={at} x={240 + i * 480} y={640} h={560} from="bottom" />
-						<Title text={'★'.repeat(levels[c]) + '☆'.repeat(3 - levels[c])} at={at + 6} size={70} y={360} accent={CREW[c].color} tilt={0} fill={`linear-gradient(180deg,#fff3b0,${CREW[c].color})`} />
-						{levels[c] >= 3 && <Title text="MASTER" at={at + 10} size={60} y={-30} accent={CREW[c].color} />}
+						{levels && <Title text={'★'.repeat(levels[c]) + '☆'.repeat(3 - levels[c])} at={at + 6} size={70} y={360} accent={CREW[c].color} tilt={0} fill={`linear-gradient(180deg,#fff3b0,${CREW[c].color})`} />}
+						{levels && levels[c] >= 3 && <Title text="MASTER" at={at + 10} size={60} y={-30} accent={CREW[c].color} />}
 					</React.Fragment>
 				);
 			})}

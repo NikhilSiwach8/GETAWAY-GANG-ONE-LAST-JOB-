@@ -31,10 +31,17 @@
 	import CellHighlights from './CellHighlights.svelte';
 	import TempWatermark from './TempWatermark.svelte';
 	import WildReels from './WildReels.svelte';
+	import ClipLayer from './ClipLayer.svelte';
+	import CrewMascot from './CrewMascot.svelte';
+	import CellFxLayer from './CellFxLayer.svelte';
+	import { prefetchClips } from '../game/clips.svelte';
 
 	const context = getContext();
 
-	onMount(() => (context.stateLayout.showLoadingScreen = true));
+	onMount(() => {
+		context.stateLayout.showLoadingScreen = true;
+		prefetchClips();
+	});
 
 	context.eventEmitter.subscribeOnMount({
 		buyBonusConfirm: () => {
@@ -70,7 +77,9 @@
 			<Board />
 			<Anticipations />
 			<WildReels />
+			<CellFxLayer />
 			<CellHighlights />
+			<CrewMascot />
 			<Hud />
 			<FeatureBanner />
 		</MainContainer>
@@ -92,6 +101,7 @@
 		<Transition />
 
 	{/if}
+	<ClipLayer />
 	<TempWatermark />
 </App>
 

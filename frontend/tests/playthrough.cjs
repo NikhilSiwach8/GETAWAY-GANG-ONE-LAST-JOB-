@@ -43,7 +43,7 @@ const force = (bookId) =>
 	const page = await browser.newPage({ viewport: { width: 1422, height: 800 }, ignoreHTTPSErrors: true });
 	const errors = [];
 	page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
-	page.on('pageerror', (e) => errors.push('PAGEERROR ' + e.message));
+	page.on('pageerror', (e) => errors.push('PAGEERROR ' + e.message + (process.env.STACK ? ' :: ' + (e.stack || '').slice(0, 1500) : '')));
 	await page.goto(playUrl);
 	await page.waitForTimeout(20000);
 	await page.screenshot({ path: path.join(outDir, '00_loading.png') });

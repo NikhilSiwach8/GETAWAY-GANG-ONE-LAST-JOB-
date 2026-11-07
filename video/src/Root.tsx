@@ -9,6 +9,7 @@ import {BgEscapeLoop, BgMainLoop, FinalEscape} from './clips/Loops';
 import {SymbolAnim, SymbolTransform} from './clips/Symbols';
 import {CharacterAnim, type CharacterAction} from './clips/Characters';
 import {SYMBOLS, type CrewKey} from './lib/assets';
+// Symbol transformations and Final Escape are effect-only: the game shows the real symbols, levels and award.
 
 // Composition ids are the asset ids from docs/ASSET_PROMPTS.txt (Remotion ids cannot contain "_", so "-" is kept).
 const FPS = 30;
@@ -71,7 +72,7 @@ export const RemotionRoot: React.FC = () => {
 					component={FinalEscape}
 					durationInFrames={210}
 					{...HD}
-					defaultProps={{levels: {R: 3, B: 2, T: 3, F: 1} as Record<CrewKey, number>, award: '+60× BET'}}
+					defaultProps={{award: ''}}
 				/>
 			</Folder>
 			<Folder name="Symbol-animations">
@@ -81,11 +82,11 @@ export const RemotionRoot: React.FC = () => {
 						<Composition id={`${id}-ANIM-WIN`} component={SymbolAnim} durationInFrames={30} {...CELL} defaultProps={{id, mode: 'win' as const}} />
 					</React.Fragment>
 				))}
-				<Composition id="SYM-FX-CLONE-IN" component={SymbolTransform} durationInFrames={15} {...CELL} defaultProps={{kind: 'CLONE-IN' as const, from: 'SYM-L4', to: 'SYM-H1'}} />
-				<Composition id="SYM-FX-UPGRADE-IN" component={SymbolTransform} durationInFrames={15} {...CELL} defaultProps={{kind: 'UPGRADE-IN' as const, from: 'SYM-L3', to: 'SYM-H2'}} />
-				<Composition id="SYM-FX-VAULT-REVEAL" component={SymbolTransform} durationInFrames={18} {...CELL} defaultProps={{kind: 'VAULT-REVEAL' as const, from: 'SYM-L2', to: 'SYM-H3'}} />
-				<Composition id="SYM-FX-WILD-STAMP" component={SymbolTransform} durationInFrames={15} {...CELL} defaultProps={{kind: 'WILD-STAMP' as const, from: 'SYM-L1', to: 'SYM-WILD'}} />
-				<Composition id="SYM-FX-CREW-EXIT" component={SymbolTransform} durationInFrames={18} {...CELL} defaultProps={{kind: 'CREW-EXIT' as const, from: 'SYM-ROXY', to: 'SYM-WILD'}} />
+				<Composition id="SYM-FX-CLONE-IN" component={SymbolTransform} durationInFrames={15} {...CELL} defaultProps={{kind: 'CLONE-IN' as const, from: '', to: ''}} />
+				<Composition id="SYM-FX-UPGRADE-IN" component={SymbolTransform} durationInFrames={15} {...CELL} defaultProps={{kind: 'UPGRADE-IN' as const, from: '', to: ''}} />
+				<Composition id="SYM-FX-VAULT-REVEAL" component={SymbolTransform} durationInFrames={18} {...CELL} defaultProps={{kind: 'VAULT-REVEAL' as const, from: '', to: ''}} />
+				<Composition id="SYM-FX-WILD-STAMP" component={SymbolTransform} durationInFrames={15} {...CELL} defaultProps={{kind: 'WILD-STAMP' as const, from: '', to: ''}} />
+				<Composition id="SYM-FX-CREW-EXIT" component={SymbolTransform} durationInFrames={18} {...CELL} defaultProps={{kind: 'CREW-EXIT' as const, from: '', to: ''}} />
 			</Folder>
 			<Folder name="Character-animations">
 				{CREW_IDS.flatMap(({key, id}) =>

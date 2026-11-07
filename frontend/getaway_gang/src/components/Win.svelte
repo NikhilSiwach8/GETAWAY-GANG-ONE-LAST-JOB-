@@ -20,6 +20,16 @@
 	import PressToContinue from './PressToContinue.svelte';
 	import { SYMBOL_SIZE } from '../game/constants';
 	import { getContext } from '../game/context';
+	import ClipSprite from './ClipSprite.svelte';
+	import { hasClip } from '../game/clips.svelte';
+
+	// Win celebration clips by win level (the game draws the counting amount on top)
+	const WIN_CLIPS: Record<string, { id: string; seconds: number }> = {
+		big: { id: 'WIN-BIG', seconds: 4 },
+		superwin: { id: 'WIN-SUPER', seconds: 5 },
+		mega: { id: 'WIN-MEGA', seconds: 6 },
+		epic: { id: 'WIN-EPIC', seconds: 8 },
+	};
 
 	const context = getContext();
 
@@ -43,11 +53,17 @@
 <FadeContainer {show}>
 	{#if winLevelData}
 		{@const isBigWin = winLevelData.type === 'big'}
-		{@const duration = winLevelData.presentDuration}
+		{@const winClip = WIN_CLIPS[winLevelData.alias] && hasClip(WIN_CLIPS[winLevelData.alias].id) ? WIN_CLIPS[winLevelData.alias] : null}
+		{@const duration = winClip ? (winClip.seconds - 1) * 1000 : winLevelData.presentDuration}
 		<WinCountUpProvider {amount} {duration} oncomplete={() => onCountUpComplete()}>
 			{#snippet children({ countUpAmount, startCountUp, finishCountUp, countUpCompleted })}
 				{#if isBigWin}
 					<CanvasSizeRectangle backgroundColor={0x000000} backgroundAlpha={0.5} />
+				{/if}
+				{#if winClip}
+					{@const cs = context.stateLayoutDerived.canvasSizes()}
+					{@const k = Math.min(cs.width / 1920, cs.height / 1080)}
+					<ClipSprite id={winClip.id} channel="win" x={cs.width / 2} y={cs.height / 2} width={1920 * k} height={1080 * k} />
 				{/if}
 
 				<OnMount
@@ -63,7 +79,15 @@
 						x={context.stateGameDerived.boardLayout().x}
 						y={context.stateGameDerived.boardLayout().y}
 					>
-						{#if winLevelData?.animation}
+						{#if winClip}
+							<ResponsiveBitmapText
+								anchor={0.5}
+								y={SYMBOL_SIZE * 0.9}
+								maxWidth={context.stateLayoutDerived.canvasSizes().width / context.stateLayoutDerived.mainLayout().scale}
+								text={bookEventAmountToCurrencyString(countUpAmount)}
+								style={{ fontFamily: 'gold', fontSize: SYMBOL_SIZE * 1.6, align: 'center', fontWeight: 'bold', letterSpacing: 0 }}
+							/>
+						{:else if winLevelData?.animation}
 							<WinAnimation animationMap={winLevelData.animation}>
 								<ResponsiveBitmapText
 									anchor={0.5}

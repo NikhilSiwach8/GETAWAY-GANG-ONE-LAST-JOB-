@@ -10,6 +10,7 @@ import { winLevelMap, type WinLevel, type WinLevelData } from './winLevelMap';
 import { stateGame, stateGameDerived, setCell, swapReels, resetHud } from './stateGame.svelte';
 import { CREW_INFO, COMBO_INFO, METER_STAGE_REWARDS, LOOT_REWARDS, LOOT_THRESHOLDS, PALETTE, type CrewKey } from './tempArt';
 import config from './config';
+import { playClip, playCellFx, mascotDo } from './clips.svelte';
 import type { BookEvent, BookEventOfType, BookEventContext } from './typesBookEvent';
 import type { Position } from './types';
 
@@ -61,6 +62,25 @@ const RESPIN_REASON_TEXT: Record<string, string> = {
 	cleanGetaway: 'Clean Getaway (stage 5)',
 };
 let nextRevealIsRespin = false;
+let lastFsTotal = 0;
+let crewThisRound = false;
+const CREW_ID = { R: 'ROXY', B: 'BYTE', T: 'TANK', F: 'FUSE' } as const;
+const COMBO_CLIP: Record<string, string> = {
+	hotwiredClone: 'FX-COMBO-RB',
+	vaultClone: 'FX-COMBO-BT',
+	goldenVault: 'FX-COMBO-TF',
+	blastDrift: 'FX-COMBO-FR',
+	armoredGetaway: 'FX-COMBO-RT',
+};
+/** Play the animation clip; if it cannot play (e.g. Safari), show the title card instead. */
+const clipOr = async (id: string, fallback: () => Promise<unknown>) => {
+	if (!(await playClip(id))) await fallback();
+};
+/** Cell transformation clip; falls back to the coloured outline. */
+const cellFxOr = async (id: string, cells: Position[], color: number, ms = 500) => {
+	if (!cells.length) return;
+	if (!(await playCellFx(id, cells))) await highlight(cells, color, ms);
+};
 
 export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContext> = {
 	reveal: async (bookEvent: BookEventOfType<'reveal'>, { bookEvents }: BookEventContext) => {
@@ -87,6 +107,8 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		stateBet.winBookEventAmount = bookEvent.amount;
 	},
 	freeSpinTrigger: async (bookEvent: BookEventOfType<'freeSpinTrigger'>) => {
+		lastFsTotal = bookEvent.totalFs;
+		mascotDo('BONUS-INTRO');
 		// animate scatters
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_scatter_win_v2' });
 		await animateSymbols({ positions: bookEvent.positions });
@@ -144,9 +166,11 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		await eventEmitter.broadcastAsync({ type: 'uiShow' });
 		await eventEmitter.broadcastAsync({ type: 'drawerUnfold' });
 		eventEmitter.broadcast({ type: 'drawerButtonHide' });
+		mascotDo('VICTORY');
 	},
 	setWin: async (bookEvent: BookEventOfType<'setWin'>) => {
 		const winLevelData = winLevelMap[bookEvent.winLevel as WinLevel];
+		if (winLevelData?.type !== 'big' && bookEvent.amount > 0) mascotDo('WIN');
 
 		eventEmitter.broadcast({ type: 'winShow' });
 		winLevelSoundsPlay({ winLevelData });
@@ -159,7 +183,9 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		eventEmitter.broadcast({ type: 'winHide' });
 	},
 	finalWin: async (bookEvent: BookEventOfType<'finalWin'>) => {
-		// Do nothing
+		// comedic shrug only when the crew tried and the round still paid nothing
+		if (bookEvent.amount === 0 && crewThisRound) mascotDo('LOSE');
+		crewThisRound = false;
 	},
 
 	// ============================================================ GETAWAY GANG
@@ -171,13 +197,15 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	crewLanded: async (bookEvent: BookEventOfType<'crewLanded'>) => {
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_multiplier_landing' });
 		const names = bookEvent.crew.map((c) => CREW_INFO[c.character].name).join(' + ');
+		crewThisRound = true;
+		mascotDo('ABILITY', CREW_ID[bookEvent.crew[0].character]);
 		await Promise.all([
 			...bookEvent.crew.map((c) => highlight(c.positions, crewColor(c.character), 900)),
-			banner('CREW CHAOS!', PALETTE.gold, names, 'FX-CREW-CHAOS', 900),
+			clipOr('FX-CREW-CHAOS', () => banner('CREW CHAOS!', PALETTE.gold, names, 'FX-CREW-CHAOS', 900)),
 		]);
 	},
 	laneSwitch: async (bookEvent: BookEventOfType<'laneSwitch'>) => {
-		await banner(crewTitle('R', bookEvent.level), PALETTE.roxy, CREW_INFO.R.line, 'ANIM-ROXY-ABILITY');
+		await clipOr('ANIM-ROXY-ABILITY-FX', () => banner(crewTitle('R', bookEvent.level), PALETTE.roxy, CREW_INFO.R.line, 'ANIM-ROXY-ABILITY'));
 		for (const swap of bookEvent.swaps) {
 			await highlight(
 				[1, 2, 3, 4].flatMap((row) => [
@@ -189,44 +217,49 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 			);
 			swapReels(swap.from, swap.to);
 		}
+		await cellFxOr('SYM-FX-WILD-STAMP', bookEvent.wilds, PALETTE.roxy);
 		bookEvent.wilds.forEach((p) => setCell(p.reel, p.row, 'W'));
-		await highlight(bookEvent.wilds, PALETTE.roxy, 500);
 	},
 	systemClone: async (bookEvent: BookEventOfType<'systemClone'>) => {
 		const sym = bookEvent.symbol;
-		await banner(crewTitle('B', bookEvent.level), PALETTE.byte, sym ? `Cloning ${sym} ×${bookEvent.positions.length}` : CREW_INFO.B.line, 'ANIM-BYTE-ABILITY');
+		await clipOr('ANIM-BYTE-ABILITY-FX', () =>
+			banner(crewTitle('B', bookEvent.level), PALETTE.byte, sym ? `Cloning ${sym} ×${bookEvent.positions.length}` : CREW_INFO.B.line, 'ANIM-BYTE-ABILITY'),
+		);
 		if (sym) bookEvent.positions.forEach((p) => setCell(p.reel, p.row, sym));
-		await highlight(bookEvent.positions, PALETTE.byte, 600);
+		await cellFxOr('SYM-FX-CLONE-IN', bookEvent.positions, PALETTE.byte, 600);
 	},
 	vaultBreaker: async (bookEvent: BookEventOfType<'vaultBreaker'>) => {
-		await banner(crewTitle('T', bookEvent.level), PALETTE.tank, CREW_INFO.T.line, 'ANIM-TANK-ABILITY');
+		await clipOr('ANIM-TANK-ABILITY-FX', () => banner(crewTitle('T', bookEvent.level), PALETTE.tank, CREW_INFO.T.line, 'ANIM-TANK-ABILITY'));
 		await highlight(bookEvent.area, PALETTE.tank, 500);
 		bookEvent.loot.forEach((c) => setCell(c.reel, c.row, c.symbol));
-		await highlight(bookEvent.loot, PALETTE.gold, 500);
+		await cellFxOr('SYM-FX-VAULT-REVEAL', bookEvent.loot, PALETTE.gold);
 	},
 	bigBangUpgrade: async (bookEvent: BookEventOfType<'bigBangUpgrade'>) => {
-		await banner(crewTitle('F', bookEvent.level), PALETTE.fuse, CREW_INFO.F.line, 'ANIM-FUSE-ABILITY');
+		await clipOr('ANIM-FUSE-ABILITY-FX', () => banner(crewTitle('F', bookEvent.level), PALETTE.fuse, CREW_INFO.F.line, 'ANIM-FUSE-ABILITY'));
 		await highlight(bookEvent.area, PALETTE.fuse, 500);
 		bookEvent.upgrades.forEach((u) => setCell(u.reel, u.row, u.to));
-		await highlight(bookEvent.upgrades, PALETTE.gold, 500);
+		await cellFxOr('SYM-FX-UPGRADE-IN', bookEvent.upgrades, PALETTE.gold);
 	},
 	crewCombo: async (bookEvent: BookEventOfType<'crewCombo'>) => {
 		const info = COMBO_INFO[bookEvent.combo];
 		const color = crewColor(bookEvent.characters[0]);
-		await banner(
-			info?.title ?? bookEvent.combo,
-			color,
-			`${bookEvent.characters.map((c) => CREW_INFO[c].name).join(' + ')} · ${info?.detail ?? ''}`,
-			info?.assetId,
+		mascotDo('COMBO', CREW_ID[bookEvent.characters[0]]);
+		await clipOr(COMBO_CLIP[bookEvent.combo] ?? '', () =>
+			banner(
+				info?.title ?? bookEvent.combo,
+				color,
+				`${bookEvent.characters.map((c) => CREW_INFO[c].name).join(' + ')} · ${info?.detail ?? ''}`,
+				info?.assetId,
+			),
 		);
 		const sym = bookEvent.symbol;
 		if (sym && bookEvent.positions?.length) {
 			bookEvent.positions.forEach((p) => setCell(p.reel, p.row, sym));
-			await highlight(bookEvent.positions, color, 500);
+			await cellFxOr('SYM-FX-CLONE-IN', bookEvent.positions, color);
 		}
 		if (bookEvent.upgrades?.length) {
 			bookEvent.upgrades.forEach((u) => setCell(u.reel, u.row, u.to));
-			await highlight(bookEvent.upgrades, PALETTE.gold, 500);
+			await cellFxOr('SYM-FX-UPGRADE-IN', bookEvent.upgrades, PALETTE.gold);
 		}
 		if (bookEvent.swap && bookEvent.swap.from !== bookEvent.swap.to) {
 			swapReels(bookEvent.swap.from, bookEvent.swap.to);
@@ -239,17 +272,19 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	},
 	perfectlyBadPlan: async (bookEvent: BookEventOfType<'perfectlyBadPlan'>) => {
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_superfreespin' });
-		await banner('PERFECTLY BAD PLAN!', PALETTE.gold, `All four crew · ×${bookEvent.multiplier} Crew Combo · Chaos Re-spin`, 'CIN-PERFECTLY-BAD-PLAN', 2200);
+		await clipOr('CIN-PERFECTLY-BAD-PLAN', () =>
+			banner('PERFECTLY BAD PLAN!', PALETTE.gold, `All four crew · ×${bookEvent.multiplier} Crew Combo · Chaos Re-spin`, 'CIN-PERFECTLY-BAD-PLAN', 2200),
+		);
+		await cellFxOr('SYM-FX-WILD-STAMP', bookEvent.wilds, PALETTE.gold, 600);
 		bookEvent.wilds.forEach((p) => setCell(p.reel, p.row, 'W'));
-		await highlight(bookEvent.wilds, PALETTE.gold, 600);
 	},
 	meterWilds: async (bookEvent: BookEventOfType<'meterWilds'>) => {
+		await cellFxOr('SYM-FX-WILD-STAMP', bookEvent.positions, PALETTE.gold);
 		bookEvent.positions.forEach((p) => setCell(p.reel, p.row, 'W'));
-		await highlight(bookEvent.positions, PALETTE.gold, 500);
 	},
 	crewExit: async (bookEvent: BookEventOfType<'crewExit'>) => {
 		bookEvent.positions.forEach((p) => setCell(p.reel, p.row, bookEvent.symbol));
-		if (bookEvent.positions.length) await highlight(bookEvent.positions, 0xffffff, 400);
+		await cellFxOr('SYM-FX-CREW-EXIT', bookEvent.positions, 0xffffff, 400);
 	},
 	boardTransformed: async (bookEvent: BookEventOfType<'boardTransformed'>) => {
 		// Authoritative board from the math: guarantees the evaluated board is exactly what is shown.
@@ -266,12 +301,14 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		stateGame.hud.meterPoints = bookEvent.points;
 		stateGame.hud.meterStage = bookEvent.stage;
 		for (const stage of bookEvent.newStages) {
+			// the clip celebrates; the card names the exact reward so the player knows what changed
+			const played = await playClip(stage === 5 ? 'CIN-CLEAN-GETAWAY' : 'FX-METER-STAGE');
 			await banner(
 				stage === 5 ? 'CLEAN GETAWAY!' : `GETAWAY METER · STAGE ${stage}`,
 				PALETTE.gold,
 				METER_STAGE_REWARDS[stage - 1],
 				stage === 5 ? 'CIN-CLEAN-GETAWAY' : 'UI-METER-GETAWAY',
-				stage === 5 ? 2000 : 1000,
+				played ? 800 : stage === 5 ? 2000 : 1000,
 			);
 		}
 	},
@@ -279,7 +316,8 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		stateGame.hud.lootPoints = bookEvent.points;
 		for (const reward of bookEvent.rewards) {
 			const i = LOOT_THRESHOLDS.indexOf(reward.at);
-			await banner(`LOOT METER · ${reward.at} POINTS`, PALETTE.vault, LOOT_REWARDS[i] ?? '', 'UI-METER-LOOT', 1100);
+			const played = await playClip('FX-LOOT-MILESTONE');
+			await banner(`LOOT METER · ${reward.at} POINTS`, PALETTE.vault, LOOT_REWARDS[i] ?? '', 'UI-METER-LOOT', played ? 800 : 1100);
 		}
 	},
 	crewLevels: async (bookEvent: BookEventOfType<'crewLevels'>) => {
@@ -293,7 +331,14 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		stateGame.hud.respinRemaining = bookEvent.remaining;
 		const granted = bookEvent.reasons.filter((r) => r.granted > 0);
 		if (granted.length) {
-			await banner('CHAOS RE-SPIN!', PALETTE.gold, granted.map((r) => RESPIN_REASON_TEXT[r.reason] ?? r.reason).join(' · '), 'FX-RESPIN', 1100);
+			const played = await playClip('FX-RESPIN');
+			await banner(
+				played ? 'WHY THE RE-SPIN' : 'CHAOS RE-SPIN!',
+				PALETTE.gold,
+				granted.map((r) => RESPIN_REASON_TEXT[r.reason] ?? r.reason).join(' · '),
+				'FX-RESPIN',
+				played ? 700 : 1100,
+			);
 		} else {
 			await banner('RE-SPIN LIMIT REACHED', PALETTE.metal, `Max ${config.features.maxRespinsPerChain} Chaos Re-spins per spin`, 'FX-RESPIN', 900);
 		}
@@ -307,25 +352,32 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	freeSpinRetrigger: async (bookEvent: BookEventOfType<'freeSpinRetrigger'>) => {
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_scatter_win_v2' });
 		await animateSymbols({ positions: bookEvent.positions });
+		const added = bookEvent.totalFs - lastFsTotal;
+		lastFsTotal = bookEvent.totalFs;
 		eventEmitter.broadcast({ type: 'freeSpinCounterUpdate', total: bookEvent.totalFs });
-		await banner('RETRIGGER!', PALETTE.gold, `+5 free spins · ${bookEvent.totalFs} total`, 'FX-RETRIGGER', 1200);
+		// the clip shows "+5 FREE SPINS": only use it when exactly 5 were added (the cap can award fewer)
+		if (added === 5 && (await playClip('FX-RETRIGGER'))) return;
+		await banner('RETRIGGER!', PALETTE.gold, `+${added} free spins · ${bookEvent.totalFs} total`, 'FX-RETRIGGER', 1200);
 	},
 	freeSpinsAdded: async (bookEvent: BookEventOfType<'freeSpinsAdded'>) => {
+		lastFsTotal = bookEvent.totalFs;
 		eventEmitter.broadcast({ type: 'freeSpinCounterUpdate', total: bookEvent.totalFs });
 		await banner(`+${bookEvent.amount} FREE SPIN${bookEvent.amount > 1 ? 'S' : ''}`, PALETTE.vault, 'Loot Meter reward', 'UI-METER-LOOT', 900);
 	},
 	finalEscape: async (bookEvent: BookEventOfType<'finalEscape'>) => {
 		const masters = bookEvent.masters.map((c) => CREW_INFO[c].name).join(', ') || 'none';
+		const played = await playClip('CIN-FINAL-ESCAPE');
 		await banner(
 			'FINAL ESCAPE',
 			PALETTE.fuse,
 			bookEvent.award > 0 ? `Master crew: ${masters} · +${bookEvent.award / 100}× bet` : 'No crew reached Level 3',
 			'CIN-FINAL-ESCAPE',
-			2400,
+			played ? 1800 : 2400,
 		);
 	},
 	payoutCapped: async () => {},
 	wincap: async () => {
+		if (await playClip('CIN-MAX-WIN')) return;
 		await banner('MAXIMUM WIN!', PALETTE.gold, `${config.wincap.toLocaleString()}× bet · round complete`, 'CIN-MAX-WIN', 2600);
 	},
 	// customised

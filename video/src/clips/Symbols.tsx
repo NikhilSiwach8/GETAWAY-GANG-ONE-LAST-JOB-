@@ -64,7 +64,8 @@ export const SymbolTransform: React.FC<{kind: TransformKind; from: string; to: s
 	const frame = useCurrentFrame();
 	const {durationInFrames} = useVideoConfig();
 	const t = frame / (durationInFrames - 1);
-	const img = (id: string, style: React.CSSProperties) => <Img src={art(id)} style={{position: 'absolute', left: 26, top: 26, width: 460, height: 460, ...style}} />;
+	// Empty id = effect-only render (the game shows its own real symbols underneath).
+	const img = (id: string, style: React.CSSProperties) => (id ? <Img src={art(id)} style={{position: 'absolute', left: 26, top: 26, width: 460, height: 460, ...style}} /> : null);
 	if (kind === 'CLONE-IN') {
 		const reveal = interpolate(t, [0.1, 0.8], [0, 100], clamp);
 		return (
@@ -107,6 +108,8 @@ export const SymbolTransform: React.FC<{kind: TransformKind; from: string; to: s
 	// CREW-EXIT: the crew badge jumps toward the camera and away, replacement drops in
 	return (
 		<AbsoluteFill>
+			<Burst at={0} count={16} kind="smoke" x={256} y={300} speed={8} life={durationInFrames} seed="cx" size={0.7} />
+			<Burst at={2} count={18} kind="star" x={256} y={256} speed={14} gravity={0.2} life={durationInFrames} colors={[GOLD, '#ffffff']} seed="cxs" size={0.6} />
 			{img(from, {scale: interpolate(t, [0, 0.5], [1, 1.6], clamp), translate: `${interpolate(t, [0.2, 0.6], [0, 600], clamp)}px ${interpolate(t, [0, 0.25, 0.6], [0, -80, 200], clamp)}px`, opacity: interpolate(t, [0.45, 0.6], [1, 0], clamp)})}
 			{img(to, {translate: `0px ${interpolate(t, [0.55, 0.85], [-520, 0], {...clamp, easing: Easing.out(Easing.bounce)})}px`, opacity: t > 0.5 ? 1 : 0})}
 		</AbsoluteFill>
