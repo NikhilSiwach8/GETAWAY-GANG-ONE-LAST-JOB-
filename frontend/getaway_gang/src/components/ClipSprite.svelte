@@ -60,6 +60,8 @@
 	});
 </script>
 
+<!-- scale (not width/height): Pixi resolves width against the texture size at assignment time, and a
+     video texture can still be resizing then, leaving the clip drawn at its native pixel size. -->
 <!-- always-mounted wrapper: keeps this clip's place in the draw order even though the video appears later -->
 <Container zIndex={props.zIndex}>
 	{#if clip && ready}
@@ -68,8 +70,7 @@
 			texture={clip.texture}
 			x={props.x}
 			y={props.y}
-			width={props.width}
-			height={props.height}
+			scale={{ x: props.width / (clip.video.videoWidth || props.width), y: props.height / (clip.video.videoHeight || props.height) }}
 			anchor={props.anchor ?? 0.5}
 			alpha={(props.alpha ?? 1) * fade}
 		/>

@@ -8,7 +8,7 @@
 	import { BaseSprite, Rectangle } from 'pixi-svelte';
 	import { stateBet } from 'state-shared';
 	import { getContext } from '../game/context';
-	import { getClip, hasClip, playVideo, retain, unretain, whenReady } from '../game/clips.svelte';
+	import { getClip, hasClip, playVideo, retain, unretain, videoScale, whenReady } from '../game/clips.svelte';
 
 	type Props = { oncovered?: () => void; onfinished: () => void };
 	const props: Props = $props();
@@ -65,7 +65,7 @@
 </script>
 
 {#if showClip && clip}
-	<BaseSprite texture={clip.texture} anchor={0.5} {...cover} zIndex={60} />
+	<BaseSprite texture={clip.texture} anchor={0.5} x={cover.x} y={cover.y} scale={videoScale(clip.texture, cover.width, cover.height)} zIndex={60} />
 {:else if fade > 0}
 	<Rectangle {...sizes} backgroundColor={0x0b1026} backgroundAlpha={fade} zIndex={60} />
 {/if}

@@ -8,7 +8,7 @@ import path from 'node:path';
 
 const BROWSER = '/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell';
 // Full-frame clips with their own background; everything else is an overlay with transparency.
-const OPAQUE = new Set(['BG-MAIN-LOOP', 'BG-ESCAPE-LOOP', 'CIN-MAX-WIN', 'CIN-FINAL-ESCAPE', 'CIN-PERFECTLY-BAD-PLAN', 'SCR-HEIST-OUTRO', 'SCR-ESCAPE-OUTRO']);
+const OPAQUE = new Set(['BG-MAIN-LOOP', 'BG-ESCAPE-LOOP', 'CIN-MAX-WIN', 'CIN-FINAL-ESCAPE', 'CIN-PERFECTLY-BAD-PLAN', 'SCR-HEIST-OUTRO', 'SCR-ESCAPE-OUTRO', 'SCR-HEIST-INTRO', 'SCR-HEIST-INTRO-LOOP', 'SCR-ESCAPE-INTRO', 'SCR-ESCAPE-INTRO-LOOP']);
 // rendered at native size (already authored at display size)
 const NATIVE = new Set(['FX-ANTICIPATION', 'UI-BUY-BONUS-ANIM']);
 const prefixes = process.argv.slice(2);

@@ -6,7 +6,7 @@
 	 */
 	import { BaseSprite, Rectangle } from 'pixi-svelte';
 	import { getContext } from '../game/context';
-	import { clipLayer, LAYER_FADE_IN_MS, LAYER_FADE_OUT_MS, type LayerSlot } from '../game/clips.svelte';
+	import { clipLayer, LAYER_FADE_IN_MS, LAYER_FADE_OUT_MS, videoScale, type LayerSlot } from '../game/clips.svelte';
 
 	const context = getContext();
 	const sizes = $derived(context.stateLayoutDerived.canvasSizes());
@@ -59,9 +59,9 @@
 		zIndex={40}
 	/>
 	{#if clipLayer.outgoing}
-		<BaseSprite texture={clipLayer.outgoing.texture} anchor={0.5} {...fit} alpha={alphas[clipLayer.outgoing.key] ?? 1} zIndex={41} />
+		<BaseSprite texture={clipLayer.outgoing.texture} anchor={0.5} x={fit.x} y={fit.y} scale={videoScale(clipLayer.outgoing.texture, fit.width, fit.height)} alpha={alphas[clipLayer.outgoing.key] ?? 1} zIndex={41} />
 	{/if}
 	{#if clipLayer.current}
-		<BaseSprite texture={clipLayer.current.texture} anchor={0.5} {...fit} alpha={alphas[clipLayer.current.key] ?? 0} zIndex={42} />
+		<BaseSprite texture={clipLayer.current.texture} anchor={0.5} x={fit.x} y={fit.y} scale={videoScale(clipLayer.current.texture, fit.width, fit.height)} alpha={alphas[clipLayer.current.key] ?? 0} zIndex={42} />
 	{/if}
 {/if}

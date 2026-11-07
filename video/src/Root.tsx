@@ -1,6 +1,7 @@
 import './lib/font';
 import React from 'react';
 import {Composition, Folder} from 'remotion';
+import {BonusIntro, BonusIntroLoop} from './clips/BonusIntro';
 import {Anticipation, BillSprite, BuyBonusSheen, CoinSprite, EscapeOutro, GlintSprite, HeistOutro, Transition} from './clips/Round2';
 import {ABILITY_SECONDS, AbilityFx, CrewChaos} from './clips/Abilities';
 import {COMBO_SECONDS, CleanGetaway, Combo, PerfectlyBadPlan} from './clips/Combos';
@@ -79,6 +80,10 @@ export const RemotionRoot: React.FC = () => {
 			<Folder name="Round-2">
 				<Composition id="FX-ANTICIPATION" component={Anticipation} durationInFrames={30} fps={FPS} width={300} height={1000} />
 				<Composition id="FX-TRANSITION" component={Transition} durationInFrames={36} {...HD} />
+				<Composition id="SCR-HEIST-INTRO" component={BonusIntro} durationInFrames={48} {...HD} defaultProps={{bonus: 'heist' as const}} />
+				<Composition id="SCR-HEIST-INTRO-LOOP" component={BonusIntroLoop} durationInFrames={90} {...HD} defaultProps={{bonus: 'heist' as const}} />
+				<Composition id="SCR-ESCAPE-INTRO" component={BonusIntro} durationInFrames={48} {...HD} defaultProps={{bonus: 'escape' as const}} />
+				<Composition id="SCR-ESCAPE-INTRO-LOOP" component={BonusIntroLoop} durationInFrames={90} {...HD} defaultProps={{bonus: 'escape' as const}} />
 				<Composition id="SCR-HEIST-OUTRO" component={HeistOutro} durationInFrames={150} {...HD} />
 				<Composition id="SCR-ESCAPE-OUTRO" component={EscapeOutro} durationInFrames={150} {...HD} />
 				<Composition id="UI-BUY-BONUS-ANIM" component={BuyBonusSheen} durationInFrames={60} fps={FPS} width={600} height={260} />

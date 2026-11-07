@@ -221,6 +221,7 @@ export const prefetchClips = () => {
 		...['ROXY', 'BYTE', 'TANK', 'FUSE'].flatMap((c) => ['IDLE', 'ABILITY', 'COMPLETE', 'WIN', 'LOSE'].map((a) => `ANIM-${c}-${a}`)),
 		'FX-RESPIN', 'FX-METER-STAGE', 'FX-COMBO-RB', 'FX-COMBO-BT', 'FX-COMBO-TF', 'FX-COMBO-FR', 'FX-COMBO-RT',
 		'WIN-BIG', 'WIN-SUPER', 'WIN-MEGA', 'WIN-EPIC',
+		'SCR-HEIST-INTRO', 'SCR-HEIST-INTRO-LOOP', 'SCR-ESCAPE-INTRO', 'SCR-ESCAPE-INTRO-LOOP',
 		'SCR-HEIST-OUTRO', 'SCR-ESCAPE-OUTRO',
 	];
 	const rest = Object.keys(CLIP_URLS).filter((id) => !first.includes(id));
@@ -258,4 +259,10 @@ export const playCellFx = (id: string, cells: { reel: number; row: number }[]): 
 		cellFx.list = cellFx.list.filter((e) => e.key !== entry.key);
 		return ok;
 	});
+};
+
+/** Sprite scale that draws a video texture at w×h, from the video's real pixel size (see ClipSprite). */
+export const videoScale = (texture: PIXI.Texture, w: number, h: number) => {
+	const v = texture.source?.resource as HTMLVideoElement | undefined;
+	return { x: w / (v?.videoWidth || w), y: h / (v?.videoHeight || h) };
 };
