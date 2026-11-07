@@ -8,14 +8,17 @@ import path from 'node:path';
 
 const BROWSER = '/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell';
 // Full-frame clips with their own background; everything else is an overlay with transparency.
-const OPAQUE = new Set(['BG-MAIN-LOOP', 'BG-ESCAPE-LOOP', 'CIN-MAX-WIN', 'CIN-FINAL-ESCAPE', 'CIN-PERFECTLY-BAD-PLAN']);
+const OPAQUE = new Set(['BG-MAIN-LOOP', 'BG-ESCAPE-LOOP', 'CIN-MAX-WIN', 'CIN-FINAL-ESCAPE', 'CIN-PERFECTLY-BAD-PLAN', 'SCR-HEIST-OUTRO', 'SCR-ESCAPE-OUTRO']);
+// rendered at native size (already authored at display size)
+const NATIVE = new Set(['FX-ANTICIPATION', 'UI-BUY-BONUS-ANIM']);
 const prefixes = process.argv.slice(2);
 const out = path.resolve('out');
 fs.mkdirSync(out, {recursive: true});
 
 const serveUrl = await bundle({entryPoint: path.resolve('src/index.ts')});
 const comps = (await getCompositions(serveUrl, {browserExecutable: BROWSER})).filter(
-	(c) => !prefixes.length || prefixes.some((p) => c.id.startsWith(p)),
+	// FX-COINS-* are sprite sheets: rendered frame by frame by render-sprites.mjs
+	(c) => !c.id.startsWith('FX-COINS-') && (!prefixes.length || prefixes.some((p) => c.id.startsWith(p))),
 );
 console.log(`rendering ${comps.length} compositions`);
 for (const comp of comps) {
@@ -31,7 +34,7 @@ for (const comp of comps) {
 		imageFormat: transparent ? 'png' : 'jpeg',
 		pixelFormat: transparent ? 'yuva420p' : 'yuv420p',
 		// render at the size the game displays: HD clips at 720p, character clips 512px, symbol clips 256px
-		scale: comp.width === 1920 ? 2 / 3 : 0.5,
+		scale: NATIVE.has(comp.id) ? 1 : comp.width === 1920 ? 2 / 3 : 0.5,
 		crf: comp.width === 1920 ? Number(process.env.HD_CRF ?? 42) : 32,
 		concurrency: 4,
 		logLevel: 'error',

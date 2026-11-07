@@ -1,6 +1,7 @@
 import './lib/font';
 import React from 'react';
 import {Composition, Folder} from 'remotion';
+import {Anticipation, BillSprite, BuyBonusSheen, CoinSprite, EscapeOutro, GlintSprite, HeistOutro, Transition} from './clips/Round2';
 import {ABILITY_SECONDS, AbilityFx, CrewChaos} from './clips/Abilities';
 import {COMBO_SECONDS, CleanGetaway, Combo, PerfectlyBadPlan} from './clips/Combos';
 import {LootMilestone, MeterStage, Respin, Retrigger} from './clips/Feature';
@@ -74,6 +75,17 @@ export const RemotionRoot: React.FC = () => {
 					{...HD}
 					defaultProps={{award: ''}}
 				/>
+			</Folder>
+			<Folder name="Round-2">
+				<Composition id="FX-ANTICIPATION" component={Anticipation} durationInFrames={30} fps={FPS} width={300} height={1000} />
+				<Composition id="FX-TRANSITION" component={Transition} durationInFrames={36} {...HD} />
+				<Composition id="SCR-HEIST-OUTRO" component={HeistOutro} durationInFrames={150} {...HD} />
+				<Composition id="SCR-ESCAPE-OUTRO" component={EscapeOutro} durationInFrames={150} {...HD} />
+				<Composition id="UI-BUY-BONUS-ANIM" component={BuyBonusSheen} durationInFrames={60} fps={FPS} width={600} height={260} />
+				<Composition id="FX-COINS-COIN" component={CoinSprite} durationInFrames={8} fps={FPS} width={128} height={128} />
+				<Composition id="FX-COINS-BILL" component={BillSprite} durationInFrames={8} fps={FPS} width={128} height={128} />
+				<Composition id="FX-COINS-DIAMOND" component={GlintSprite} durationInFrames={4} fps={FPS} width={128} height={128} defaultProps={{kind: 'diamond' as const}} />
+				<Composition id="FX-COINS-STAR" component={GlintSprite} durationInFrames={4} fps={FPS} width={128} height={128} defaultProps={{kind: 'star' as const}} />
 			</Folder>
 			<Folder name="Symbol-animations">
 				{SYMBOLS.map((id) => (
