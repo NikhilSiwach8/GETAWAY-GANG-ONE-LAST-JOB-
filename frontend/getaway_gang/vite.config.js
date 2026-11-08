@@ -60,5 +60,29 @@ const noSampleUrls = {
 	},
 };
 
+// The shared Authenticate.svelte drops the RGS bet limits. Keep them so the Buy Bonus screen can disable
+// purchases above a mode's maximum (the RGS would reject them): stateConfig.maxBetAmount (global, currency
+// units) and stateConfig.modeLimits ({ MODE: maxBet in currency units } when the RGS sends per-mode limits).
+const keepBetLimits = {
+	name: 'gg-keep-bet-limits',
+	enforce: 'pre',
+	transform(code, id) {
+		const file = id.split('?')[0].replace(/\\/g, '/');
+		if (!file.endsWith('components-shared/src/components/Authenticate.svelte')) return null;
+		const anchor = 'stateConfig.betMenuOptions = stateConfig.betAmountOptions.filter(';
+		if (!code.includes(anchor)) throw new Error('gg-keep-bet-limits: anchor not found in Authenticate.svelte');
+		const inject = `(stateConfig as any).maxBetAmount = (authenticateData.config?.maxBet ?? 0) / API_AMOUNT_MULTIPLIER;
+				{
+					const modes: any = (authenticateData.config as any)?.gameModes ?? (authenticateData.config as any)?.betModes ?? [];
+					const list: any[] = Array.isArray(modes) ? modes : Object.entries(modes).map(([mode, v]: any) => ({ mode, ...(v ?? {}) }));
+					(stateConfig as any).modeLimits = Object.fromEntries(
+						list.filter((m) => m && m.mode && m.maxBet).map((m) => [String(m.mode).toUpperCase(), m.maxBet / API_AMOUNT_MULTIPLIER]),
+					);
+				}
+				`;
+		return { code: code.replace(anchor, inject + anchor), map: null };
+	},
+};
+
 const base = config();
-export default { ...base, plugins: [ggUiOverrides, localFonts, noSampleUrls, ...base.plugins] };
+export default { ...base, plugins: [ggUiOverrides, localFonts, noSampleUrls, keepBetLimits, ...base.plugins] };

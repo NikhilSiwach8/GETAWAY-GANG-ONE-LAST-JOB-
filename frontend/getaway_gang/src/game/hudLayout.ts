@@ -14,7 +14,7 @@ const GAP = 12;
 export const portraitRows = (
 	board: { x: number; y: number },
 	frame: { width: number; height: number },
-	bonus: 'heist' | 'escape' | null,
+	bonus: 'heist' | 'escape' | 'hidden' | null,
 ) => {
 	const mH = h('UI-METER-GETAWAY');
 	const multW = (mH * GG_LAYOUT['UI-MULT'].width) / GG_LAYOUT['UI-MULT'].height;
@@ -23,7 +23,7 @@ export const portraitRows = (
 	const left = board.x - frame.width / 2;
 	const frameTop = board.y - frame.height / 2;
 	const row1Y = frameTop - mH * s1 - 6;
-	const h2 = bonus === 'escape' ? h('UI-CREW-LEVELS') : h('UI-METER-LOOT');
+	const h2 = bonus === 'escape' || bonus === 'hidden' ? h('UI-CREW-LEVELS') : h('UI-METER-LOOT');
 	const fsW = (h2 * GG_LAYOUT['UI-FS-COUNTER'].width) / GG_LAYOUT['UI-FS-COUNTER'].height;
 	const s2 = Math.min(s1, frame.width / (HUD_W + GAP + fsW));
 	const row2Y = row1Y - h2 * s2 - 6;

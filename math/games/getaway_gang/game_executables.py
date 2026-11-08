@@ -86,7 +86,7 @@ class GameExecutables(GameCalculations):
 
     # ================================================================ levels / multipliers
     def crew_level(self, c: str) -> int:
-        base = self.escape_levels[c] if self.bonus == "escape" else 1
+        base = self.escape_levels[c] if self.bonus in ("escape", "hidden") else 1
         bonus = (METER_STAGE2_LEVEL_BONUS if self.meter_stage >= 2 else 0) + self.loot_level_bonus
         return min(MAX_CREW_LEVEL, base + bonus)
 
@@ -336,7 +336,7 @@ class GameExecutables(GameCalculations):
                         self.loot_level_bonus += reward["level_bonus"]
             ev.loot_meter_event(self, self.loot_points, loot_gain, rewards)
 
-        if self.bonus == "escape":
+        if self.bonus in ("escape", "hidden"):
             changed = False
             for c in info["active"]:
                 self.escape_activations[c] += 1

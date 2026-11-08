@@ -36,8 +36,18 @@ def emit(gamestate, event_type: str, **payload) -> None:
     gamestate.book.add_event(event)
 
 
+def mystery_reveal_event(gamestate, result: str) -> None:
+    """Mystery Vault buy: 'hidden' (Hidden Bonus), 'escape' (The Perfect Escape) or 'none' (base spin)."""
+    emit(gamestate, "mysteryReveal", result=result)
+
+
+def vault_guarantee_event(gamestate, floor: float, award: float) -> None:
+    """Hidden Bonus top-up so the round pays at least the guaranteed floor."""
+    emit(gamestate, "vaultGuarantee", floor=int(round(floor * 100)), award=int(round(award * 100)))
+
+
 def bonus_mode_event(gamestate, bonus: str, total_fs: int) -> None:
-    """Which bonus is starting: 'heist' or 'escape'."""
+    """Which bonus is starting: 'heist', 'escape' or 'hidden'."""
     emit(gamestate, "bonusStart", bonus=bonus, totalFs=total_fs)
 
 

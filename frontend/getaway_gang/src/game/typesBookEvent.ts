@@ -87,7 +87,9 @@ type Upgrade = Position & { from: SymbolName; to: SymbolName };
 type Swap = { from: number; to: number };
 
 type BookEventGG =
-	| Ev<'bonusStart', { bonus: 'heist' | 'escape'; totalFs: number }>
+	| Ev<'bonusStart', { bonus: 'heist' | 'escape' | 'hidden'; totalFs: number }>
+	| Ev<'mysteryReveal', { result: 'hidden' | 'escape' | 'none' }>
+	| Ev<'vaultGuarantee', { floor: number; award: number }>
 	| Ev<'crewLanded', { crew: { character: CrewKey; positions: Position[]; level: number }[] }>
 	| Ev<'laneSwitch', { level: number; swaps: Swap[]; wilds: Position[] }>
 	| Ev<'systemClone', { level: number; symbol: SymbolName | null; positions: Position[]; source: string }>

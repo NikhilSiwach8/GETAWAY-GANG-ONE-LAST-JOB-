@@ -81,7 +81,7 @@
 		<Sprite key="UI-METER-LOOT" width={W} height={h('UI-METER-LOOT')} />
 		<MeterFill points={hud.lootPoints} thresholds={LOOT_THRESHOLDS} pins={LPINS} {...LBAR} width={W} height={h('UI-METER-LOOT')} />
 	{/if}
-	{#if hud.bonus === 'escape'}
+	{#if hud.bonus === 'escape' || hud.bonus === 'hidden'}
 		<Sprite key="UI-CREW-LEVELS" width={W} height={h('UI-CREW-LEVELS')} />
 		{#each crew as c, ci}
 			{#each [0, 1, 2] as s}

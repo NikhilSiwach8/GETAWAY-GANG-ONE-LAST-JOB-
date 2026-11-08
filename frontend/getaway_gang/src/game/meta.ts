@@ -38,6 +38,20 @@ export const BUY_MODES = [
 			`Retrigger +${fs.retriggerFs} spins, up to ${fs.escapeMaxFs}`,
 		],
 	},
+	{
+		key: 'MYSTERY',
+		mode: 'mystery',
+		title: 'MYSTERY VAULT',
+		art: 'SCR-ESCAPE-INTRO',
+		volatility: 5,
+		tagline: 'Crack the vault: Hidden Bonus, Perfect Escape or nothing',
+		points: [
+			`${Math.round(fs.mysterySplit.hidden * 100)}% HIDDEN BONUS: ${fs.hiddenFs} free spins, crew start Level ${fs.hiddenStartLevel}`,
+			`Hidden Bonus always pays at least ${fs.hiddenFloor}× bet`,
+			`${Math.round(fs.mysterySplit.escape * 100)}% THE PERFECT ESCAPE (${fs.escapeFs} free spins)`,
+			`${Math.round(fs.mysterySplit.basegame * 100)}% empty vault: a normal spin, no bonus`,
+		],
+	},
 ] as const;
 
 export const costOf = (mode: string) => config.betModes[mode as keyof typeof config.betModes].cost;

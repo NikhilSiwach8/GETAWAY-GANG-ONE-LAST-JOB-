@@ -179,6 +179,19 @@
 						A bought bonus plays exactly like a naturally triggered one: it starts on a board showing the trigger
 						Scatters. Wins are multiplied by your bet, not by the price paid.
 					</p>
+					<h3>Mystery Vault</h3>
+					<p>
+						For <b>{costOf('mystery')}× bet ({money(costOf('mystery'))})</b> the vault is cracked and reveals one of three
+						outcomes, with these fixed chances:
+					</p>
+					<table class="wide">
+						<tbody>
+							<tr><td><b>{Math.round(f.mysterySplit.hidden * 100)}%</b></td><td><b>HIDDEN BONUS</b> (5 Scatters): {f.hiddenFs} free spins of The Perfect Escape with every crew member starting at Level {f.hiddenStartLevel}. Always pays at least <b>{f.hiddenFloor}× bet ({money(f.hiddenFloor)})</b>, more than the price; if the bonus wins less, the Vault Guarantee tops it up when it ends.</td></tr>
+							<tr><td><b>{Math.round(f.mysterySplit.escape * 100)}%</b></td><td><b>THE PERFECT ESCAPE</b> (4 Scatters): {f.escapeFs} free spins.</td></tr>
+							<tr><td><b>{Math.round(f.mysterySplit.basegame * 100)}%</b></td><td><b>Empty vault</b>: one normal base-game spin, no bonus.</td></tr>
+						</tbody>
+					</table>
+					<p class="small">The Hidden Bonus is only available through the Mystery Vault. RTP {rtp}. Max win {cap}× bet.</p>
 				</section>
 			{:else}
 				<section>

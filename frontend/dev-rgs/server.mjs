@@ -100,7 +100,8 @@ const lgs = new EngineLgs({
 	port: HTTP_PORT,
 	defaultCurrency: 'USD',
 	balance: { starting: 10000 },
-	bets: { min: 0.1, max: 100, step: 0.1, default: 1, levels: [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100] },
+	// max is the largest total cost of one round (bet x mode price): 1,000 lets every buy run at a $1 bet
+	bets: { min: 0.1, max: 1000, step: 0.1, default: 1, levels: [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100] },
 	jurisdiction: { displayRTP: true },
 });
 lgs.registerGame({

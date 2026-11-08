@@ -16,7 +16,7 @@ jobs:
         run: |
           mkdir -p out/math
           cat downloads/parts/getaway_gang_frontend.zip.part* > out/getaway_gang_frontend.zip
-          for m in base heist escape; do
+          for m in base heist escape mystery; do
             cat downloads/parts/books_$m.jsonl.zst.part* > out/math/books_$m.jsonl.zst
             cp downloads/parts/lookUpTable_${m}_0.csv out/math/
           done
@@ -32,6 +32,6 @@ jobs:
           TAG=stake-upload
           gh release delete "$TAG" --yes --cleanup-tag || true
           gh release create "$TAG" --target "$GITHUB_SHA" --title "Stake Engine upload files" \
-            --notes "Frontend build zip and math publish files for GETAWAY GANG: ONE LAST JOB! (modes: base 1x, heist 43x bonus buy, escape 450x bonus buy; all 96.00% RTP). getaway_gang_math.zip contains index.json plus the books and lookup table of every mode." \
+            --notes "Frontend build zip and math publish files for GETAWAY GANG: ONE LAST JOB! (modes: base 1x, heist 43x, escape 450x and mystery 420x bonus buys; all 96.00% RTP). getaway_gang_math.zip contains index.json plus the books and lookup table of every mode." \
             out/getaway_gang_frontend.zip out/getaway_gang_math.zip out/index.json \
             out/lookUpTable_*_0.csv out/books_*.jsonl.zst out/SHA256SUMS.txt

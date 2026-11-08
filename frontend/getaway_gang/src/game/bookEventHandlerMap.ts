@@ -194,9 +194,34 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	},
 
 	// ============================================================ GETAWAY GANG
+	mysteryReveal: async (bookEvent: BookEventOfType<'mysteryReveal'>) => {
+		// MYSTERY VAULT: the vault opens and reveals the outcome of the bought round (decided by the book)
+		stateGame.hud.mystery = bookEvent.result;
+		const clip = { hidden: 'FX-MYSTERY-HIDDEN', escape: 'FX-MYSTERY-ESCAPE', none: 'FX-MYSTERY-NONE' }[bookEvent.result];
+		if (await playClip(clip)) return;
+		await banner('MYSTERY VAULT', PALETTE.gold, 'Cracking the safe…', 'FX-MYSTERY', 1000);
+		if (bookEvent.result === 'hidden') {
+			await banner('HIDDEN BONUS!', PALETTE.gold, `${config.features.hiddenFs} free spins · crew start at Level ${config.features.hiddenStartLevel} · guaranteed ${config.features.hiddenFloor}× bet`, 'FX-MYSTERY-HIDDEN', 2200, ['R', 'B', 'T', 'F']);
+		} else if (bookEvent.result === 'escape') {
+			await banner('THE PERFECT ESCAPE!', PALETTE.fuse, `${config.features.escapeFs} free spins`, 'FX-MYSTERY-ESCAPE', 1800);
+		} else {
+			await banner('EMPTY VAULT', PALETTE.metal, 'No bonus this time · the spin plays on', 'FX-MYSTERY-NONE', 1600);
+		}
+	},
+	vaultGuarantee: async (bookEvent: BookEventOfType<'vaultGuarantee'>) => {
+		// Hidden Bonus floor: top-up so the round pays the guaranteed minimum
+		if (await playClip('FX-VAULT-GUARANTEE')) return;
+		await banner('VAULT GUARANTEE', PALETTE.gold, `+${bookEvent.award / 100}× bet · Hidden Bonus pays at least ${bookEvent.floor / 100}×`, 'FX-VAULT-GUARANTEE', 2000);
+	},
 	bonusStart: async (bookEvent: BookEventOfType<'bonusStart'>) => {
+		const mystery = stateGame.hud.mystery;
 		resetHud();
+		stateGame.hud.mystery = mystery;
 		stateGame.hud.bonus = bookEvent.bonus;
+		if (bookEvent.bonus === 'hidden') {
+			const l = config.features.hiddenStartLevel;
+			stateGame.hud.levels = { R: l, B: l, T: l, F: l }; // the Hidden Bonus starts every crew member at Level 2
+		}
 		// The bonus intro screen (SCR-HEIST-INTRO / SCR-ESCAPE-INTRO) already played on freeSpinTrigger.
 	},
 	crewLanded: async (bookEvent: BookEventOfType<'crewLanded'>) => {
@@ -412,5 +437,9 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		if (lastMeter) Object.assign(stateGame.hud, { meterPoints: lastMeter.points, meterStage: lastMeter.stage });
 		if (lastLoot) stateGame.hud.lootPoints = lastLoot.points;
 		if (lastLevels) stateGame.hud.levels = { ...lastLevels.levels };
+		else if (lastBonusStart?.bonus === 'hidden') {
+			const l = config.features.hiddenStartLevel;
+			stateGame.hud.levels = { R: l, B: l, T: l, F: l };
+		}
 	},
 };

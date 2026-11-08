@@ -38,10 +38,16 @@ PLAN = {
     **{r: (1100, None) for r in ["RULE-CREW-CHAOS", "RULE-RESPIN", "RULE-PBP", "RULE-FINAL-ESCAPE"]},
     "RULE-METER": (1100, None),
     "RULE-LOOT-METER": (None, 900),
+    # Mystery Vault / Hidden Bonus (docs/ASSET_PROMPTS_HIDDEN_BONUS.txt); picked up automatically when delivered
+    "BUY-MYSTERY-CARD": (1280, 720),
+    "BG-HIDDEN": (2560, 1440),
+    "SCR-HIDDEN-INTRO": (1920, 1080),
+    "UI-MYSTERY-BADGE": (900, None),
 }
 # assets only used by the HTML modals: written to GG_HTML (URLs) instead of the Pixi asset loader
 HTML_ONLY = {"BUY-HEIST-CARD", "BUY-ESCAPE-CARD", "UI-INFO-HEADER", "UI-BUY-PANEL", "RULE-CREW-CHAOS", "RULE-RESPIN",
-             "RULE-PBP", "RULE-FINAL-ESCAPE", "RULE-METER", "RULE-LOOT-METER", "UI-VOL-ON", "UI-VOL-OFF"}
+             "RULE-PBP", "RULE-FINAL-ESCAPE", "RULE-METER", "RULE-LOOT-METER", "UI-VOL-ON", "UI-VOL-OFF",
+             "BUY-MYSTERY-CARD", "UI-MYSTERY-BADGE"}
 
 
 def find(aid):
@@ -158,10 +164,12 @@ def write_ts(layout):
 def main():
     os.makedirs(OUT, exist_ok=True)
     layout, done, missing = {}, [], []
+    OPTIONAL = {"BUY-MYSTERY-CARD", "BG-HIDDEN", "SCR-HIDDEN-INTRO", "UI-MYSTERY-BADGE"}  # not delivered yet
     for aid, (w, h) in PLAN.items():
         path = find(aid)
         if not path:
-            missing.append(aid)
+            if aid not in OPTIONAL:
+                missing.append(aid)
             continue
         im = Image.open(path).convert("RGBA")
         out = fit(im, w, h)

@@ -46,6 +46,10 @@ cfg = {
         "finalEscapePerMaster": gc.FINAL_ESCAPE_PER_MASTER,
         "finalEscapeAllMasters": gc.FINAL_ESCAPE_ALL_MASTERS,
         "pbpMultiplier": gc.PBP_MULTIPLIER,
+        "mysterySplit": gc.MYSTERY_SPLIT,
+        "hiddenFs": gc.HIDDEN_FS,
+        "hiddenStartLevel": gc.HIDDEN_START_LEVEL,
+        "hiddenFloor": gc.HIDDEN_FLOOR,
     },
 }
 out = os.path.join(ROOT, "frontend", "getaway_gang", "src", "game", "config.ts")

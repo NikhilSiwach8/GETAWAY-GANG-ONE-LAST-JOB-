@@ -22,7 +22,7 @@
 	const frame = $derived(frameRect(layout));
 	const W = 230;
 	const H = (W * GG_LAYOUT['UI-FS-COUNTER'].height) / GG_LAYOUT['UI-FS-COUNTER'].width;
-	const bonusName = $derived(context.stateGame.hud.bonus === 'escape' ? 'THE PERFECT ESCAPE' : 'THE HEIST');
+	const bonusName = $derived({ escape: 'THE PERFECT ESCAPE', hidden: 'HIDDEN BONUS', heist: 'THE HEIST' }[context.stateGame.hud.bonus ?? 'heist']);
 	const portrait = $derived(context.stateLayoutDerived.layoutType() === 'portrait');
 	const pr = $derived(portraitRows(layout, frame, context.stateGame.hud.bonus));
 	const font = (size: number, fill: number) => ({ fontFamily: 'proxima-nova, Arial, sans-serif', fontWeight: '900' as const, fontSize: size, fill });

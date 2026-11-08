@@ -6,25 +6,34 @@
 	 */
 	import { Popup } from 'components-shared';
 	import { zIndex } from 'constants-shared/zIndex';
-	import { stateBet, stateModal } from 'state-shared';
+	import { stateBet, stateConfig, stateModal } from 'state-shared';
 	import { numberToCurrencyString } from 'utils-shared/amount';
 	import { getContext } from '../game/context';
-	import { ggUrl } from '../game/ggAssets';
+	import { ggUrl, GG_HTML } from '../game/ggAssets';
 	import { BUY_MODES, costOf } from '../game/meta';
 	import config from '../game/config';
 
 	const context = getContext();
-	const CARD = { HEIST: 'BUY-HEIST-CARD', ESCAPE: 'BUY-ESCAPE-CARD' } as const;
+	// MYSTERY uses its own card once BUY-MYSTERY-CARD is delivered; until then the Escape card, darkened, with a '?'
+	const ownMystery = !!GG_HTML['BUY-MYSTERY-CARD'];
+	const CARD = { HEIST: 'BUY-HEIST-CARD', ESCAPE: 'BUY-ESCAPE-CARD', MYSTERY: ownMystery ? 'BUY-MYSTERY-CARD' : 'BUY-ESCAPE-CARD' } as const;
 	let selected = $state<(typeof BUY_MODES)[number] | null>(null);
 	const price = (mode: string) => stateBet.betAmount * costOf(mode);
-	const affordable = (mode: string) => stateBet.betAmount > 0 && stateBet.balanceAmount >= price(mode);
+	// RGS bet limit per mode (per-mode maxBet if sent, else the global maxBet spread over the price)
+	const maxBetFor = (key: string, mode: string) => {
+		const c = stateConfig as unknown as { modeLimits?: Record<string, number>; maxBetAmount?: number };
+		return c.modeLimits?.[key] ?? (c.maxBetAmount ? c.maxBetAmount / costOf(mode) : Infinity);
+	};
+	const overLimit = (key: string, mode: string) => stateBet.betAmount > maxBetFor(key, mode) + 1e-9;
+	const affordable = (mode: string, key?: string) =>
+		stateBet.betAmount > 0 && stateBet.balanceAmount >= price(mode) && !(key && overLimit(key, mode));
 
 	const close = () => {
 		selected = null;
 		stateModal.modal = null;
 	};
 	const confirm = () => {
-		if (!selected || !affordable(selected.mode)) return;
+		if (!selected || !affordable(selected.mode, selected.key)) return;
 		stateBet.activeBetModeKey = selected.key; // reset to BASE by the bet machine after the round
 		context.eventEmitter.broadcast({ type: 'soundPressGeneral' });
 		close();
@@ -42,7 +51,7 @@
 					<div class="cards">
 						{#each BUY_MODES as b (b.key)}
 							<div class="card">
-								<div class="art" style="background-image:url({ggUrl(CARD[b.key])})">
+								<div class="art" class:mystery={b.key === 'MYSTERY' && !ownMystery} style="background-image:url({ggUrl(CARD[b.key])})">
 									<span class="cardtitle">{b.title}</span>
 									<span class="cardcost">{costOf(b.mode)}× BET</span>
 								</div>
@@ -56,7 +65,7 @@
 									</ul>
 									<button
 										class="buy"
-										disabled={!affordable(b.mode)}
+										disabled={!affordable(b.mode, b.key)}
 										onclick={() => {
 											selected = b;
 											context.eventEmitter.broadcast({ type: 'soundPressGeneral' });
@@ -64,6 +73,9 @@
 									>
 										BUY {numberToCurrencyString(price(b.mode))}
 									</button>
+									{#if overLimit(b.key, b.mode)}
+										<div class="limit">Max bet for this buy: {numberToCurrencyString(maxBetFor(b.key, b.mode))}</div>
+									{/if}
 								</div>
 							</div>
 						{/each}
@@ -71,7 +83,7 @@
 					<p class="small">RTP {(config.rtp * 100).toFixed(2)}% for every bonus buy · Max win {config.wincap.toLocaleString()}× bet</p>
 				{:else}
 					<div class="confirm">
-						<div class="art big" style="background-image:url({ggUrl(CARD[selected.key])})"></div>
+						<div class="art big" class:mystery={selected.key === 'MYSTERY' && !ownMystery} style="background-image:url({ggUrl(CARD[selected.key])})"></div>
 						<p>
 							Buy <b>{selected.title}</b> for <b>{numberToCurrencyString(price(selected.mode))}</b>
 							({costOf(selected.mode)}× your bet of {numberToCurrencyString(stateBet.betAmount)})?
@@ -79,7 +91,7 @@
 						<p class="small">The bonus starts immediately on a trigger board. Wins are paid in multiples of your bet.</p>
 						<div class="row">
 							<button class="ghost" onclick={() => (selected = null)}>BACK</button>
-							<button class="buy" data-test="confirm-button" disabled={!affordable(selected.mode)} onclick={confirm}>CONFIRM</button>
+							<button class="buy" data-test="confirm-button" disabled={!affordable(selected.mode, selected.key)} onclick={confirm}>CONFIRM</button>
 						</div>
 					</div>
 				{/if}
@@ -131,7 +143,7 @@
 	}
 	.cards {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: repeat(3, 1fr);
 		gap: clamp(8px, 2cqw, 22px);
 	}
 	.card {
@@ -170,6 +182,23 @@
 		font-size: clamp(12px, 2cqw, 24px);
 		color: #fff;
 		text-shadow: 0 2px 0 #0b1230, 0 4px 10px rgba(0, 0, 0, 0.8);
+	}
+	/* placeholder Mystery card: darkened art with a big gold question mark */
+	.art.mystery {
+		box-shadow: inset 0 0 0 2000px rgba(8, 10, 24, 0.62);
+	}
+	.art.mystery::after {
+		content: '?';
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-family: 'Luckiest Guy', 'proxima-nova', sans-serif;
+		font-size: clamp(40px, 9cqw, 110px);
+		color: #ffe27a;
+		-webkit-text-stroke: 3px #2a1200;
+		text-shadow: 0 6px 0 #b5470f;
 	}
 	.art.big {
 		width: min(100%, 520px);
@@ -240,6 +269,11 @@
 		gap: 1rem;
 		justify-content: center;
 		margin-top: 0.4rem;
+	}
+	.limit {
+		font-size: clamp(10px, 1.2cqw, 13px);
+		font-weight: 800;
+		color: #ffb4a8;
 	}
 	.small {
 		font-size: clamp(10px, 1.2cqw, 13px);

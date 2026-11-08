@@ -109,7 +109,19 @@ FINAL_ESCAPE_ALL_MASTERS = 300  # x bet paid instead if all four are level 3
 
 # BONUS BUY prices, in multiples of the base bet (the books pay in base-bet multiples).
 # Each is the bonus' mean value / 0.96; game_lut.py trims the table to exactly 96.00% RTP.
-BUY_COST = {"heist": 43, "escape": 450}
+BUY_COST = {"heist": 43, "escape": 450, "mystery": 420}
+
+# --------------------------------------------------------------------------------------
+# MYSTERY VAULT (bonus buy only): a vault reveal decides the round
+#   20% HIDDEN BONUS  (5 Scatters) -- Perfect Escape upgraded: 15 FS, every crew member starts at Level 2,
+#                                   and a guaranteed minimum round win of HIDDEN_FLOOR x bet (> the price)
+#   30% THE PERFECT ESCAPE (4 Scatters) -- the normal Escape
+#   50% no bonus -- a normal base-game spin
+# --------------------------------------------------------------------------------------
+MYSTERY_SPLIT = {"hidden": 0.20, "escape": 0.30, "basegame": 0.50}
+HIDDEN_FS = 15
+HIDDEN_START_LEVEL = 2
+HIDDEN_FLOOR = 500  # x bet: always more than the 420x price (solved from the simulated Hidden distribution)
 
 MAX_TOTAL_MULTIPLIER = 45  # PBP(3) x meter(5) x loot(3); asserted, never exceeded
 
@@ -273,6 +285,46 @@ class GameConfig(Config):
                 is_feature=False,
                 is_buybonus=True,
                 distributions=[heist_dist(1.0)],
+            ),
+            BetMode(
+                name="mystery",
+                cost=BUY_COST["mystery"],
+                rtp=self.rtp,
+                max_win=self.wincap,
+                auto_close_disabled=False,
+                is_feature=False,
+                is_buybonus=True,
+                distributions=[
+                    Distribution(
+                        criteria="hidden",
+                        quota=MYSTERY_SPLIT["hidden"],
+                        conditions={
+                            "reel_weights": {self.basegame_type: {"BR0": 1}, self.freegame_type: {"FRE": 1}},
+                            "force_wincap": False,
+                            "force_freegame": True,
+                            "scatter_triggers": {5: 1},
+                        },
+                    ),
+                    Distribution(
+                        criteria="escape",
+                        quota=MYSTERY_SPLIT["escape"],
+                        conditions={
+                            "reel_weights": {self.basegame_type: {"BR0": 1}, self.freegame_type: {"FRE": 1}},
+                            "force_wincap": False,
+                            "force_freegame": True,
+                            "scatter_triggers": {4: 1},
+                        },
+                    ),
+                    Distribution(
+                        criteria="basegame",
+                        quota=MYSTERY_SPLIT["basegame"],
+                        conditions={
+                            "reel_weights": {self.basegame_type: {"BR0": 1}},
+                            "force_wincap": False,
+                            "force_freegame": False,
+                        },
+                    ),
+                ],
             ),
             BetMode(
                 name="escape",

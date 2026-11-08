@@ -179,3 +179,85 @@ def write_buy_lut(config, mode):
     print(f"[LUT] {mode}: {info['cost']}x, natural RTP {info['natural_rtp_of_book_sample']*100:.4f}% -> table RTP "
           f"{info['table_rtp']*100:.4f}% (below-price trim x{info['below_price_trim_factor']:.5f})")
     return info
+
+
+# --------------------------------------------------------------------------------------------- mystery vault
+def build_mystery_weights(config, mode="mystery"):
+    """Three strata with exact, advertised probabilities (MYSTERY_SPLIT: 20% hidden / 30% escape / 50% base).
+    Within a stratum every book has equal natural weight. To reach exactly TARGET_RTP at a whole-number price,
+    weight is moved *inside the escape stratum only* between books paying below and above the price, keeping
+    the stratum's total (its 30%) unchanged."""
+    from game_config import MYSTERY_SPLIT, HIDDEN_FLOOR
+
+    rows = read_rows(config, mode)
+    cost = Fraction(next(b for b in config.bet_modes if b.get_name() == mode).get_cost()).limit_denominator(1000)
+    by = {}
+    for i, r in rows.items():
+        by.setdefault(r["criteria"], []).append(i)
+    assert set(by) == set(MYSTERY_SPLIT), f"unexpected strata {set(by)}"
+    probs = {c: Fraction(MYSTERY_SPLIT[c]).limit_denominator(1000) for c in by}
+    mean = {c: Fraction(sum(rows[i]["payout"] for i in ids), 100 * len(ids)) for c, ids in by.items()}
+    natural_rtp = sum(probs[c] * mean[c] for c in by) / cost
+    # escape stratum split at the price
+    esc = by["escape"]
+    lo = [i for i in esc if rows[i]["payout"] < cost * 100]
+    hi = [i for i in esc if rows[i]["payout"] >= cost * 100]
+    n = len(esc)
+    s_lo = Fraction(sum(rows[i]["payout"] for i in lo), 100)
+    s_hi = Fraction(sum(rows[i]["payout"] for i in hi), 100)
+    other = sum(probs[c] * mean[c] for c in by if c != "escape")
+    target_escape_mean = (TARGET_RTP * cost - other) / probs["escape"]
+    # per-book factors f (below price) and g (above): f*len(lo) + g*len(hi) = n and (f*s_lo + g*s_hi)/n = target
+    det = s_hi * len(lo) - s_lo * len(hi)
+    f = (s_hi * n - target_escape_mean * n * len(hi)) / det
+    g = (target_escape_mean * n * len(lo) - s_lo * n) / det
+    if f <= 0 or g <= 0 or abs(float(f) - 1) > 0.15 or abs(float(g) - 1) > 0.15:
+        raise RuntimeError(f"[mystery] escape re-weighting f={float(f):.4f} g={float(g):.4f} out of range; re-price "
+                           f"(natural RTP {float(natural_rtp):.5f} at {float(cost)}x)")
+    unit = {c: probs[c] / len(ids) * TOTAL_WEIGHT for c, ids in by.items()}
+    lo_set = set(lo)
+    weights = {}
+    for c, ids in by.items():
+        for i in ids:
+            w = unit[c]
+            if c == "escape":
+                w *= f if i in lo_set else g
+            weights[i] = int(w)
+    tw = sum(weights.values())
+    tp = sum(weights[i] * rows[i]["payout"] for i in weights)
+    lo_sorted = sorted(lo, key=lambda i: rows[i]["payout"])
+    k = 0
+    while Fraction(tp, 100 * tw) / cost > TARGET_RTP:  # integer flooring: nudge with the cheapest escape books
+        j = lo_sorted[k % len(lo_sorted)]
+        weights[j] += 1000
+        tw += 1000
+        tp += 1000 * rows[j]["payout"]
+        k += 1
+    hidden_min = min(rows[i]["payout"] for i in by["hidden"]) / 100
+    assert hidden_min > float(cost), f"Hidden Bonus minimum {hidden_min}x does not exceed the price {float(cost)}x"
+    split = {c: float(Fraction(sum(weights[i] for i in ids), tw)) for c, ids in by.items()}
+    return rows, weights, {
+        "cost": float(cost),
+        "books": {c: len(ids) for c, ids in by.items()},
+        "stratum_probabilities": split,
+        "mean_payout_x_bet": {c: float(m) for c, m in mean.items()},
+        "hidden_floor_x_bet": HIDDEN_FLOOR,
+        "hidden_min_payout_x_bet": hidden_min,
+        "natural_rtp_of_book_sample": float(natural_rtp),
+        "table_rtp": float(Fraction(tp, 100 * tw) / cost),
+        "escape_reweight_below_above_price": [float(f), float(g)],
+        "max_win_books": sum(r["payout"] >= config.wincap * 100 for r in rows.values()),
+    }
+
+
+def write_mystery_lut(config, mode="mystery"):
+    rows, weights, info = build_mystery_weights(config, mode)
+    out = os.path.join(config.publish_path, f"lookUpTable_{mode}_0.csv")
+    with open(out, "w", encoding="UTF-8", newline="") as fh:
+        for i in sorted(weights):
+            fh.write(f"{i},{weights[i]},{rows[i]['payout']}\n")
+    with open(os.path.join(config.library_path, f"lut_weighting_{mode}.json"), "w", encoding="UTF-8") as fh:
+        json.dump(info, fh, indent=1)
+    print(f"[LUT] {mode}: {info['cost']}x, split {info['stratum_probabilities']}, table RTP {info['table_rtp']*100:.4f}%, "
+          f"Hidden min {info['hidden_min_payout_x_bet']}x (floor {info['hidden_floor_x_bet']}x)")
+    return info

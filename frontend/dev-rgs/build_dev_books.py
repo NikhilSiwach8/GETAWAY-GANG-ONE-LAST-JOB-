@@ -82,7 +82,7 @@ def main():
     ap.add_argument("--buy", type=int, default=3000, help="books sampled per bonus-buy mode")
     ap.add_argument("--buy-only", action="store_true", help="only (re)build the bonus-buy mode sets")
     args = ap.parse_args()
-    for mode in ("heist", "escape"):
+    for mode in ("heist", "escape", "mystery"):
         build_buy_mode(mode, args.buy, args.seed)
     if args.buy_only:
         return

@@ -243,4 +243,22 @@ Exact statistics of the published buy tables (`lookUpTable_heist_0.csv`, `lookUp
 | 5,000 – 1.2e+04 | 0.926% |
 | exactly 12,000 | 0.248% |
 
+### MYSTERY VAULT — `mystery`, price 420× bet
+
+A vault reveal decides the bought round with fixed, advertised odds:
+
+| Outcome | Probability | Mean payout (× bet) | Books |
+|---|---:|---:|---:|
+| HIDDEN BONUS (5 Scatters, 15 FS, crew start Level 2, guaranteed ≥ 500×) | 20.00% | 1,373.01 | 40,000 |
+| THE PERFECT ESCAPE (4 Scatters) | 30.00% | 426.54 | 60,000 |
+| No bonus (base-game spin) | 50.00% | 0.41 | 100,000 |
+
+| Metric | Value |
+|---|---|
+| **RTP** | **96.0000%** |
+| Smallest Hidden Bonus payout | 500× bet (price 420×: always a profit) |
+| P(max win 12,000×) | 1 in 389 (514 books) |
+| Natural RTP of the book sample (before trim) | 95.8976% |
+| Escape re-weighting below / above the price (stratum total unchanged) | ×0.99879 / ×1.00445 |
+
 <!-- BUY-REPORT:END -->

@@ -11,7 +11,7 @@
 | Max win | **12,000× total bet**, hard cap per round |
 | Signature mechanic | CREW CHAOS |
 | Bonuses | THE HEIST (3 Scatters), THE PERFECT ESCAPE (4+ Scatters) |
-| Bonus buy | THE HEIST 43×, THE PERFECT ESCAPE 450× (both 96.00% RTP) |
+| Bonus buy | THE HEIST 43×, THE PERFECT ESCAPE 450×, MYSTERY VAULT 420× (20% Hidden Bonus, guaranteed ≥ 500×) — all 96.00% RTP |
 | Platform | Stake Engine (Python Math SDK, Svelte/PixiJS web-sdk) |
 
 Every rule in this document is implemented in `math/games/getaway_gang/`. Every number comes from
@@ -245,6 +245,23 @@ plays out, then the bonus. Prices are the bonus' simulated mean value / 0.96, ro
 multiple. `game_lut.py` then moves each table to exactly 96.0000% with one factor on the books that pay
 less than the price (Heist ×0.975, Escape ×0.988), the same kind of single, bounded trim used for the
 base table. All three modes therefore have identical RTP, inside Stake's ±0.5% rule.
+
+### Mystery Vault (bonus buy) and the Hidden Bonus
+
+A third buy option, **MYSTERY VAULT** (`mystery`, **420×** bet). A vault reveal decides the round with fixed,
+advertised odds, each a separate stratum of the published table so the probabilities are exact:
+
+| Chance | Outcome |
+|---|---|
+| **20%** | **HIDDEN BONUS** (5 Scatters): The Perfect Escape upgraded to **15** free spins, every crew member starting at **Level 2**, and a **guaranteed minimum round win of 500×** bet |
+| **30%** | **THE PERFECT ESCAPE** (4 Scatters), unchanged |
+| **50%** | Empty vault: one normal base-game spin |
+
+*Guaranteed profit:* the Hidden Bonus pays at least **500×** on a **420×** price. If the bonus itself wins
+less, the **Vault Guarantee** (`vaultGuarantee` event) tops the round up to 500× when the bonus ends. The
+floor was solved from the simulated Hidden distribution so that the mode still returns exactly 96.00%:
+about 39% of Hidden Bonus rounds are topped up, and the mean Hidden payout is about 1,373× bet.
+The Hidden Bonus exists only in this mode; a natural 5-Scatter trigger in the base game remains The Perfect Escape.
 
 ## 10. Maximum win
 

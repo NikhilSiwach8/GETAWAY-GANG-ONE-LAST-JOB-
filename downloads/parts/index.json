@@ -13,6 +13,12 @@
             "weights": "lookUpTable_heist_0.csv"
         },
         {
+            "name": "mystery",
+            "cost": 420.0,
+            "events": "books_mystery.jsonl.zst",
+            "weights": "lookUpTable_mystery_0.csv"
+        },
+        {
             "name": "escape",
             "cost": 450.0,
             "events": "books_escape.jsonl.zst",

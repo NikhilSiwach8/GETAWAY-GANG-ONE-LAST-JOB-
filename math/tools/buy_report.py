@@ -57,6 +57,31 @@ for mode in ("heist", "escape"):
             label = f"{lo:,.4g} – {hi:,.4g}"
         lines.append(f"| {label} | {p * 100:.3f}% |")
     lines.append("")
+# ---- Mystery Vault
+mi = json.load(open(os.path.join(LIB, "lut_weighting_mystery.json")))
+mrows = [(int(w), int(p)) for _, w, p in csv.reader(open(os.path.join(LIB, "publish_files", "lookUpTable_mystery_0.csv")))]
+mW = sum(w for w, _ in mrows)
+mcap = sum(w for w, p in mrows if p >= 1200000) / mW
+lines += [
+    f"### MYSTERY VAULT — `mystery`, price {mi['cost']:g}× bet",
+    "",
+    "A vault reveal decides the bought round with fixed, advertised odds:",
+    "",
+    "| Outcome | Probability | Mean payout (× bet) | Books |",
+    "|---|---:|---:|---:|",
+    f"| HIDDEN BONUS (5 Scatters, 15 FS, crew start Level 2, guaranteed ≥ {mi['hidden_floor_x_bet']}×) | {mi['stratum_probabilities']['hidden']*100:.2f}% | {mi['mean_payout_x_bet']['hidden']:,.2f} | {mi['books']['hidden']:,} |",
+    f"| THE PERFECT ESCAPE (4 Scatters) | {mi['stratum_probabilities']['escape']*100:.2f}% | {mi['mean_payout_x_bet']['escape']:,.2f} | {mi['books']['escape']:,} |",
+    f"| No bonus (base-game spin) | {mi['stratum_probabilities']['basegame']*100:.2f}% | {mi['mean_payout_x_bet']['basegame']:,.2f} | {mi['books']['basegame']:,} |",
+    "",
+    "| Metric | Value |",
+    "|---|---|",
+    f"| **RTP** | **{mi['table_rtp']*100:.4f}%** |",
+    f"| Smallest Hidden Bonus payout | {mi['hidden_min_payout_x_bet']:g}× bet (price {mi['cost']:g}×: always a profit) |",
+    f"| P(max win 12,000×) | 1 in {1 / mcap:,.0f} ({mi['max_win_books']} books) |",
+    f"| Natural RTP of the book sample (before trim) | {mi['natural_rtp_of_book_sample']*100:.4f}% |",
+    f"| Escape re-weighting below / above the price (stratum total unchanged) | ×{mi['escape_reweight_below_above_price'][0]:.5f} / ×{mi['escape_reweight_below_above_price'][1]:.5f} |",
+    "",
+]
 lines.append(END)
 text = open(REPORT, encoding="UTF-8").read()
 block = "\n".join(lines)

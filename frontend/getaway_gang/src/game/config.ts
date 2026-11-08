@@ -29,6 +29,13 @@ export default {
 			"rtp": 0.96,
 			"max_win": 12000
 		},
+		"mystery": {
+			"cost": 420,
+			"feature": false,
+			"buyBonus": true,
+			"rtp": 0.96,
+			"max_win": 12000
+		},
 		"escape": {
 			"cost": 450,
 			"feature": false,
@@ -233,6 +240,14 @@ export default {
 		"retriggerFs": 5,
 		"finalEscapePerMaster": 30,
 		"finalEscapeAllMasters": 300,
-		"pbpMultiplier": 3
+		"pbpMultiplier": 3,
+		"mysterySplit": {
+			"hidden": 0.2,
+			"escape": 0.3,
+			"basegame": 0.5
+		},
+		"hiddenFs": 15,
+		"hiddenStartLevel": 2,
+		"hiddenFloor": 500
 	}
 } as const;

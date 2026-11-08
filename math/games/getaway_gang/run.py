@@ -9,7 +9,7 @@ import sys
 
 from gamestate import GameState
 from game_config import GameConfig
-from game_lut import write_published_lut, write_buy_lut
+from game_lut import write_published_lut, write_buy_lut, write_mystery_lut
 from src.state.run_sims import create_books
 from src.write_data.write_configs import generate_configs
 from utils.rgs_verification import execute_all_tests
@@ -25,6 +25,7 @@ if __name__ == "__main__":
         "base": int(os.environ.get("GG_SIMS", 500_000)),
         "heist": int(os.environ.get("GG_SIMS_HEIST", 300_000)),
         "escape": int(os.environ.get("GG_SIMS_ESCAPE", 150_000)),
+        "mystery": int(os.environ.get("GG_SIMS_MYSTERY", 200_000)),
     }
     # GG_MODES=heist,escape regenerates only those modes (the other modes' published files are kept)
     only = [m for m in os.environ.get("GG_MODES", "").split(",") if m]
@@ -42,6 +43,9 @@ if __name__ == "__main__":
     for mode in num_sim_args:
         if mode == "base":
             write_published_lut(config, "base")
+        elif mode == "mystery":
+            if not os.environ.get("GG_NO_LUT"):
+                write_mystery_lut(config, mode)
         else:
             write_buy_lut(config, mode)
     generate_configs(gamestate)  # re-hash the published LUT into index/config files

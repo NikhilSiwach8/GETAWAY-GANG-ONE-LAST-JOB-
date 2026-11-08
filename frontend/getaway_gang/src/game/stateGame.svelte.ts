@@ -73,7 +73,9 @@ export type MultiplierSymbol = {
 };
 
 const freshHud = () => ({
-	bonus: null as null | 'heist' | 'escape',
+	bonus: null as null | 'heist' | 'escape' | 'hidden',
+	/** Mystery Vault outcome of the current bought round (null otherwise). */
+	mystery: null as null | 'hidden' | 'escape' | 'none',
 	meterPoints: 0,
 	meterStage: 0,
 	lootPoints: 0,

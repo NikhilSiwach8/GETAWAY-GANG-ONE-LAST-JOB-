@@ -32,16 +32,16 @@
 	let winLevelData = $state<WinLevelData>();
 	let oncomplete = $state(() => {});
 	let onCountUpComplete = $state(() => {});
-	let bonus = $state<'heist' | 'escape'>('heist');
+	let bonus = $state<'heist' | 'escape' | 'hidden'>('heist');
 
 	// panel centre and width inside the 1920×1080 clips (see video/src/clips/Round2.tsx)
-	const PANEL = { heist: { y: 600, w: 760 }, escape: { y: 470, w: 600 } } as const;
+	const PANEL = { heist: { y: 600, w: 760 }, escape: { y: 470, w: 600 }, hidden: { y: 560, w: 700 } } as const;
 	const sizes = $derived(context.stateLayoutDerived.canvasSizes());
 	const cover = $derived.by(() => {
 		const s = Math.max(sizes.width / 1920, sizes.height / 1080);
 		return { s, width: 1920 * s, height: 1080 * s, x: sizes.width / 2, y: sizes.height / 2 };
 	});
-	const clipId = $derived(bonus === 'escape' ? 'SCR-ESCAPE-OUTRO' : 'SCR-HEIST-OUTRO');
+	const clipId = $derived({ escape: 'SCR-ESCAPE-OUTRO', heist: 'SCR-HEIST-OUTRO', hidden: 'SCR-HIDDEN-OUTRO' }[bonus]);
 	let clipFailed = $state(false);
 	let clipShown = $state(false);
 	const useClip = $derived(hasClip(clipId) && !clipFailed);
@@ -54,7 +54,7 @@
 
 	context.eventEmitter.subscribeOnMount({
 		freeSpinOutroShow: () => {
-			bonus = context.stateGame.hud.bonus === 'escape' ? 'escape' : 'heist';
+			bonus = context.stateGame.hud.bonus ?? 'heist';
 			clipShown = false;
 			clipFailed = false;
 			show = true;
@@ -80,7 +80,7 @@
 
 				<Rectangle {...sizes} backgroundColor={0x05070f} />
 				{#snippet still()}
-					<Sprite key={bonus === 'escape' ? 'BG-ESCAPE' : 'BG-HEIST'} anchor={0.5} x={cover.x} y={cover.y} width={cover.width} height={cover.height} alpha={0.55} />
+					<Sprite key={bonus === 'heist' ? 'BG-HEIST' : 'BG-ESCAPE'} anchor={0.5} x={cover.x} y={cover.y} width={cover.width} height={cover.height} alpha={0.55} />
 				{/snippet}
 				{#if useClip}
 					<ClipSprite
@@ -98,12 +98,12 @@
 						onended={(ok) => !ok && !clipShown && (clipFailed = true)}
 					/>
 				{:else}
-					<Sprite key={bonus === 'escape' ? 'BG-ESCAPE' : 'BG-HEIST'} anchor={0.5} x={cover.x} y={cover.y} width={cover.width} height={cover.height} alpha={0.55} />
+					<Sprite key={bonus === 'heist' ? 'BG-HEIST' : 'BG-ESCAPE'} anchor={0.5} x={cover.x} y={cover.y} width={cover.width} height={cover.height} alpha={0.55} />
 					<Text
 						anchor={0.5}
 						x={cover.x}
 						y={panelY - panelW * 0.45}
-						text={bonus === 'escape' ? 'PERFECT ESCAPE!' : 'HEIST COMPLETE!'}
+						text={{ escape: 'PERFECT ESCAPE!', heist: 'HEIST COMPLETE!', hidden: 'HIDDEN BONUS!' }[bonus]}
 						style={{ fontFamily: 'Luckiest Guy, proxima-nova, sans-serif', fontSize: panelW * 0.13, fill: 0xffe27a, stroke: { color: 0x2a1200, width: 10 } }}
 					/>
 					<Text anchor={0.5} x={cover.x} y={panelY - panelW * 0.2} text="TOTAL WIN" style={{ fontFamily: 'Luckiest Guy, proxima-nova, sans-serif', fontSize: panelW * 0.06, fill: 0xffffff }} />

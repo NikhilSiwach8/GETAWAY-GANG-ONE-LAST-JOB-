@@ -1,0 +1,27 @@
+{
+ "cost": 420.0,
+ "books": {
+  "basegame": 100000,
+  "escape": 60000,
+  "hidden": 40000
+ },
+ "stratum_probabilities": {
+  "basegame": 0.5000000000217785,
+  "escape": 0.2999999999695101,
+  "hidden": 0.2000000000087114
+ },
+ "mean_payout_x_bet": {
+  "basegame": 0.412036,
+  "escape": 426.53876333333335,
+  "hidden": 1373.01222
+ },
+ "hidden_floor_x_bet": 500,
+ "hidden_min_payout_x_bet": 500.0,
+ "natural_rtp_of_book_sample": 0.9589764071428571,
+ "table_rtp": 0.9599999999875223,
+ "escape_reweight_below_above_price": [
+  0.9987871183332728,
+  1.0044508197889215
+ ],
+ "max_win_books": 514
+}
