@@ -43,6 +43,18 @@ const download = (id: string): Promise<string | null> => {
 	}
 	return downloads.get(id)!;
 };
+/**
+ * Make sure a clip is in memory before a screen that relies on it opens (bonus intro/outro), so the
+ * animation plays instead of a still. Resolves true when downloaded, false after `timeoutMs`.
+ */
+export const ensureClip = (id: string, timeoutMs = 4000): Promise<boolean> => {
+	if (!hasClip(id)) return Promise.resolve(false);
+	if (blobs.has(id)) return Promise.resolve(true);
+	return Promise.race([
+		download(id).then((u) => !!u),
+		new Promise<boolean>((r) => setTimeout(() => r(false), timeoutMs)),
+	]);
+};
 /** True once the clip is in memory, i.e. it can start without waiting for the network. */
 export const isDownloaded = (id: string) => blobs.has(id);
 
@@ -244,6 +256,8 @@ export const prefetchClips = () => {
 	const first = [
 		'FX-TRANSITION',
 		'BG-MAIN-LOOP',
+		'BG-HEIST-LOOP',
+		'BG-HIDDEN-LOOP',
 		'FX-ANTICIPATION',
 		...symbols.map((s) => `SYM-${s}-ANIM-WIN`),
 		...['WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'].map((s) => `SYM-${s}-ANIM-LAND`),

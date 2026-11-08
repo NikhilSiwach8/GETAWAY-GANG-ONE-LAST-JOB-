@@ -8,8 +8,8 @@
 <script lang="ts">
 	/**
 	 * Bonus intro: the animated SCR-HEIST-INTRO / SCR-ESCAPE-INTRO clip plays once, then its seamless
-	 * *-INTRO-LOOP runs until the player presses. The still art is drawn underneath until the video has a
-	 * frame, and is the whole screen on browsers without clip support.
+	 * *-INTRO-LOOP runs until the player presses. The still art is only used on browsers without clip
+	 * support or if the clip fails to play; the clip is downloaded before this screen opens.
 	 */
 	import ClipSprite from './ClipSprite.svelte';
 	import { hasClip } from '../game/clips.svelte';
@@ -41,7 +41,11 @@
 	const key = $derived(hidden && ownHidden ? 'SCR-HIDDEN-INTRO' : totalFs >= 12 ? 'SCR-ESCAPE-INTRO' : 'SCR-HEIST-INTRO');
 	const f = config.features;
 	let phase = $state<'intro' | 'loop'>('intro');
-	const clipId = $derived(phase === 'intro' ? key : `${key}-LOOP`);
+	// the still is only a fallback: shown when clips are unsupported or the clip could not play
+	let clipFailed = $state(false);
+	let clipShown = $state(false);
+	let loopShown = $state(false);
+	const useClip = $derived(hasClip(key) && !clipFailed);
 	const centre = $derived({ x: cover.x + cover.width / 2, y: cover.y + cover.height / 2 });
 	// clips are 16:9 like the still: fit them to the same cover rectangle
 	const clipSize = $derived({ width: cover.width, height: cover.height });
@@ -49,6 +53,9 @@
 	context.eventEmitter.subscribeOnMount({
 		freeSpinIntroShow: () => {
 			phase = 'intro';
+			clipFailed = false;
+			clipShown = false;
+			loopShown = false;
 			show = true;
 		},
 		freeSpinIntroHide: () => (show = false),
@@ -63,23 +70,43 @@
 
 <FadeContainer {show} zIndex={30}>
 	<Rectangle {...sizes} backgroundColor={0x000000} />
-	<Sprite {key} {...cover} />
-	{#if show && hasClip(key)}
-		{#key clipId}
+	<!-- still = the clip's first frame: placeholder until the video has a frame, or the whole screen without clips -->
+	{#if !useClip || !clipShown}
+		<Sprite {key} {...cover} />
+	{/if}
+	{#if show && useClip}
+		<!-- the intro holds its last frame underneath until the loop has its first one (no black gap) -->
+		{#if phase === 'intro' || !loopShown}
 			<ClipSprite
-				id={clipId}
-				channel={phase === 'intro' ? 'bonus-intro' : 'bonus-intro-loop'}
-				loop={phase === 'loop'}
+				id={key}
+				channel="bonus-intro"
 				anchor={0.5}
 				x={centre.x}
 				y={centre.y}
 				{...clipSize}
 				fadeMs={0}
+				zIndex={1}
+				onready={() => (clipShown = true)}
 				onended={(ok) => {
-					if (ok && phase === 'intro' && hasClip(`${key}-LOOP`)) phase = 'loop';
+					if (!ok) clipFailed = true;
+					else if (hasClip(`${key}-LOOP`)) phase = 'loop';
 				}}
 			/>
-		{/key}
+		{/if}
+		{#if phase === 'loop'}
+			<ClipSprite
+				id={`${key}-LOOP`}
+				channel="bonus-intro-loop"
+				loop
+				anchor={0.5}
+				x={centre.x}
+				y={centre.y}
+				{...clipSize}
+				fadeMs={0}
+				zIndex={2}
+				onready={() => (loopShown = true)}
+			/>
+		{/if}
 	{/if}
 	{#if hidden && !ownHidden}
 		{@const px = cover.x + cover.width * 0.74}

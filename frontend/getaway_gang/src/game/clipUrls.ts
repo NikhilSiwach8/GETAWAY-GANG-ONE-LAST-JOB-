@@ -37,6 +37,8 @@ export const CLIP_URLS: Record<string, string> = {
 	'ANIM-TANK-VICTORY': new URL('../../assets/clips/ANIM-TANK-VICTORY.webm', import.meta.url).href,
 	'ANIM-TANK-WIN': new URL('../../assets/clips/ANIM-TANK-WIN.webm', import.meta.url).href,
 	'BG-ESCAPE-LOOP': new URL('../../assets/clips/BG-ESCAPE-LOOP.webm', import.meta.url).href,
+	'BG-HEIST-LOOP': new URL('../../assets/clips/BG-HEIST-LOOP.webm', import.meta.url).href,
+	'BG-HIDDEN-LOOP': new URL('../../assets/clips/BG-HIDDEN-LOOP.webm', import.meta.url).href,
 	'BG-MAIN-LOOP': new URL('../../assets/clips/BG-MAIN-LOOP.webm', import.meta.url).href,
 	'CIN-CLEAN-GETAWAY': new URL('../../assets/clips/CIN-CLEAN-GETAWAY.webm', import.meta.url).href,
 	'CIN-FINAL-ESCAPE': new URL('../../assets/clips/CIN-FINAL-ESCAPE.webm', import.meta.url).href,

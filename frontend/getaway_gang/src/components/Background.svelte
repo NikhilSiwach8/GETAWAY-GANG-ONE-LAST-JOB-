@@ -7,10 +7,10 @@
 	import ClipSprite from './ClipSprite.svelte';
 	import { hasClip } from '../game/clips.svelte';
 
-	// animated loops (BG-MAIN-LOOP, BG-ESCAPE-LOOP) play over the still art once loaded
+	// every scene has an animated loop (BG-MAIN/HEIST/ESCAPE/HIDDEN-LOOP) over its still art, which only shows while loading
 	// HIDDEN BONUS: its own BG-HIDDEN once delivered; until then the Escape scene with a gold grade
 	const ownHidden = hasArt('BG-HIDDEN');
-	const LOOPS = { basegame: 'BG-MAIN-LOOP', heist: '', escape: 'BG-ESCAPE-LOOP', hidden: ownHidden ? '' : 'BG-ESCAPE-LOOP' } as const;
+	const LOOPS = { basegame: 'BG-MAIN-LOOP', heist: 'BG-HEIST-LOOP', escape: 'BG-ESCAPE-LOOP', hidden: ownHidden ? 'BG-HIDDEN-LOOP' : 'BG-ESCAPE-LOOP' } as const;
 	const coverHD = $derived.by(() => {
 		const s = Math.max(sizes.width / 1920, sizes.height / 1080);
 		return { width: 1920 * s, height: 1080 * s, x: sizes.width / 2, y: sizes.height / 2 };

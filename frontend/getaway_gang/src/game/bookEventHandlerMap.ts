@@ -10,7 +10,7 @@ import { winLevelMap, type WinLevel, type WinLevelData } from './winLevelMap';
 import { stateGame, stateGameDerived, setCell, swapReels, resetHud } from './stateGame.svelte';
 import { CREW_INFO, COMBO_INFO, METER_STAGE_REWARDS, LOOT_REWARDS, LOOT_THRESHOLDS, PALETTE, type CrewKey } from './tempArt';
 import config from './config';
-import { playClip, playCellFx, mascotDo } from './clips.svelte';
+import { playClip, playCellFx, mascotDo, ensureClip } from './clips.svelte';
 import type { BookEvent, BookEventOfType, BookEventContext } from './typesBookEvent';
 import type { Position } from './types';
 
@@ -114,6 +114,9 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	freeSpinTrigger: async (bookEvent: BookEventOfType<'freeSpinTrigger'>) => {
 		lastFsTotal = bookEvent.totalFs;
 		mascotDo('BONUS-INTRO');
+		// the intro is an animated clip: fetch it (and its loop) now, so it is ready when the screen opens
+		const introId = stateGame.hud.mystery === 'hidden' ? 'SCR-HIDDEN-INTRO' : bookEvent.totalFs >= 12 ? 'SCR-ESCAPE-INTRO' : 'SCR-HEIST-INTRO';
+		const introReady = Promise.all([ensureClip(introId, 6000), ensureClip(`${introId}-LOOP`, 6000)]);
 		// animate scatters
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_scatter_win_v2' });
 		await animateSymbols({ positions: bookEvent.positions });
@@ -121,6 +124,7 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_superfreespin' });
 		await eventEmitter.broadcastAsync({ type: 'uiHide' });
 		await eventEmitter.broadcastAsync({ type: 'transition' });
+		await introReady;
 		eventEmitter.broadcast({ type: 'freeSpinIntroShow' });
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'jng_intro_fs' });
 		eventEmitter.broadcast({ type: 'soundMusic', name: 'bgm_freespin' });
@@ -151,8 +155,11 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	},
 	freeSpinEnd: async (bookEvent: BookEventOfType<'freeSpinEnd'>) => {
 		const winLevelData = winLevelMap[bookEvent.winLevel as WinLevel];
+		const outroId = { escape: 'SCR-ESCAPE-OUTRO', heist: 'SCR-HEIST-OUTRO', hidden: 'SCR-HIDDEN-OUTRO' }[stateGame.hud.bonus ?? 'heist'];
+		const outroReady = ensureClip(outroId, 6000);
 
 		await eventEmitter.broadcastAsync({ type: 'uiHide' });
+		await outroReady;
 		stateGame.gameType = 'basegame';
 		eventEmitter.broadcast({ type: 'boardFrameGlowHide' });
 		eventEmitter.broadcast({ type: 'freeSpinOutroShow' });
@@ -198,6 +205,7 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		// MYSTERY VAULT: the vault opens and reveals the outcome of the bought round (decided by the book)
 		stateGame.hud.mystery = bookEvent.result;
 		const clip = { hidden: 'FX-MYSTERY-HIDDEN', escape: 'FX-MYSTERY-ESCAPE', none: 'FX-MYSTERY-NONE' }[bookEvent.result];
+		await ensureClip(clip, 6000); // the reveal is the clip: wait for it rather than show the title card
 		if (await playClip(clip)) return;
 		await banner('MYSTERY VAULT', PALETTE.gold, 'Cracking the safe…', 'FX-MYSTERY', 1000);
 		if (bookEvent.result === 'hidden') {
@@ -210,6 +218,7 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	},
 	vaultGuarantee: async (bookEvent: BookEventOfType<'vaultGuarantee'>) => {
 		// Hidden Bonus floor: top-up so the round pays the guaranteed minimum
+		await ensureClip('FX-VAULT-GUARANTEE', 4000);
 		if (await playClip('FX-VAULT-GUARANTEE')) return;
 		await banner('VAULT GUARANTEE', PALETTE.gold, `+${bookEvent.award / 100}× bet · Hidden Bonus pays at least ${bookEvent.floor / 100}×`, 'FX-VAULT-GUARANTEE', 2000);
 	},

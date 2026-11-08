@@ -9,7 +9,7 @@ import {ABILITY_SECONDS, AbilityFx, CrewChaos} from './clips/Abilities';
 import {COMBO_SECONDS, CleanGetaway, Combo, PerfectlyBadPlan} from './clips/Combos';
 import {LootMilestone, MeterStage, Retrigger} from './clips/Feature';
 import {MaxWin, WinBig, WinEpic, WinMega, WinSuper} from './clips/Wins';
-import {BgEscapeLoop, BgMainLoop, FinalEscape} from './clips/Loops';
+import {BgEscapeLoop, BgHeistLoop, BgHiddenLoop, BgMainLoop, FinalEscape} from './clips/Loops';
 import {SymbolAnim, SymbolTransform} from './clips/Symbols';
 import {CharacterAnim, type CharacterAction} from './clips/Characters';
 import {SYMBOLS, type CrewKey} from './lib/assets';
@@ -71,6 +71,8 @@ export const RemotionRoot: React.FC = () => {
 			<Folder name="Backgrounds-and-screens">
 				<Composition id="BG-MAIN-LOOP" component={BgMainLoop} durationInFrames={360} {...HD} />
 				<Composition id="BG-ESCAPE-LOOP" component={BgEscapeLoop} durationInFrames={240} {...HD} />
+				<Composition id="BG-HEIST-LOOP" component={BgHeistLoop} durationInFrames={240} {...HD} />
+				<Composition id="BG-HIDDEN-LOOP" component={BgHiddenLoop} durationInFrames={240} {...HD} />
 				<Composition
 					id="CIN-FINAL-ESCAPE"
 					component={FinalEscape}
