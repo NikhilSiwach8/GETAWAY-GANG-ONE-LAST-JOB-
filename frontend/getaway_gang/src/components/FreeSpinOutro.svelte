@@ -24,6 +24,7 @@
 	import WinCoins from './WinCoins.svelte';
 	import ClipSprite from './ClipSprite.svelte';
 	import { hasClip } from '../game/clips.svelte';
+	import { hasArt } from '../game/ggAssets';
 
 	const context = getContext();
 
@@ -35,7 +36,7 @@
 	let bonus = $state<'heist' | 'escape' | 'hidden'>('heist');
 
 	// panel centre and width inside the 1920×1080 clips (see video/src/clips/Round2.tsx)
-	const PANEL = { heist: { y: 600, w: 760 }, escape: { y: 470, w: 600 }, hidden: { y: 560, w: 700 } } as const;
+	const PANEL = { heist: { y: 600, w: 760 }, escape: { y: 470, w: 600 }, hidden: { y: 726, w: 1137 } } as const;
 	const sizes = $derived(context.stateLayoutDerived.canvasSizes());
 	const cover = $derived.by(() => {
 		const s = Math.max(sizes.width / 1920, sizes.height / 1080);
@@ -97,6 +98,10 @@
 						onready={() => (clipShown = true)}
 						onended={(ok) => !ok && !clipShown && (clipFailed = true)}
 					/>
+				{:else if bonus === 'hidden' && hasArt('SCR-HIDDEN-OUTRO')}
+					<!-- the delivered Hidden Bonus end screen, with its own title and panel -->
+					<Sprite key="SCR-HIDDEN-OUTRO" anchor={0.5} x={cover.x} y={cover.y} width={cover.width} height={cover.height} />
+					<Text anchor={0.5} x={cover.x} y={cover.y + (612 - 540) * cover.s} text="TOTAL WIN" style={{ fontFamily: 'Luckiest Guy, proxima-nova, sans-serif', fontSize: 64 * cover.s, fill: 0xffe27a, stroke: { color: 0x2a1200, width: 8 } }} />
 				{:else}
 					<Sprite key={bonus === 'heist' ? 'BG-HEIST' : 'BG-ESCAPE'} anchor={0.5} x={cover.x} y={cover.y} width={cover.width} height={cover.height} alpha={0.55} />
 					<Text

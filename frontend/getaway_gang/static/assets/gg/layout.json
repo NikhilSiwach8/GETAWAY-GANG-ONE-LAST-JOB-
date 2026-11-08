@@ -181,6 +181,30 @@
   "width": 643,
   "height": 900
  },
+ "BUY-MYSTERY-CARD": {
+  "width": 1280,
+  "height": 720
+ },
+ "BG-HIDDEN": {
+  "width": 2560,
+  "height": 1440
+ },
+ "SCR-HIDDEN-INTRO": {
+  "width": 1920,
+  "height": 1080
+ },
+ "UI-MYSTERY-BADGE": {
+  "width": 900,
+  "height": 300
+ },
+ "SCR-HIDDEN-OUTRO": {
+  "width": 1920,
+  "height": 1080
+ },
+ "UI-VAULT-GUARANTEE": {
+  "width": 1000,
+  "height": 600
+ },
  "UI-BUY-BONUS-0": {
   "width": 520,
   "height": 214

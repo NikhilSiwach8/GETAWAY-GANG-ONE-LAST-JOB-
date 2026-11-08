@@ -21,11 +21,12 @@ type Spec = {
 	badge: Rect;
 	banner: Rect;
 	press: Rect;
+	stamp?: Rect; // optional fourth part (Hidden Bonus 'GUARANTEED 500x WIN')
 	sparkles: [number, number][]; // fractions
 	burst: 'coin' | 'confetti';
 };
 
-export const INTRO_SPECS: Record<'heist' | 'escape', Spec> = {
+export const INTRO_SPECS: Record<'heist' | 'escape' | 'hidden', Spec> = {
 	heist: {
 		image: 'SCR-HEIST-INTRO',
 		title: {x0: 0.235, y0: 0.465, x1: 0.725, y1: 0.66},
@@ -43,6 +44,16 @@ export const INTRO_SPECS: Record<'heist' | 'escape', Spec> = {
 		press: {x0: 0.29, y0: 0.925, x1: 0.66, y1: 0.985},
 		sparkles: [[0.56, 0.1], [0.9, 0.12], [0.97, 0.38], [0.52, 0.42], [0.04, 0.2], [0.33, 0.06], [0.75, 0.83], [0.15, 0.86]],
 		burst: 'confetti',
+	},
+	hidden: {
+		image: 'SCR-HIDDEN-INTRO',
+		title: {x0: 0.505, y0: 0.012, x1: 0.99, y1: 0.295},
+		badge: {x0: 0.572, y0: 0.305, x1: 0.955, y1: 0.445},
+		banner: {x0: 0.618, y0: 0.462, x1: 0.94, y1: 0.632},
+		stamp: {x0: 0.635, y0: 0.628, x1: 0.965, y1: 0.855},
+		press: {x0: 0.265, y0: 0.9, x1: 0.73, y1: 0.98},
+		sparkles: [[0.55, 0.06], [0.97, 0.1], [0.53, 0.33], [0.96, 0.5], [0.1, 0.12], [0.36, 0.05], [0.06, 0.86], [0.48, 0.62], [0.99, 0.86], [0.2, 0.45]],
+		burst: 'coin',
 	},
 };
 
@@ -116,7 +127,7 @@ const Twinkle: React.FC<{x: number; y: number; phase: number; period: number; si
 };
 
 // ------------------------------------------------------------------ intro (once)
-export const BonusIntro: React.FC<{bonus: 'heist' | 'escape'}> = ({bonus}) => {
+export const BonusIntro: React.FC<{bonus: 'heist' | 'escape' | 'hidden'}> = ({bonus}) => {
 	const frame = useCurrentFrame();
 	const {durationInFrames: D} = useVideoConfig();
 	const s = INTRO_SPECS[bonus];
@@ -143,6 +154,16 @@ export const BonusIntro: React.FC<{bonus: 'heist' | 'escape'}> = ({bonus}) => {
 				)}
 				{frame >= 23 && (
 					<Cut image={s.image} r={s.banner} scale={banner} opacity={bannerIn} glow={land(28)} />
+				)}
+				{s.stamp && frame >= 29 && (
+					<Cut
+						image={s.image}
+						r={s.stamp}
+						scale={interpolate(frame, [29, 34], [1.6, 1], {...clamp, easing: Easing.in(Easing.quad)})}
+						opacity={interpolate(frame, [29, 31], [0, 1], clamp)}
+						rotate={interpolate(frame, [29, 34], [-10, 0], clamp)}
+						glow={land(34)}
+					/>
 				)}
 			</AbsoluteFill>
 			<Flash at={0} length={10} />
@@ -232,7 +253,7 @@ const Glow: React.FC<{x: number; y: number; r: number; period: number; phase?: n
 	return <div style={{position: 'absolute', left: x * W - r, top: y * H - r, width: r * 2, height: r * 2, borderRadius: '50%', background: `radial-gradient(circle, rgba(${color},${0.75 * k}) 0%, rgba(${color},${0.25 * k}) 35%, rgba(${color},0) 70%)`, mixBlendMode: 'screen'}} />;
 };
 
-export const BonusIntroLoop: React.FC<{bonus: 'heist' | 'escape'}> = ({bonus}) => {
+export const BonusIntroLoop: React.FC<{bonus: 'heist' | 'escape' | 'hidden'}> = ({bonus}) => {
 	const frame = useCurrentFrame();
 	const {durationInFrames: P} = useVideoConfig();
 	const s = INTRO_SPECS[bonus];
@@ -262,10 +283,15 @@ export const BonusIntroLoop: React.FC<{bonus: 'heist' | 'escape'}> = ({bonus}) =
 				<Cut image={s.image} r={s.badge}>
 					<Shine p={badgeShine} strength={0.55} />
 				</Cut>
+				{s.stamp && (
+					<Cut image={s.image} r={s.stamp}>
+						<Shine p={interpolate(t, [0.55, 0.9], [0, 1], clamp)} strength={0.6} />
+					</Cut>
+				)}
 				<Cut image={s.image} r={s.press} glow={0.35 * (1 - pressK)} />
 			</AbsoluteFill>
 			{bonus === 'escape' && <Streaks period={P} />}
-			<Drift kind={bonus === 'heist' ? 'coin' : 'bill'} count={bonus === 'heist' ? 16 : 12} period={P} seed={`d-${bonus}`} />
+			<Drift kind={bonus === 'escape' ? 'bill' : 'coin'} count={bonus === 'escape' ? 12 : 16} period={P} seed={`d-${bonus}`} />
 			{s.sparkles.map(([x, y], i) => (
 				<Twinkle key={i} x={x} y={y} phase={Math.round((i * P) / s.sparkles.length)} period={P} size={50 + (i % 3) * 18} color={bonus === 'escape' && i % 2 ? '#bfefff' : '#fff6c2'} />
 			))}

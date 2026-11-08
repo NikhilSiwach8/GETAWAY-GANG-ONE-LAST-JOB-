@@ -43,6 +43,8 @@ PLAN = {
     "BG-HIDDEN": (2560, 1440),
     "SCR-HIDDEN-INTRO": (1920, 1080),
     "UI-MYSTERY-BADGE": (900, None),
+    "SCR-HIDDEN-OUTRO": (1920, 1080),
+    "UI-VAULT-GUARANTEE": (1000, None),
 }
 # assets only used by the HTML modals: written to GG_HTML (URLs) instead of the Pixi asset loader
 HTML_ONLY = {"BUY-HEIST-CARD", "BUY-ESCAPE-CARD", "UI-INFO-HEADER", "UI-BUY-PANEL", "RULE-CREW-CHAOS", "RULE-RESPIN",

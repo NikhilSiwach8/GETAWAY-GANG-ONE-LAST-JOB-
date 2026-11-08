@@ -2,6 +2,7 @@ import './lib/font';
 import React from 'react';
 import {Composition, Folder} from 'remotion';
 import {BonusIntro, BonusIntroLoop} from './clips/BonusIntro';
+import {HiddenOutro, MysteryReveal, VaultGuarantee} from './clips/Mystery';
 import {Anticipation, BillSprite, BuyBonusSheen, CoinSprite, EscapeOutro, GlintSprite, HeistOutro, Transition} from './clips/Round2';
 import {ABILITY_SECONDS, AbilityFx, CrewChaos} from './clips/Abilities';
 import {COMBO_SECONDS, CleanGetaway, Combo, PerfectlyBadPlan} from './clips/Combos';
@@ -84,6 +85,13 @@ export const RemotionRoot: React.FC = () => {
 				<Composition id="SCR-HEIST-INTRO-LOOP" component={BonusIntroLoop} durationInFrames={90} {...HD} defaultProps={{bonus: 'heist' as const}} />
 				<Composition id="SCR-ESCAPE-INTRO" component={BonusIntro} durationInFrames={48} {...HD} defaultProps={{bonus: 'escape' as const}} />
 				<Composition id="SCR-ESCAPE-INTRO-LOOP" component={BonusIntroLoop} durationInFrames={90} {...HD} defaultProps={{bonus: 'escape' as const}} />
+				<Composition id="SCR-HIDDEN-INTRO" component={BonusIntro} durationInFrames={48} {...HD} defaultProps={{bonus: 'hidden' as const}} />
+				<Composition id="SCR-HIDDEN-INTRO-LOOP" component={BonusIntroLoop} durationInFrames={90} {...HD} defaultProps={{bonus: 'hidden' as const}} />
+				<Composition id="SCR-HIDDEN-OUTRO" component={HiddenOutro} durationInFrames={150} {...HD} />
+				<Composition id="FX-MYSTERY-HIDDEN" component={MysteryReveal} durationInFrames={150} {...HD} defaultProps={{result: 'hidden' as const}} />
+				<Composition id="FX-MYSTERY-ESCAPE" component={MysteryReveal} durationInFrames={126} {...HD} defaultProps={{result: 'escape' as const}} />
+				<Composition id="FX-MYSTERY-NONE" component={MysteryReveal} durationInFrames={114} {...HD} defaultProps={{result: 'none' as const}} />
+				<Composition id="FX-VAULT-GUARANTEE" component={VaultGuarantee} durationInFrames={66} {...HD} />
 				<Composition id="SCR-HEIST-OUTRO" component={HeistOutro} durationInFrames={150} {...HD} />
 				<Composition id="SCR-ESCAPE-OUTRO" component={EscapeOutro} durationInFrames={150} {...HD} />
 				<Composition id="UI-BUY-BONUS-ANIM" component={BuyBonusSheen} durationInFrames={60} fps={FPS} width={600} height={260} />

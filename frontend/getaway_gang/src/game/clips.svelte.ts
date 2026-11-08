@@ -176,7 +176,7 @@ export const playVideo = async (clip: Clip, loop = false): Promise<boolean> => {
 };
 
 /** Clips whose own artwork fills the frame (shown over a dark backdrop). */
-const FULL_FRAME = new Set(['CIN-PERFECTLY-BAD-PLAN', 'CIN-MAX-WIN', 'CIN-FINAL-ESCAPE']);
+const FULL_FRAME = new Set(['CIN-PERFECTLY-BAD-PLAN', 'CIN-MAX-WIN', 'CIN-FINAL-ESCAPE', 'FX-MYSTERY-HIDDEN', 'FX-MYSTERY-ESCAPE', 'FX-MYSTERY-NONE']);
 
 /**
  * The full-screen clip slots rendered by ClipLayer.svelte. `current` fades in; when it ends it moves to
@@ -254,6 +254,8 @@ export const prefetchClips = () => {
 		'WIN-BIG', 'WIN-SUPER', 'WIN-MEGA', 'WIN-EPIC',
 		'SCR-HEIST-INTRO', 'SCR-HEIST-INTRO-LOOP', 'SCR-ESCAPE-INTRO', 'SCR-ESCAPE-INTRO-LOOP',
 		'SCR-HEIST-OUTRO', 'SCR-ESCAPE-OUTRO',
+		'FX-MYSTERY-HIDDEN', 'FX-MYSTERY-ESCAPE', 'FX-MYSTERY-NONE', 'FX-VAULT-GUARANTEE',
+		'SCR-HIDDEN-INTRO', 'SCR-HIDDEN-INTRO-LOOP', 'SCR-HIDDEN-OUTRO',
 	];
 	const rest = Object.keys(CLIP_URLS).filter((id) => !first.includes(id));
 	const queue = [...first, ...rest].filter((id) => id in CLIP_URLS);

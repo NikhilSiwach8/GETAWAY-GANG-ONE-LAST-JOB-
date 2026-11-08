@@ -60,6 +60,9 @@
 										<span>VOLATILITY</span>
 										{#each [1, 2, 3, 4, 5] as v}<img src={ggUrl(v <= b.volatility ? 'UI-VOL-ON' : 'UI-VOL-OFF')} alt="" />{/each}
 									</div>
+									{#if b.key === 'MYSTERY' && GG_HTML['UI-MYSTERY-BADGE']}
+										<img class="odds" src={GG_HTML['UI-MYSTERY-BADGE']} alt="20% Hidden Bonus, 30% Perfect Escape, 50% empty" />
+									{/if}
 									<ul>
 										{#each b.points as p}<li>{p}</li>{/each}
 									</ul>
@@ -269,6 +272,10 @@
 		gap: 1rem;
 		justify-content: center;
 		margin-top: 0.4rem;
+	}
+	.odds {
+		width: 100%;
+		display: block;
 	}
 	.limit {
 		font-size: clamp(10px, 1.2cqw, 13px);

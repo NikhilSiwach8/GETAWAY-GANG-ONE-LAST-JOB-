@@ -182,6 +182,30 @@ export const GG_LAYOUT = {
 		"width": 643,
 		"height": 900
 	},
+	"BUY-MYSTERY-CARD": {
+		"width": 1280,
+		"height": 720
+	},
+	"BG-HIDDEN": {
+		"width": 2560,
+		"height": 1440
+	},
+	"SCR-HIDDEN-INTRO": {
+		"width": 1920,
+		"height": 1080
+	},
+	"UI-MYSTERY-BADGE": {
+		"width": 900,
+		"height": 300
+	},
+	"SCR-HIDDEN-OUTRO": {
+		"width": 1920,
+		"height": 1080
+	},
+	"UI-VAULT-GUARANTEE": {
+		"width": 1000,
+		"height": 600
+	},
 	"UI-BUY-BONUS-0": {
 		"width": 520,
 		"height": 214
@@ -295,6 +319,7 @@ export const GG_LAYOUT = {
 export const GG_ASSETS = {
 	'BG-ESCAPE': { type: 'sprite', src: new URL('../../assets/gg/BG-ESCAPE.webp', import.meta.url).href },
 	'BG-HEIST': { type: 'sprite', src: new URL('../../assets/gg/BG-HEIST.webp', import.meta.url).href },
+	'BG-HIDDEN': { type: 'sprite', src: new URL('../../assets/gg/BG-HIDDEN.webp', import.meta.url).href },
 	'BG-LOADING': { type: 'sprite', src: new URL('../../assets/gg/BG-LOADING.webp', import.meta.url).href },
 	'BG-MAIN': { type: 'sprite', src: new URL('../../assets/gg/BG-MAIN.webp', import.meta.url).href },
 	'CHR-BYTE-POSE': { type: 'sprite', src: new URL('../../assets/gg/CHR-BYTE-POSE.webp', import.meta.url).href },
@@ -303,6 +328,8 @@ export const GG_ASSETS = {
 	'CHR-TANK-POSE': { type: 'sprite', src: new URL('../../assets/gg/CHR-TANK-POSE.webp', import.meta.url).href },
 	'SCR-ESCAPE-INTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-ESCAPE-INTRO.webp', import.meta.url).href },
 	'SCR-HEIST-INTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-HEIST-INTRO.webp', import.meta.url).href },
+	'SCR-HIDDEN-INTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-HIDDEN-INTRO.webp', import.meta.url).href },
+	'SCR-HIDDEN-OUTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-HIDDEN-OUTRO.webp', import.meta.url).href },
 	'SCR-LOADING': { type: 'sprite', src: new URL('../../assets/gg/SCR-LOADING.webp', import.meta.url).href, preload: true },
 	'SYM-BYTE': { type: 'sprite', src: new URL('../../assets/gg/SYM-BYTE.webp', import.meta.url).href },
 	'SYM-FUSE': { type: 'sprite', src: new URL('../../assets/gg/SYM-FUSE.webp', import.meta.url).href },
@@ -351,6 +378,7 @@ export const GG_ASSETS = {
 	'UI-SPIN-1': { type: 'sprite', src: new URL('../../assets/gg/UI-SPIN-1.webp', import.meta.url).href },
 	'UI-TURBO-0': { type: 'sprite', src: new URL('../../assets/gg/UI-TURBO-0.webp', import.meta.url).href },
 	'UI-TURBO-1': { type: 'sprite', src: new URL('../../assets/gg/UI-TURBO-1.webp', import.meta.url).href },
+	'UI-VAULT-GUARANTEE': { type: 'sprite', src: new URL('../../assets/gg/UI-VAULT-GUARANTEE.webp', import.meta.url).href },
 	'UI-WIN-PANEL': { type: 'sprite', src: new URL('../../assets/gg/UI-WIN-PANEL.webp', import.meta.url).href },
 } as const;
 
@@ -358,6 +386,7 @@ export const GG_ASSETS = {
 export const GG_HTML: Record<string, string> = {
 	'BUY-ESCAPE-CARD': new URL('../../assets/gg/BUY-ESCAPE-CARD.webp', import.meta.url).href,
 	'BUY-HEIST-CARD': new URL('../../assets/gg/BUY-HEIST-CARD.webp', import.meta.url).href,
+	'BUY-MYSTERY-CARD': new URL('../../assets/gg/BUY-MYSTERY-CARD.webp', import.meta.url).href,
 	'RULE-CREW-CHAOS': new URL('../../assets/gg/RULE-CREW-CHAOS.webp', import.meta.url).href,
 	'RULE-FINAL-ESCAPE': new URL('../../assets/gg/RULE-FINAL-ESCAPE.webp', import.meta.url).href,
 	'RULE-LOOT-METER': new URL('../../assets/gg/RULE-LOOT-METER.webp', import.meta.url).href,
@@ -366,6 +395,7 @@ export const GG_HTML: Record<string, string> = {
 	'RULE-RESPIN': new URL('../../assets/gg/RULE-RESPIN.webp', import.meta.url).href,
 	'UI-BUY-PANEL': new URL('../../assets/gg/UI-BUY-PANEL.webp', import.meta.url).href,
 	'UI-INFO-HEADER': new URL('../../assets/gg/UI-INFO-HEADER.webp', import.meta.url).href,
+	'UI-MYSTERY-BADGE': new URL('../../assets/gg/UI-MYSTERY-BADGE.webp', import.meta.url).href,
 	'UI-VOL-OFF': new URL('../../assets/gg/UI-VOL-OFF.webp', import.meta.url).href,
 	'UI-VOL-ON': new URL('../../assets/gg/UI-VOL-ON.webp', import.meta.url).href,
 };
