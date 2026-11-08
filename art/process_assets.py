@@ -109,6 +109,38 @@ def respin_states(im):
     return base, Image.fromarray(a.astype(np.uint8), "RGBA")
 
 
+def console_parts(frame, scale=2.0):
+    """The bet console rail, cut from the reel frame's own bottom edge (UI-REEL-FRAME, 1536 wide): octagonal
+    end caps, a clean stretchable stretch of brushed-steel rail with its gold trim, the centre plate and a
+    round rivet. The game assembles them to the screen's full width (GGConsole.svelte). Stored at 2x."""
+    y0, y1 = 872, 1006
+    strip = frame.crop((0, y0, 1536, y1))
+    h = y1 - y0
+    up = lambda im: im.resize((round(im.width * scale), round(im.height * scale)), Image.LANCZOS)
+    riv = frame.crop((265, 923, 309, 967)).convert("RGBA")
+    yy, xx = np.mgrid[0:44, 0:44]
+    d = np.hypot(xx - 21.5, yy - 21.5)
+    a = np.asarray(riv).copy()
+    a[..., 3] = (np.clip((19.5 - d) / 2.0, 0, 1) * a[..., 3]).astype(np.uint8)
+    return {
+        "UI-CONSOLE-CAP-L": up(strip.crop((0, 0, 215, h))),
+        "UI-CONSOLE-CAP-R": up(strip.crop((1321, 0, 1536, h))),
+        "UI-CONSOLE-RAIL": up(strip.crop((330, 0, 560, h))),
+        "UI-CONSOLE-PLATE": up(strip.crop((632, 0, 904, h))),
+        "UI-CONSOLE-RIVET": up(Image.fromarray(a, "RGBA")),
+    }
+
+
+def write_console(layout, done):
+    frame_src = find("UI-REEL-FRAME")
+    if not frame_src:
+        return
+    for out_id, img in console_parts(Image.open(frame_src).convert("RGBA")).items():
+        save(img, os.path.join(OUT, out_id + ".webp"))
+        layout[out_id] = {"width": img.width, "height": img.height}
+        done.append(out_id)
+
+
 def find(aid):
     for dirpath, _, files in os.walk(SRC):
         for f in files:
@@ -306,6 +338,16 @@ def main():
             save(img, os.path.join(OUT, out_id + ".webp"))
             layout[out_id] = {"width": img.width, "height": img.height}
             done.append(out_id)
+    # bet console rail pieces and the whole UI-BET unit
+    write_console(layout, done)
+    bet_src = find("UI-BET")
+    if bet_src:
+        # whole plate (minus + value window + plus): the layout puts the -/+ touch zones on it; no trimming,
+        # so the -/+ crops (fractions of this image) line up exactly
+        unit = fit(Image.open(bet_src).convert("RGBA"), 1400, None)
+        save(unit, os.path.join(OUT, "UI-BET-UNIT.webp"))
+        layout["UI-BET-UNIT"] = {"width": unit.width, "height": unit.height}
+        done.append("UI-BET-UNIT")
     p = find("SYM-WILD-REEL")
     if p:
         wr = wild_reel(Image.open(p).convert("RGBA"))
@@ -324,4 +366,14 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if os.environ.get("GG_ONLY_CONSOLE") == "1":  # quick path: just the console pieces
+        lay = json.load(open(os.path.join(OUT, "layout.json"), encoding="UTF-8"))
+        for k in ("UI-CONSOLE", "UI-CONSOLE-PORTRAIT"):
+            lay.pop(k, None)
+            if os.path.exists(os.path.join(OUT, k + ".webp")):
+                os.remove(os.path.join(OUT, k + ".webp"))
+        write_console(lay, [])
+        json.dump(lay, open(os.path.join(OUT, "layout.json"), "w", encoding="UTF-8"), indent=1)
+        write_ts(lay)
+    else:
+        main()

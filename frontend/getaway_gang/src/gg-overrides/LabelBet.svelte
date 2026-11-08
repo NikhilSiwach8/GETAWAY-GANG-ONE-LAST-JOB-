@@ -1,6 +1,7 @@
 <!-- Override of components-ui-pixi LabelBet.svelte: same value logic, delivered UI-BET art. -->
 <script lang="ts">
 	import { Container } from 'pixi-svelte';
+	import { Rectangle } from 'pixi.js';
 	import { stateBetDerived, stateModal } from 'state-shared';
 	import { numberToCurrencyString } from 'utils-shared/amount';
 
@@ -10,6 +11,7 @@
 
 	type Props = {
 		stacked?: boolean;
+		width?: number;
 	};
 
 	const props: Props = $props();
@@ -24,6 +26,12 @@
 	};
 </script>
 
-<Container eventMode="static" cursor={disabled ? 'not-allowed' : 'pointer'} onpointerup={onpress}>
-	<GGLabel kind="BET" {value} />
+<!-- the value window opens the bet menu; the -/+ ends of the plate are separate buttons placed by the layout -->
+<Container
+	eventMode="static"
+	cursor={disabled ? 'not-allowed' : 'pointer'}
+	onpointerup={onpress}
+	hitArea={new Rectangle(-(props.width ?? 400) * 0.23, -(props.width ?? 400) * 0.1, (props.width ?? 400) * 0.46, (props.width ?? 400) * 0.25)}
+>
+	<GGLabel kind="BET" {value} width={props.width} />
 </Container>

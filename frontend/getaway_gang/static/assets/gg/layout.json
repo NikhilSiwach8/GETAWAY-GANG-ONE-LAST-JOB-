@@ -325,8 +325,32 @@
   "width": 132,
   "height": 148
  },
+ "UI-BET-UNIT": {
+  "width": 1400,
+  "height": 467
+ },
  "SYM-WILD-REEL": {
   "width": 512,
   "height": 2048
+ },
+ "UI-CONSOLE-CAP-L": {
+  "width": 430,
+  "height": 268
+ },
+ "UI-CONSOLE-CAP-R": {
+  "width": 430,
+  "height": 268
+ },
+ "UI-CONSOLE-RAIL": {
+  "width": 460,
+  "height": 268
+ },
+ "UI-CONSOLE-PLATE": {
+  "width": 544,
+  "height": 268
+ },
+ "UI-CONSOLE-RIVET": {
+  "width": 88,
+  "height": 88
  }
 }

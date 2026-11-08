@@ -1,6 +1,6 @@
 <!--
-  Copy of web-sdk components-ui-pixi UIDefault.svelte (import paths only). The Buy Bonus button opens
-  ModalGGBuyBonus (THE HEIST / THE PERFECT ESCAPE).
+  Copy of web-sdk components-ui-pixi UIDefault.svelte with the GETAWAY GANG console layouts
+  (GGLayoutDesktop / GGLayoutPortrait). The Buy Bonus button opens ModalGGBuyBonus.
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
@@ -9,10 +9,8 @@
 	import { EnableSpaceHold } from 'components-shared';
 
 	import UiFadeContainer from 'components-ui-pixi/src/components/UiFadeContainer.svelte';
-	import LayoutDesktop from 'components-ui-pixi/src/components/LayoutDesktop.svelte';
-	import LayoutPortrait from 'components-ui-pixi/src/components/LayoutPortrait.svelte';
-	import LayoutLandscape from 'components-ui-pixi/src/components/LayoutLandscape.svelte';
-	import LayoutTablet from 'components-ui-pixi/src/components/LayoutTablet.svelte';
+	import GGLayoutDesktop from './GGLayoutDesktop.svelte';
+	import GGLayoutPortrait from './GGLayoutPortrait.svelte';
 	import LabelBalance from 'components-ui-pixi/src/components/LabelBalance.svelte';
 	import LabelWin from 'components-ui-pixi/src/components/LabelWin.svelte';
 	import LabelBet from 'components-ui-pixi/src/components/LabelBet.svelte';
@@ -38,11 +36,12 @@
 
 	const { stateLayoutDerived } = getContextLayout();
 
+	// GETAWAY GANG bet console: one layout for wide screens (desktop, landscape phones, tablets), one for portrait
 	const LAYOUT_COMPONENT_MAP = {
-		desktop: LayoutDesktop,
-		portrait: LayoutPortrait,
-		landscape: LayoutLandscape,
-		tablet: LayoutTablet,
+		desktop: GGLayoutDesktop,
+		portrait: GGLayoutPortrait,
+		landscape: GGLayoutDesktop,
+		tablet: GGLayoutDesktop,
 	};
 
 	const LayoutComponent = $derived(LAYOUT_COMPONENT_MAP[stateLayoutDerived.layoutType()]);

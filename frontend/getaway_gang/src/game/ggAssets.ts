@@ -326,9 +326,33 @@ export const GG_LAYOUT = {
 		"width": 132,
 		"height": 148
 	},
+	"UI-BET-UNIT": {
+		"width": 1400,
+		"height": 467
+	},
 	"SYM-WILD-REEL": {
 		"width": 512,
 		"height": 2048
+	},
+	"UI-CONSOLE-CAP-L": {
+		"width": 430,
+		"height": 268
+	},
+	"UI-CONSOLE-CAP-R": {
+		"width": 430,
+		"height": 268
+	},
+	"UI-CONSOLE-RAIL": {
+		"width": 460,
+		"height": 268
+	},
+	"UI-CONSOLE-PLATE": {
+		"width": 544,
+		"height": 268
+	},
+	"UI-CONSOLE-RIVET": {
+		"width": 88,
+		"height": 88
 	}
 } as const;
 
@@ -369,10 +393,16 @@ export const GG_ASSETS = {
 	'UI-BET-MINUS': { type: 'sprite', src: new URL('../../assets/gg/UI-BET-MINUS.webp', import.meta.url).href },
 	'UI-BET-PANEL': { type: 'sprite', src: new URL('../../assets/gg/UI-BET-PANEL.webp', import.meta.url).href },
 	'UI-BET-PLUS': { type: 'sprite', src: new URL('../../assets/gg/UI-BET-PLUS.webp', import.meta.url).href },
+	'UI-BET-UNIT': { type: 'sprite', src: new URL('../../assets/gg/UI-BET-UNIT.webp', import.meta.url).href },
 	'UI-BUY-BONUS-0': { type: 'sprite', src: new URL('../../assets/gg/UI-BUY-BONUS-0.webp', import.meta.url).href },
 	'UI-BUY-BONUS-1': { type: 'sprite', src: new URL('../../assets/gg/UI-BUY-BONUS-1.webp', import.meta.url).href },
 	'UI-BUY-BONUS-2': { type: 'sprite', src: new URL('../../assets/gg/UI-BUY-BONUS-2.webp', import.meta.url).href },
 	'UI-BUY-BONUS-3': { type: 'sprite', src: new URL('../../assets/gg/UI-BUY-BONUS-3.webp', import.meta.url).href },
+	'UI-CONSOLE-CAP-L': { type: 'sprite', src: new URL('../../assets/gg/UI-CONSOLE-CAP-L.webp', import.meta.url).href },
+	'UI-CONSOLE-CAP-R': { type: 'sprite', src: new URL('../../assets/gg/UI-CONSOLE-CAP-R.webp', import.meta.url).href },
+	'UI-CONSOLE-PLATE': { type: 'sprite', src: new URL('../../assets/gg/UI-CONSOLE-PLATE.webp', import.meta.url).href },
+	'UI-CONSOLE-RAIL': { type: 'sprite', src: new URL('../../assets/gg/UI-CONSOLE-RAIL.webp', import.meta.url).href },
+	'UI-CONSOLE-RIVET': { type: 'sprite', src: new URL('../../assets/gg/UI-CONSOLE-RIVET.webp', import.meta.url).href },
 	'UI-CREW-LEVELS': { type: 'sprite', src: new URL('../../assets/gg/UI-CREW-LEVELS.webp', import.meta.url).href },
 	'UI-FS-COUNTER': { type: 'sprite', src: new URL('../../assets/gg/UI-FS-COUNTER.webp', import.meta.url).href },
 	'UI-INFO-0': { type: 'sprite', src: new URL('../../assets/gg/UI-INFO-0.webp', import.meta.url).href },

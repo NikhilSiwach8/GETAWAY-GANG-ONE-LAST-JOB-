@@ -181,9 +181,11 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	},
 	updateFreeSpin: async (bookEvent: BookEventOfType<'updateFreeSpin'>) => {
 		eventEmitter.broadcast({ type: 'freeSpinCounterShow' });
+		// the math sends the number of spins already played as each spin starts (0 … total-1);
+		// the counter shows the spin in progress (1 … total), so the last spin reads e.g. 10/10
 		eventEmitter.broadcast({
 			type: 'freeSpinCounterUpdate',
-			current: bookEvent.amount,
+			current: Math.min(bookEvent.amount + 1, bookEvent.total),
 			total: bookEvent.total,
 		});
 	},
