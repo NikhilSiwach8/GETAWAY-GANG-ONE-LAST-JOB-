@@ -87,6 +87,26 @@ const cellFxOr = async (id: string, cells: Position[], color: number, ms = 500) 
 	if (!(await playCellFx(id, cells))) await highlight(cells, color, ms);
 };
 
+// Mystery Vault outcome held back until the bought round's first board has landed
+let pendingMystery: 'hidden' | 'escape' | 'none' | null = null;
+const playPendingMystery = async () => {
+	const result = pendingMystery!;
+	pendingMystery = null;
+	stateGame.hud.mystery = result;
+	const clip = { hidden: 'FX-MYSTERY-HIDDEN', escape: 'FX-MYSTERY-ESCAPE', none: 'FX-MYSTERY-NONE' }[result];
+	// the reveal is the clip: wait for it (download + first frame) rather than show the title card
+	await ensureClip(clip, 8000);
+	if (await playClip(clip, 6000)) return;
+	await banner('MYSTERY VAULT', PALETTE.gold, 'Cracking the safe…', 'FX-MYSTERY', 1000);
+	if (result === 'hidden') {
+		await banner('HIDDEN BONUS!', PALETTE.gold, `${config.features.hiddenFs} free spins · crew start at Level ${config.features.hiddenStartLevel} · guaranteed ${config.features.hiddenFloor}× bet`, 'FX-MYSTERY-HIDDEN', 2200, ['R', 'B', 'T', 'F']);
+	} else if (result === 'escape') {
+		await banner('THE PERFECT ESCAPE!', PALETTE.fuse, `${config.features.escapeFs} free spins`, 'FX-MYSTERY-ESCAPE', 1800);
+	} else {
+		await banner('EMPTY VAULT', PALETTE.metal, 'No bonus this time · the spin plays on', 'FX-MYSTERY-NONE', 1600);
+	}
+};
+
 export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContext> = {
 	reveal: async (bookEvent: BookEventOfType<'reveal'>, { bookEvents }: BookEventContext) => {
 		const isBonusGame = checkIsMultipleRevealEvents({ bookEvents });
@@ -101,6 +121,7 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		nextRevealIsRespin = false;
 		await stateGameDerived.enhancedBoard.spin({ revealEvent: bookEvent });
 		eventEmitter.broadcast({ type: 'soundScatterCounterClear' });
+		if (pendingMystery) await playPendingMystery();
 	},
 	winInfo: async (bookEvent: BookEventOfType<'winInfo'>) => {
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_winlevel_small' });
@@ -202,24 +223,14 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 
 	// ============================================================ GETAWAY GANG
 	mysteryReveal: async (bookEvent: BookEventOfType<'mysteryReveal'>) => {
-		// MYSTERY VAULT: the vault opens and reveals the outcome of the bought round (decided by the book)
-		stateGame.hud.mystery = bookEvent.result;
-		const clip = { hidden: 'FX-MYSTERY-HIDDEN', escape: 'FX-MYSTERY-ESCAPE', none: 'FX-MYSTERY-NONE' }[bookEvent.result];
-		await ensureClip(clip, 6000); // the reveal is the clip: wait for it rather than show the title card
-		if (await playClip(clip)) return;
-		await banner('MYSTERY VAULT', PALETTE.gold, 'Cracking the safe…', 'FX-MYSTERY', 1000);
-		if (bookEvent.result === 'hidden') {
-			await banner('HIDDEN BONUS!', PALETTE.gold, `${config.features.hiddenFs} free spins · crew start at Level ${config.features.hiddenStartLevel} · guaranteed ${config.features.hiddenFloor}× bet`, 'FX-MYSTERY-HIDDEN', 2200, ['R', 'B', 'T', 'F']);
-		} else if (bookEvent.result === 'escape') {
-			await banner('THE PERFECT ESCAPE!', PALETTE.fuse, `${config.features.escapeFs} free spins`, 'FX-MYSTERY-ESCAPE', 1800);
-		} else {
-			await banner('EMPTY VAULT', PALETTE.metal, 'No bonus this time · the spin plays on', 'FX-MYSTERY-NONE', 1600);
-		}
+		// MYSTERY VAULT: keep the outcome secret until the first board has dropped and the scatters have
+		// landed; the vault reveal then plays right after that reveal (see playPendingMystery)
+		pendingMystery = bookEvent.result;
 	},
 	vaultGuarantee: async (bookEvent: BookEventOfType<'vaultGuarantee'>) => {
 		// Hidden Bonus floor: top-up so the round pays the guaranteed minimum
-		await ensureClip('FX-VAULT-GUARANTEE', 4000);
-		if (await playClip('FX-VAULT-GUARANTEE')) return;
+		await ensureClip('FX-VAULT-GUARANTEE', 6000);
+		if (await playClip('FX-VAULT-GUARANTEE', 4000)) return;
 		await banner('VAULT GUARANTEE', PALETTE.gold, `+${bookEvent.award / 100}× bet · Hidden Bonus pays at least ${bookEvent.floor / 100}×`, 'FX-VAULT-GUARANTEE', 2000);
 	},
 	bonusStart: async (bookEvent: BookEventOfType<'bonusStart'>) => {

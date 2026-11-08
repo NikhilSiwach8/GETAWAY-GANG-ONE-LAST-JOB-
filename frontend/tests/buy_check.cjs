@@ -9,9 +9,12 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	fs.mkdirSync(outDir, { recursive: true });
 	const s = await lgs('/lgs/sessions', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ gameId: 'getaway_gang' }) });
 	const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
-	const page = await browser.newPage({ viewport: { width: 1422, height: 800 }, ignoreHTTPSErrors: true });
+	// UA=safari: Safari user agent (no transparent WebM: only the opaque clips play)
+	const userAgent = process.env.UA === 'safari' ? 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Safari/605.1.15' : undefined;
+	const page = await browser.newPage({ viewport: { width: 1422, height: 800 }, ignoreHTTPSErrors: true, userAgent });
 	if (process.env.NOCLIPS) await page.addInitScript(() => { HTMLMediaElement.prototype.canPlayType = () => ''; });
 	const errors = [];
+	if (process.env.LOG) page.on('console', (m) => /clip|webm|video/i.test(m.text()) && console.log('console', m.text().slice(0, 200)));
 	page.on('pageerror', (e) => errors.push(e.message));
 	page.on('response', (r) => r.status() >= 400 && errors.push(`HTTP ${r.status()} ${r.url().split('?')[0]}`));
 	await page.goto(`${url}/?${s.launchQuery.replace('localhost%3A7770', 'localhost%3A7771')}`);
@@ -28,11 +31,11 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	const t0 = Date.now();
 	let i = 0;
 	while (Date.now() - t0 < Number(secs) * 1000) {
-		await page.waitForTimeout(1500);
+		await page.waitForTimeout(Number(process.env.STEP || 1500));
 		await page.screenshot({ path: path.join(outDir, `s${String(i++).padStart(3, '0')}.png`) });
 		const st = await lgs(`/lgs/sessions/${s.sessionID}`);
 		if (st.lastBet && !st.activeBet && Date.now() - t0 > 8000) break;
-		if (i % 2 === 0) await page.keyboard.press('Space');
+		if (i % 2 === 0 && Date.now() - t0 > Number(process.env.QUIET || 0) * 1000) await page.keyboard.press('Space');
 	}
 	const st = await lgs(`/lgs/sessions/${s.sessionID}`);
 	console.log(JSON.stringify({ mode: st.lastBet?.mode, cost: st.lastBet?.cost, payoutMultiplier: st.lastBet?.payoutMultiplier, settled: !st.activeBet, seconds: Math.round((Date.now() - t0) / 1000), errors }));

@@ -105,11 +105,11 @@
 		overflow-y: auto;
 		padding: 1.2rem;
 		color: #fff;
-		font-family: 'proxima-nova', sans-serif;
+		font-family: 'Luckiest Guy', sans-serif;
 	}
 	h3 {
 		text-align: center;
-		font-family: 'Luckiest Guy', 'proxima-nova', sans-serif;
+		font-family: 'Luckiest Guy', sans-serif;
 		font-weight: 400;
 		letter-spacing: 0.06em;
 		color: #f7c947;
@@ -129,7 +129,7 @@
 		top: 56%;
 		translate: -50% -50%;
 		margin: 0;
-		font-family: 'Luckiest Guy', 'proxima-nova', sans-serif;
+		font-family: 'Luckiest Guy', sans-serif;
 		font-weight: 400;
 		font-size: clamp(22px, 5vw, 46px);
 		letter-spacing: 0.05em;

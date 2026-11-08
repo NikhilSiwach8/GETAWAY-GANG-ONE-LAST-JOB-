@@ -117,11 +117,11 @@
 			<Rectangle anchor={0.5} width={pw + 16} height={ph + 16} borderRadius={30} backgroundColor={0x7a4a00} />
 			<Rectangle anchor={0.5} width={pw + 9} height={ph + 9} borderRadius={27} backgroundColor={0xf7c947} />
 			<Rectangle anchor={0.5} width={pw} height={ph} borderRadius={22} backgroundColor={0x0b1230} backgroundAlpha={0.96} />
-			<Text anchor={0.5} y={-ph * 0.3} text="HIDDEN BONUS" style={{ fontFamily: 'Luckiest Guy, proxima-nova, sans-serif', fontSize: pw * 0.13, fill: 0xffe27a, stroke: { color: 0x2a1200, width: 10 }, dropShadow: { color: 0xb5470f, alpha: 1, distance: 6, angle: Math.PI / 2, blur: 0 } }} />
-			<Text anchor={0.5} y={-ph * 0.08} text={`${f.hiddenFs} FREE SPINS`} style={{ fontFamily: 'Luckiest Guy, proxima-nova, sans-serif', fontSize: pw * 0.095, fill: 0xffffff, stroke: { color: 0x1a0d00, width: 8 } }} />
-			<Text anchor={0.5} y={ph * 0.1} text={`ALL CREW START AT LEVEL ${f.hiddenStartLevel}`} style={{ fontFamily: 'proxima-nova, Arial, sans-serif', fontWeight: '900', fontSize: pw * 0.048, fill: 0x8fe3ff, stroke: { color: 0x0b1230, width: 4 } }} />
-			<Text anchor={0.5} y={ph * 0.24} text={`GUARANTEED WIN: ${f.hiddenFloor}× BET`} style={{ fontFamily: 'Luckiest Guy, proxima-nova, sans-serif', fontSize: pw * 0.07, fill: 0xffe27a, stroke: { color: 0x2a1200, width: 7 } }} />
-			<Text anchor={0.5} y={ph * 0.39} text="TAP / PRESS ANYWHERE TO START" style={{ fontFamily: 'proxima-nova, Arial, sans-serif', fontWeight: '800', fontSize: pw * 0.036, fill: 0xffffff }} alpha={0.85} />
+			<Text anchor={0.5} y={-ph * 0.3} text="HIDDEN BONUS" style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: pw * 0.13, fill: 0xffe27a, stroke: { color: 0x2a1200, width: 10 }, dropShadow: { color: 0xb5470f, alpha: 1, distance: 6, angle: Math.PI / 2, blur: 0 } }} />
+			<Text anchor={0.5} y={-ph * 0.08} text={`${f.hiddenFs} FREE SPINS`} style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: pw * 0.095, fill: 0xffffff, stroke: { color: 0x1a0d00, width: 8 } }} />
+			<Text anchor={0.5} y={ph * 0.1} text={`ALL CREW START AT LEVEL ${f.hiddenStartLevel}`} style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: pw * 0.048, fill: 0x8fe3ff, stroke: { color: 0x0b1230, width: 4 } }} />
+			<Text anchor={0.5} y={ph * 0.24} text={`GUARANTEED WIN: ${f.hiddenFloor}× BET`} style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: pw * 0.07, fill: 0xffe27a, stroke: { color: 0x2a1200, width: 7 } }} />
+			<Text anchor={0.5} y={ph * 0.39} text="TAP / PRESS ANYWHERE TO START" style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: pw * 0.036, fill: 0xffffff }} alpha={0.85} />
 		</Container>
 	{/if}
 </FadeContainer>

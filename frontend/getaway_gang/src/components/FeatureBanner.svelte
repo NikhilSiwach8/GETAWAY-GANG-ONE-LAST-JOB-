@@ -97,7 +97,7 @@
 				y={banner.subtitle ? -H * 0.16 : 0}
 				text={banner.title}
 				style={{
-					fontFamily: 'Luckiest Guy, proxima-nova, sans-serif',
+					fontFamily: 'Luckiest Guy, sans-serif',
 					fontSize: Math.min(40, (W * 0.88) / Math.max(8, banner.title.length * 0.62)),
 					fill: 0xffffff,
 					stroke: { color: 0x1a0d00, width: 7 },
@@ -110,7 +110,7 @@
 					anchor={0.5}
 					y={H * 0.27}
 					text={banner.subtitle}
-					style={{ fontFamily: 'proxima-nova, Arial, sans-serif', fontWeight: '800', fontSize: 18, fill: 0xffe9a8, stroke: { color: 0x0b1230, width: 3 } }}
+					style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: 18, fill: 0xffe9a8, stroke: { color: 0x0b1230, width: 3 } }}
 				/>
 			{/if}
 			{#if banner.level}

@@ -107,3 +107,5 @@ export const CLIP_URLS: Record<string, string> = {
 	'WIN-MEGA': new URL('../../assets/clips/WIN-MEGA.webm', import.meta.url).href,
 	'WIN-SUPER': new URL('../../assets/clips/WIN-SUPER.webm', import.meta.url).href,
 };
+/** Clips without an alpha channel: these also play where transparent WebM is unsupported (Safari). */
+export const OPAQUE_CLIPS = new Set<string>(['BG-ESCAPE-LOOP', 'BG-HEIST-LOOP', 'BG-HIDDEN-LOOP', 'BG-MAIN-LOOP', 'CIN-FINAL-ESCAPE', 'CIN-MAX-WIN', 'CIN-PERFECTLY-BAD-PLAN', 'FX-MYSTERY-ESCAPE', 'FX-MYSTERY-HIDDEN', 'FX-MYSTERY-NONE', 'SCR-ESCAPE-INTRO', 'SCR-ESCAPE-INTRO-LOOP', 'SCR-ESCAPE-OUTRO', 'SCR-HEIST-INTRO', 'SCR-HEIST-INTRO-LOOP', 'SCR-HEIST-OUTRO', 'SCR-HIDDEN-INTRO', 'SCR-HIDDEN-INTRO-LOOP', 'SCR-HIDDEN-OUTRO']);

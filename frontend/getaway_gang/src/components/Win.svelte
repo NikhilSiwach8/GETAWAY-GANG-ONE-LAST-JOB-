@@ -94,7 +94,7 @@
 								anchor={0.5}
 								y={-SYMBOL_SIZE * 0.9}
 								text={WIN_TITLES[winLevelData.alias] ?? 'BIG WIN'}
-								style={{ fontFamily: 'Luckiest Guy, proxima-nova, sans-serif', fontSize: SYMBOL_SIZE * 1.2, fill: 0xffe27a, stroke: { color: 0x2a1200, width: 14 }, dropShadow: { color: 0xff4c36, distance: 8, angle: Math.PI / 2, blur: 0, alpha: 1 } }}
+								style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: SYMBOL_SIZE * 1.2, fill: 0xffe27a, stroke: { color: 0x2a1200, width: 14 }, dropShadow: { color: 0xff4c36, distance: 8, angle: Math.PI / 2, blur: 0, alpha: 1 } }}
 							/>
 							<ResponsiveBitmapText
 								anchor={0.5}

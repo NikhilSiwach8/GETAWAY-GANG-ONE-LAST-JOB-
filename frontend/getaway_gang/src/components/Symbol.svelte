@@ -88,7 +88,7 @@
 			y={art.shape === 'card' ? -8 : -12}
 			text={art.label}
 			style={{
-				fontFamily: 'proxima-nova, Arial, sans-serif',
+				fontFamily: 'Luckiest Guy, sans-serif',
 				fontWeight: '800',
 				fontSize: art.label.length > 2 ? 24 : 46,
 				fill: art.text,
@@ -99,7 +99,7 @@
 			y={size / 2 - 22}
 			text={art.sub}
 			style={{
-				fontFamily: 'proxima-nova, Arial, sans-serif',
+				fontFamily: 'Luckiest Guy, sans-serif',
 				fontWeight: '700',
 				fontSize: 11,
 				fill: art.text,

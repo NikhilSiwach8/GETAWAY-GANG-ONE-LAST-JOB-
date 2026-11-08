@@ -25,7 +25,7 @@
 	const bonusName = $derived({ escape: 'THE PERFECT ESCAPE', hidden: 'HIDDEN BONUS', heist: 'THE HEIST' }[context.stateGame.hud.bonus ?? 'heist']);
 	const portrait = $derived(context.stateLayoutDerived.layoutType() === 'portrait');
 	const pr = $derived(portraitRows(layout, frame, context.stateGame.hud.bonus));
-	const font = (size: number, fill: number) => ({ fontFamily: 'proxima-nova, Arial, sans-serif', fontWeight: '900' as const, fontSize: size, fill });
+	const font = (size: number, fill: number) => ({ fontFamily: 'Luckiest Guy, sans-serif', fontSize: size, fill });
 
 	context.eventEmitter.subscribeOnMount({
 		freeSpinCounterShow: () => (show = true),

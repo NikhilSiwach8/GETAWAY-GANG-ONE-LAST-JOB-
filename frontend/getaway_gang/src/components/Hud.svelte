@@ -25,7 +25,7 @@
 	const maxLoot = LOOT_THRESHOLDS[LOOT_THRESHOLDS.length - 1];
 	const crew: CrewKey[] = ['R', 'B', 'T', 'F'];
 	const numStyle = (size: number) => ({
-		fontFamily: 'proxima-nova, Arial, sans-serif',
+		fontFamily: 'Luckiest Guy, sans-serif',
 		fontWeight: '900' as const,
 		fontSize: size,
 		fill: PALETTE.gold,

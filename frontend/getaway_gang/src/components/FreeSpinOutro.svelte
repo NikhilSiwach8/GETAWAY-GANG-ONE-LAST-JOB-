@@ -75,7 +75,7 @@
 	const lootPoints = $derived(context.stateGame.hud.lootPoints);
 	const levels = $derived(context.stateGame.hud.levels);
 
-	const LABEL = { fontFamily: 'Luckiest Guy, proxima-nova, sans-serif', fill: 0xffe27a, stroke: { color: 0x2a1200, width: 6 } };
+	const LABEL = { fontFamily: 'Luckiest Guy, sans-serif', fill: 0xffe27a, stroke: { color: 0x2a1200, width: 6 } };
 
 	context.eventEmitter.subscribeOnMount({
 		freeSpinOutroShow: () => {
@@ -173,7 +173,7 @@
 									anchor={0.5}
 									y={22}
 									text={LOOT_REWARDS[i] ?? ''}
-									style={{ fontFamily: 'proxima-nova, sans-serif', fontWeight: '800', fontSize: 20, fill: lit ? 0x3b1d00 : 0x9c8fb8, align: 'center', wordWrap: true, wordWrapWidth: 160 }}
+									style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: 20, fill: lit ? 0x3b1d00 : 0x9c8fb8, align: 'center', wordWrap: true, wordWrapWidth: 160 }}
 								/>
 								{#if lit}
 									<Graphics x={70} y={-42} draw={(g) => g.star(0, 0, 5, 16, 7).fill(0xffffff).stroke({ color: 0x8a4a00, width: 3 })} />

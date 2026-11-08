@@ -1,24 +1,24 @@
 /**
  * Animation clips (VP9 WebM with alpha, rendered by video/ with Remotion) played as Pixi video textures.
  *
- * Clips are cosmetic: every outcome still comes from the book events. When a browser cannot play
- * transparent WebM (Safari/iOS), `clipsSupported` is false and callers fall back to the title cards.
+ * Clips are cosmetic: every outcome still comes from the book events. Browsers that play VP9 WebM but
+ * not its alpha channel (Safari) get the opaque clips only (bonus intros/outros, Mystery reveals,
+ * backgrounds, cinematics); for the transparent effect clips callers fall back to their title cards.
  */
 import * as PIXI from 'pixi.js';
 import { stateBet } from 'state-shared';
-import { CLIP_URLS } from './clipUrls';
+import { CLIP_URLS, OPAQUE_CLIPS } from './clipUrls';
 
 const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent;
 const isSafari = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(ua) || /iPad|iPhone|iPod/.test(ua);
-export const clipsSupported =
-	typeof document !== 'undefined' &&
-	!isSafari &&
-	document.createElement('video').canPlayType('video/webm; codecs="vp9"') !== '';
+const vp9 = typeof document !== 'undefined' && document.createElement('video').canPlayType('video/webm; codecs="vp9"') !== '';
+/** Any clip can play (transparent ones need alpha support, which Safari lacks). */
+export const clipsSupported = vp9 && !isSafari;
 
 export type Clip = { video: HTMLVideoElement; texture: PIXI.Texture; lastUsed: number; refs: number };
 const cache = new Map<string, Clip>();
 
-export const hasClip = (id: string) => clipsSupported && id in CLIP_URLS;
+export const hasClip = (id: string) => id in CLIP_URLS && (clipsSupported || (vp9 && OPAQUE_CLIPS.has(id)));
 
 // ---------------------------------------------------------------- downloads
 // Clips are downloaded once into memory (Blob URLs). A <video> made from a Blob URL is ready within a
@@ -209,7 +209,7 @@ export const LAYER_FADE_OUT_MS = 260;
  * Play a full-screen clip and wait for it (tap to skip). Returns false quickly if clips are not supported,
  * the clip is not downloaded yet or it fails, so the caller shows its title card instead of freezing.
  */
-export const playClip = async (id: string): Promise<boolean> => {
+export const playClip = async (id: string, readyMs = 1500): Promise<boolean> => {
 	if (!hasClip(id)) return false;
 	// not in memory yet: the title card is better than a pause while it downloads
 	if (!isDownloaded(id)) {
@@ -217,7 +217,7 @@ export const playClip = async (id: string): Promise<boolean> => {
 		return false;
 	}
 	const clip = getClip(id, 'layer');
-	if (!clip || !(await whenReady(clip.video, 1500))) return false;
+	if (!clip || !(await whenReady(clip.video, readyMs))) return false;
 	retain(clip);
 	// only one HD video at a time: hold the background loop while a full-screen clip plays
 	const heldBg = [...cache.entries()].filter(([k, c]) => k.endsWith('|bg') && !c.video.paused).map(([, c]) => c);
@@ -251,7 +251,7 @@ export const playClip = async (id: string): Promise<boolean> => {
  * Download clips in the background after the game loads, most frequent first, a few at a time.
  */
 export const prefetchClips = () => {
-	if (!clipsSupported) return;
+	if (!vp9) return;
 	const symbols = ['H1', 'H2', 'H3', 'H4', 'L1', 'L2', 'L3', 'L4', 'WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'];
 	const first = [
 		'FX-TRANSITION',
@@ -272,7 +272,7 @@ export const prefetchClips = () => {
 		'SCR-HIDDEN-INTRO', 'SCR-HIDDEN-INTRO-LOOP', 'SCR-HIDDEN-OUTRO',
 	];
 	const rest = Object.keys(CLIP_URLS).filter((id) => !first.includes(id));
-	const queue = [...first, ...rest].filter((id) => id in CLIP_URLS);
+	const queue = [...first, ...rest].filter((id) => hasClip(id));
 	let i = 0;
 	const next = (): unknown => i < queue.length && download(queue[i++]).then(next);
 	for (let k = 0; k < 3; k++) next();

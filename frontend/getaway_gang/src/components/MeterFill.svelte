@@ -82,5 +82,5 @@
 	x={(props.width * (props.x0 + props.x1)) / 2}
 	y={cy + ch / 2}
 	text={`${Math.min(props.points, max)} / ${max}`}
-	style={{ fontFamily: 'proxima-nova, Arial, sans-serif', fontWeight: '900', fontSize: Math.max(11, ch * 0.62), fill: 0xffffff, stroke: { color: 0x2a1600, width: 4 } }}
+	style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: Math.max(11, ch * 0.62), fill: 0xffffff, stroke: { color: 0x2a1600, width: 4 } }}
 />

@@ -113,7 +113,7 @@
 		background: var(--panel) center / 100% 100% no-repeat;
 		filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
 		color: #fff;
-		font-family: 'proxima-nova', sans-serif;
+		font-family: 'Luckiest Guy', sans-serif;
 		text-align: center;
 		container-type: inline-size;
 	}
@@ -122,7 +122,7 @@
 		left: 50%;
 		top: 19.4%;
 		translate: -50% -50%;
-		font-family: 'Luckiest Guy', 'proxima-nova', sans-serif;
+		font-family: 'Luckiest Guy', sans-serif;
 		font-size: clamp(18px, 4.2cqw, 46px);
 		color: #3b2400;
 		letter-spacing: 0.04em;
@@ -170,7 +170,7 @@
 		position: absolute;
 		left: 0;
 		right: 0;
-		font-family: 'Luckiest Guy', 'proxima-nova', sans-serif;
+		font-family: 'Luckiest Guy', sans-serif;
 		color: #ffe27a;
 		-webkit-text-stroke: 1px #2a1200;
 		text-shadow: 0 3px 0 #b5470f, 0 4px 10px rgba(0, 0, 0, 0.8);
@@ -197,7 +197,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-family: 'Luckiest Guy', 'proxima-nova', sans-serif;
+		font-family: 'Luckiest Guy', sans-serif;
 		font-size: clamp(40px, 9cqw, 110px);
 		color: #ffe27a;
 		-webkit-text-stroke: 3px #2a1200;
@@ -242,7 +242,7 @@
 	}
 	button {
 		cursor: pointer;
-		font-family: 'Luckiest Guy', 'proxima-nova', sans-serif;
+		font-family: 'Luckiest Guy', sans-serif;
 		font-size: clamp(14px, 1.8cqw, 22px);
 		letter-spacing: 0.04em;
 		border-radius: 999px;
