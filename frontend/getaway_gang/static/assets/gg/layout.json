@@ -317,6 +317,14 @@
   "width": 512,
   "height": 171
  },
+ "UI-RESPIN-BASE": {
+  "width": 800,
+  "height": 267
+ },
+ "UI-RESPIN-LOCK-ON": {
+  "width": 132,
+  "height": 148
+ },
  "SYM-WILD-REEL": {
   "width": 256,
   "height": 1024

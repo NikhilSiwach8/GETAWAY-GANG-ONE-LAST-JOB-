@@ -86,6 +86,19 @@ const cellFxOr = async (id: string, cells: Position[], color: number, ms = 500) 
 	if (!cells.length) return;
 	if (!(await playCellFx(id, cells))) await highlight(cells, color, ms);
 };
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+/**
+ * Smooth symbol transformation: the SYM-FX clip (or the coloured outline) starts first and the cells
+ * change underneath it a third of the way in, popping into the new symbol (ReelSymbol `morph`), so the
+ * effect hides the change instead of the symbol switching before or after it.
+ */
+const transform = async (id: string, cells: Position[], apply: () => void, color: number, ms = 500) => {
+	if (!cells.length) return apply();
+	const fx = cellFxOr(id, cells, color, ms);
+	await wait(stateBet.isTurbo ? 90 : 180);
+	apply();
+	await fx;
+};
 
 // Mystery Vault outcome held back until the bought round's first board has landed
 let pendingMystery: 'hidden' | 'escape' | 'none' | null = null;
@@ -257,38 +270,39 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	laneSwitch: async (bookEvent: BookEventOfType<'laneSwitch'>) => {
 		await clipOr('ANIM-ROXY-ABILITY-FX', () => abilityBanner('R', bookEvent.level, CREW_INFO.R.line));
 		for (const swap of bookEvent.swaps) {
-			await highlight(
-				[1, 2, 3, 4].flatMap((row) => [
-					{ reel: swap.from, row },
-					{ reel: swap.to, row },
-				]),
-				PALETTE.roxy,
-				450,
-			);
+			const lanes = [1, 2, 3, 4].flatMap((row) => [
+				{ reel: swap.from, row },
+				{ reel: swap.to, row },
+			]);
+			// outline both lanes, and trade them while the outline is up
+			const glow = highlight(lanes, PALETTE.roxy, 520);
+			await wait(160);
 			swapReels(swap.from, swap.to);
+			await glow;
 		}
-		await cellFxOr('SYM-FX-WILD-STAMP', bookEvent.wilds, PALETTE.roxy);
-		bookEvent.wilds.forEach((p) => setCell(p.reel, p.row, 'W'));
+		await transform('SYM-FX-WILD-STAMP', bookEvent.wilds, () => bookEvent.wilds.forEach((p) => setCell(p.reel, p.row, 'W')), PALETTE.roxy);
 	},
 	systemClone: async (bookEvent: BookEventOfType<'systemClone'>) => {
 		const sym = bookEvent.symbol;
 		await clipOr('ANIM-BYTE-ABILITY-FX', () =>
 			abilityBanner('B', bookEvent.level, sym ? `Cloning ${SYMBOL_NAME[sym] ?? sym} ×${bookEvent.positions.length}` : CREW_INFO.B.line),
 		);
-		if (sym) bookEvent.positions.forEach((p) => setCell(p.reel, p.row, sym));
-		await cellFxOr('SYM-FX-CLONE-IN', bookEvent.positions, PALETTE.byte, 600);
+		await transform('SYM-FX-CLONE-IN', bookEvent.positions, () => sym && bookEvent.positions.forEach((p) => setCell(p.reel, p.row, sym)), PALETTE.byte, 600);
 	},
 	vaultBreaker: async (bookEvent: BookEventOfType<'vaultBreaker'>) => {
 		await clipOr('ANIM-TANK-ABILITY-FX', () => abilityBanner('T', bookEvent.level, CREW_INFO.T.line));
-		await highlight(bookEvent.area, PALETTE.tank, 500);
-		bookEvent.loot.forEach((c) => setCell(c.reel, c.row, c.symbol));
-		await cellFxOr('SYM-FX-VAULT-REVEAL', bookEvent.loot, PALETTE.gold);
+		// the blast area lights up and the loot is revealed while it is still glowing
+		const area = highlight(bookEvent.area, PALETTE.tank, 520);
+		await wait(220);
+		await transform('SYM-FX-VAULT-REVEAL', bookEvent.loot, () => bookEvent.loot.forEach((c) => setCell(c.reel, c.row, c.symbol)), PALETTE.gold);
+		await area;
 	},
 	bigBangUpgrade: async (bookEvent: BookEventOfType<'bigBangUpgrade'>) => {
 		await clipOr('ANIM-FUSE-ABILITY-FX', () => abilityBanner('F', bookEvent.level, CREW_INFO.F.line));
-		await highlight(bookEvent.area, PALETTE.fuse, 500);
-		bookEvent.upgrades.forEach((u) => setCell(u.reel, u.row, u.to));
-		await cellFxOr('SYM-FX-UPGRADE-IN', bookEvent.upgrades, PALETTE.gold);
+		const area = highlight(bookEvent.area, PALETTE.fuse, 520);
+		await wait(220);
+		await transform('SYM-FX-UPGRADE-IN', bookEvent.upgrades, () => bookEvent.upgrades.forEach((u) => setCell(u.reel, u.row, u.to)), PALETTE.gold);
+		await area;
 	},
 	crewCombo: async (bookEvent: BookEventOfType<'crewCombo'>) => {
 		const info = COMBO_INFO[bookEvent.combo];
@@ -306,20 +320,17 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		);
 		const sym = bookEvent.symbol;
 		if (sym && bookEvent.positions?.length) {
-			bookEvent.positions.forEach((p) => setCell(p.reel, p.row, sym));
-			await cellFxOr('SYM-FX-CLONE-IN', bookEvent.positions, color);
+			await transform('SYM-FX-CLONE-IN', bookEvent.positions, () => bookEvent.positions!.forEach((p) => setCell(p.reel, p.row, sym)), color);
 		}
 		if (bookEvent.upgrades?.length) {
-			bookEvent.upgrades.forEach((u) => setCell(u.reel, u.row, u.to));
-			await cellFxOr('SYM-FX-UPGRADE-IN', bookEvent.upgrades, PALETTE.gold);
+			await transform('SYM-FX-UPGRADE-IN', bookEvent.upgrades, () => bookEvent.upgrades!.forEach((u) => setCell(u.reel, u.row, u.to)), PALETTE.gold);
 		}
 		if (bookEvent.swap && bookEvent.swap.from !== bookEvent.swap.to) {
-			swapReels(bookEvent.swap.from, bookEvent.swap.to);
-			await highlight(
-				[1, 2, 3, 4].map((row) => ({ reel: bookEvent.swap!.to, row })),
-				color,
-				500,
-			);
+			const swap = bookEvent.swap;
+			const glow = highlight([1, 2, 3, 4].flatMap((row) => [{ reel: swap.from, row }, { reel: swap.to, row }]), color, 520);
+			await wait(160);
+			swapReels(swap.from, swap.to);
+			await glow;
 		}
 	},
 	perfectlyBadPlan: async (bookEvent: BookEventOfType<'perfectlyBadPlan'>) => {
@@ -327,16 +338,13 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		await clipOr('CIN-PERFECTLY-BAD-PLAN', () =>
 			banner('PERFECTLY BAD PLAN!', PALETTE.gold, `All four crew · ×${bookEvent.multiplier} Crew Combo · Chaos Re-spin`, 'CIN-PERFECTLY-BAD-PLAN', 2200),
 		);
-		await cellFxOr('SYM-FX-WILD-STAMP', bookEvent.wilds, PALETTE.gold, 600);
-		bookEvent.wilds.forEach((p) => setCell(p.reel, p.row, 'W'));
+		await transform('SYM-FX-WILD-STAMP', bookEvent.wilds, () => bookEvent.wilds.forEach((p) => setCell(p.reel, p.row, 'W')), PALETTE.gold, 600);
 	},
 	meterWilds: async (bookEvent: BookEventOfType<'meterWilds'>) => {
-		await cellFxOr('SYM-FX-WILD-STAMP', bookEvent.positions, PALETTE.gold);
-		bookEvent.positions.forEach((p) => setCell(p.reel, p.row, 'W'));
+		await transform('SYM-FX-WILD-STAMP', bookEvent.positions, () => bookEvent.positions.forEach((p) => setCell(p.reel, p.row, 'W')), PALETTE.gold);
 	},
 	crewExit: async (bookEvent: BookEventOfType<'crewExit'>) => {
-		bookEvent.positions.forEach((p) => setCell(p.reel, p.row, bookEvent.symbol));
-		await cellFxOr('SYM-FX-CREW-EXIT', bookEvent.positions, 0xffffff, 400);
+		await transform('SYM-FX-CREW-EXIT', bookEvent.positions, () => bookEvent.positions.forEach((p) => setCell(p.reel, p.row, bookEvent.symbol)), 0xffffff, 400);
 	},
 	boardTransformed: async (bookEvent: BookEventOfType<'boardTransformed'>) => {
 		// Authoritative board from the math: guarantees the evaluated board is exactly what is shown.

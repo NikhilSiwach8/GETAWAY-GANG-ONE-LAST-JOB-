@@ -100,10 +100,12 @@ export const resetHud = () => {
 
 // ---------------------------------------------------------------- board mutation helpers
 // Feature events change individual cells or swap whole reels; positions include the padding row.
-export const setCell = (reel: number, row: number, name: RawSymbol['name']) => {
+/** Ability transformation: the cell pops into its new symbol (see ReelSymbol), after `delayMs`. */
+export const setCell = (reel: number, row: number, name: RawSymbol['name'], delayMs = 0) => {
 	const reelSymbol = stateGame.board[reel]?.reelState.symbols[row];
 	if (!reelSymbol) return;
-	reelSymbol.rawSymbol = { name };
+	if (reelSymbol.rawSymbol.name === name) return;
+	reelSymbol.rawSymbol = { name, morph: performance.now() + delayMs };
 	reelSymbol.symbolState = 'static';
 };
 
@@ -113,8 +115,10 @@ export const swapReels = (a: number, b: number) => {
 	const symsB = stateGame.board[b].reelState.symbols;
 	const rawA = symsA.map((s) => s.rawSymbol);
 	const rawB = symsB.map((s) => s.rawSymbol);
-	symsA.forEach((s, i) => (s.rawSymbol = rawB[i]));
-	symsB.forEach((s, i) => (s.rawSymbol = rawA[i]));
+	// the two reels trade places with a top-to-bottom ripple of pops
+	const now = performance.now();
+	symsA.forEach((s, i) => (s.rawSymbol = { ...rawB[i], morph: now + i * 45 }));
+	symsB.forEach((s, i) => (s.rawSymbol = { ...rawA[i], morph: now + i * 45 }));
 };
 
 export const getCellName = (reel: number, row: number) =>

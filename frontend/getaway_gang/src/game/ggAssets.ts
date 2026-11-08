@@ -318,6 +318,14 @@ export const GG_LAYOUT = {
 		"width": 512,
 		"height": 171
 	},
+	"UI-RESPIN-BASE": {
+		"width": 800,
+		"height": 267
+	},
+	"UI-RESPIN-LOCK-ON": {
+		"width": 132,
+		"height": 148
+	},
 	"SYM-WILD-REEL": {
 		"width": 256,
 		"height": 1024
@@ -381,6 +389,8 @@ export const GG_ASSETS = {
 	'UI-REEL-BG': { type: 'sprite', src: new URL('../../assets/gg/UI-REEL-BG.webp', import.meta.url).href },
 	'UI-REEL-FRAME': { type: 'sprite', src: new URL('../../assets/gg/UI-REEL-FRAME.webp', import.meta.url).href },
 	'UI-RESPIN': { type: 'sprite', src: new URL('../../assets/gg/UI-RESPIN.webp', import.meta.url).href },
+	'UI-RESPIN-BASE': { type: 'sprite', src: new URL('../../assets/gg/UI-RESPIN-BASE.webp', import.meta.url).href },
+	'UI-RESPIN-LOCK-ON': { type: 'sprite', src: new URL('../../assets/gg/UI-RESPIN-LOCK-ON.webp', import.meta.url).href },
 	'UI-SETTINGS-0': { type: 'sprite', src: new URL('../../assets/gg/UI-SETTINGS-0.webp', import.meta.url).href },
 	'UI-SOUND-0': { type: 'sprite', src: new URL('../../assets/gg/UI-SOUND-0.webp', import.meta.url).href },
 	'UI-SOUND-1': { type: 'sprite', src: new URL('../../assets/gg/UI-SOUND-1.webp', import.meta.url).href },

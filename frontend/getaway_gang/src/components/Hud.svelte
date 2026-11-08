@@ -4,13 +4,14 @@
 	 * Live state (fill, lit locks/stars, numbers) is drawn in code inside the empty plates; positions
 	 * are fractions of each image measured from the art. Display only: values come from book events.
 	 */
-	import { BitmapText, Container, Rectangle, Sprite, Text } from 'pixi-svelte';
+	import { BitmapText, Container, Sprite, Text } from 'pixi-svelte';
 	import { getContext } from '../game/context';
 	import { METER_THRESHOLDS, LOOT_THRESHOLDS, PALETTE, CREW_INFO, type CrewKey } from '../game/tempArt';
 	import { GG_LAYOUT } from '../game/ggAssets';
 	import { frameRect } from '../game/frameLayout';
 	import { portraitRows } from '../game/hudLayout';
 	import MeterFill from './MeterFill.svelte';
+	import RespinLock from './RespinLock.svelte';
 
 	const context = getContext();
 	const hud = $derived(context.stateGame.hud);
@@ -37,10 +38,12 @@
 	// milestone pins on the art (fractions of width): Getaway stages 1-5, Loot 4/8/12/16
 	const GPINS = [0.225, 0.405, 0.578, 0.742, 0.91];
 	const LPINS = [0.29, 0.476, 0.661, 0.86];
-	const LOCKS = [0.35, 0.49, 0.683, 0.825];
+	// padlock centres in UI-RESPIN (fractions); UI-RESPIN-LOCK-ON is 132×148 of the 800×267 art
+	const LOCKS = [262 / 800, 398 / 800, 531 / 800, 666 / 800];
+	const LOCK_Y = 154 / 267;
 	const STARS = [0.17, 0.39, 0.61, 0.83];
 	const mH = $derived(h('UI-METER-GETAWAY'));
-	const rH = $derived(h('UI-RESPIN'));
+	const rH = $derived(h('UI-RESPIN-BASE'));
 	const multW = 150;
 	// portrait: the HUD moves into rows above the reels (see game/hudLayout.ts)
 	const portrait = $derived(context.stateLayoutDerived.layoutType() === 'portrait');
@@ -53,12 +56,10 @@
 	<MeterFill points={hud.meterPoints} thresholds={METER_THRESHOLDS} pins={GPINS} {...GBAR} width={W} height={mH} />
 
 	<Container x={portrait ? pr.respinX : 0} y={portrait ? 0 : mH + 10}>
-		<Sprite key="UI-RESPIN" width={W} height={rH} />
-		{#each LOCKS as fx, i}
+		<Sprite key="UI-RESPIN-BASE" width={W} height={rH} />
+		{#each LOCKS as fx, i (i)}
 			{#if i < hud.respinChain}
-				<Rectangle anchor={0.5} x={W * fx} y={rH * 0.525} width={W * 0.125} height={rH * 0.43} borderRadius={6} backgroundColor={PALETTE.gold} backgroundAlpha={0.45} />
-			{:else}
-				<Rectangle anchor={0.5} x={W * fx} y={rH * 0.525} width={W * 0.125} height={rH * 0.43} borderRadius={6} backgroundColor={0x000000} backgroundAlpha={0.55} />
+				<RespinLock x={W * fx} y={rH * LOCK_Y} width={(W * 132) / 800} height={(rH * 148) / 267} />
 			{/if}
 		{/each}
 	</Container>

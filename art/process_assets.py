@@ -6,6 +6,7 @@ Run: python3 art/process_assets.py
 """
 
 import json
+import numpy as np
 import os
 
 from PIL import Image, ImageFilter
@@ -53,6 +54,49 @@ PLAN = {
 HTML_ONLY = {"BUY-HEIST-CARD", "BUY-ESCAPE-CARD", "UI-INFO-HEADER", "UI-BUY-PANEL", "RULE-CREW-CHAOS", "RULE-RESPIN",
              "RULE-PBP", "RULE-FINAL-ESCAPE", "RULE-METER", "RULE-LOOT-METER", "UI-VOL-ON", "UI-VOL-OFF",
              "BUY-MYSTERY-CARD", "UI-MYSTERY-BADGE"}
+
+
+def respin_states(im):
+    """UI-RESPIN (800 wide) paints two gold and two grey padlocks. Split it into UI-RESPIN-BASE (all four
+    padlocks grey, gold glow and chain removed) and UI-RESPIN-LOCK-ON (the gold padlock with its glow,
+    navy plate keyed out) so the game shows each lock's real state instead of dimming boxes over the art."""
+    W = im.width
+    k = W / 800
+    box = lambda cx, hw, y0, y1: tuple(round(v * k) for v in (cx - hw, y0, cx + hw, y1))
+    base = im.copy()
+    # grey padlock (4th slot, with its plate and grey chain) blended over slots 1-3 through a feathered mask
+    hw, y0, y1 = 66, 80, 228
+    grey = im.crop(box(666, hw, y0, y1))
+    gw, gh = grey.size
+    yy, xx = np.mgrid[0:gh, 0:gw]
+    feather = 16 * k
+    edge = np.minimum.reduce([xx, gw - 1 - xx, yy, gh - 1 - yy]).astype(np.float32)
+    mask = Image.fromarray((np.clip(edge / feather, 0, 1) * 255).astype(np.uint8), "L")
+    for cx in (262, 398, 531):
+        base.paste(grey, box(cx, hw, y0, y1)[:2], mask)
+    # the chain between slots 1-2 and 2-3 is gold: grey it like the 3-4 link
+    arr = np.asarray(base).astype(np.float32)
+    for x0, x1 in ((300, 360), (436, 494)):
+        sl = arr[round(140 * k):round(186 * k), round(x0 * k):round(x1 * k)]
+        warm = np.clip((sl[..., 0] - sl[..., 2] - 10) / 70, 0, 1)[..., None]
+        lum = (sl[..., :3] @ np.array([0.3, 0.55, 0.15]))[..., None] * np.array([0.92, 0.97, 1.08])
+        sl[..., :3] = sl[..., :3] * (1 - warm) + lum * warm
+    base = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), "RGBA")
+    # gold padlock + glow: alpha from "warmth" (gold/orange pixels are red-heavy, the navy plate is blue)
+    lock = im.crop(box(262, 66, 80, 228)).convert("RGBA")
+    a = np.asarray(lock).astype(np.float32)
+    warm = np.clip((a[..., 0] - a[..., 2] - 10) / 70, 0, 1)
+    dark = (a[..., :3].max(-1) < 70) & (warm == 0)  # keyhole / outlines inside the lock body
+    h, w = warm.shape
+    yy, xx = np.mgrid[0:h, 0:w]
+    inside = (abs(xx - w / 2) < w * 0.40) & (yy > h * 0.42) & (yy < h * 0.86)
+    alpha = np.where(dark & inside, 1.0, warm)
+    # drop the chain stubs and the frame bits at the crop edges: fade out beyond the lock body
+    dx = np.abs(xx - w / 2) / (w / 2)
+    alpha *= np.clip((1.0 - dx) / 0.22, 0, 1)
+    alpha *= np.clip(yy / (8 * k), 0, 1)
+    a[..., 3] = alpha * 255
+    return base, Image.fromarray(a.astype(np.uint8), "RGBA")
 
 
 def find(aid):
@@ -238,6 +282,12 @@ def main():
             part = fit(part, target, None) if part.width >= part.height else fit(part, None, target)
             part.save(os.path.join(OUT, out_id + ".webp"), "WEBP", quality=88, method=4)
             layout[out_id] = {"width": part.width, "height": part.height}
+            done.append(out_id)
+    if "UI-RESPIN" in layout:
+        base, lock = respin_states(Image.open(os.path.join(OUT, "UI-RESPIN.webp")).convert("RGBA"))
+        for out_id, img in (("UI-RESPIN-BASE", base), ("UI-RESPIN-LOCK-ON", lock)):
+            img.save(os.path.join(OUT, out_id + ".webp"), "WEBP", quality=90, method=4)
+            layout[out_id] = {"width": img.width, "height": img.height}
             done.append(out_id)
     p = find("SYM-WILD-REEL")
     if p:

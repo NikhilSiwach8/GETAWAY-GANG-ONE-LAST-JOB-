@@ -8,6 +8,8 @@ export type RawSymbol = {
 	scatter?: boolean;
 	wild?: boolean;
 	crew?: boolean;
+	/** set by ability transformations: the cell pops into its new symbol (performance.now() + delay, ms) */
+	morph?: number;
 };
 export type BetMode = keyof typeof config.betModes;
 export type GameType = keyof typeof config.paddingReels;
