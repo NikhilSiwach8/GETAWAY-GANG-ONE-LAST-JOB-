@@ -111,6 +111,32 @@ def window_of(im):
     return {"x": x0 / w, "y": y0 / h, "w": (x1 - x0 + 1) / w, "h": (y1 - y0 + 1) / h}
 
 
+def strip_reel_lines(im):
+    """UI-REEL-BG has its gold column dividers painted at uneven spacing (outer columns ~30% wider), so they
+    can never match six equal symbol columns. Erase them (and their glow) by interpolating across each line;
+    the game draws dividers exactly on the column boundaries instead (BoardFrame.svelte)."""
+    import numpy as np
+
+    a = np.array(im).astype(float)
+    r, g, b = a[:, :, 0], a[:, :, 1], a[:, :, 2]
+    gold = (r > 120) & (g > 80) & (r > b + 40)
+    cols = np.where(gold.mean(0) > 0.3)[0]
+    groups = []
+    for x in cols:
+        if groups and x - groups[-1][-1] <= 2:
+            groups[-1].append(int(x))
+        else:
+            groups.append([int(x)])
+    w = a.shape[1]
+    for grp in groups:
+        x0, x1 = max(0, grp[0] - 9), min(w - 1, grp[-1] + 9)
+        left, right = a[:, x0 - 1 if x0 > 0 else x0], a[:, x1 + 1 if x1 < w - 1 else x1]
+        for x in range(x0, x1 + 1):
+            t = (x - x0 + 1) / (x1 - x0 + 2)
+            a[:, x] = left * (1 - t) + right * t
+    return Image.fromarray(a.clip(0, 255).astype("uint8"), "RGBA"), len(groups)
+
+
 def write_ts(layout):
     """frontend registry: one 'sprite' asset per processed file, keyed by asset ID."""
     ts = os.path.join(ROOT, "frontend", "getaway_gang", "src", "game", "ggAssets.ts")
@@ -139,6 +165,9 @@ def main():
             continue
         im = Image.open(path).convert("RGBA")
         out = fit(im, w, h)
+        if aid == "UI-REEL-BG":
+            out, n = strip_reel_lines(out)
+            print(f"UI-REEL-BG: removed {n} painted column lines")
         out.save(os.path.join(OUT, aid + ".webp"), "WEBP", quality=88, method=4)
         layout[aid] = {"width": out.width, "height": out.height}
         if aid == "UI-REEL-FRAME":

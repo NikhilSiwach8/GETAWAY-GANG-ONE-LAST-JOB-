@@ -44,6 +44,8 @@ const force = (bookId) =>
 	const page = await browser.newPage({ viewport: { width: vp[0], height: vp[1] }, ignoreHTTPSErrors: true, hasTouch: !!process.env.TOUCH, isMobile: !!process.env.TOUCH });
 	const errors = [];
 	page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+	// NOCLIPS: behave like a browser without transparent-WebM support (Safari/iOS fallback path)
+	if (process.env.NOCLIPS) await page.addInitScript(() => { HTMLMediaElement.prototype.canPlayType = () => ''; });
 	page.on('response', async (r) => {
 		if (r.status() >= 400) {
 			let body = '';

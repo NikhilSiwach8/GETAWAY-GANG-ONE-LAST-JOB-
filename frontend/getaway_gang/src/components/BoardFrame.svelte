@@ -34,6 +34,12 @@
 	zIndex={-1}
 />
 <Sprite key="UI-REEL-BG" anchor={0.5} x={layout.x} y={layout.y} width={layout.width} height={layout.height} zIndex={-1} />
+<!-- column dividers exactly on the symbol column boundaries (the art's painted lines were uneven) -->
+{#each [1, 2, 3, 4, 5] as k (k)}
+	{@const x = layout.x - layout.width / 2 + (k * layout.width) / 6}
+	<Rectangle anchor={0.5} {x} y={layout.y} width={9} height={layout.height} backgroundColor={0xf7a928} backgroundAlpha={0.12} zIndex={-1} />
+	<Rectangle anchor={0.5} {x} y={layout.y} width={2.2} height={layout.height} backgroundColor={0xf2c14e} backgroundAlpha={0.9} zIndex={-1} />
+{/each}
 <Sprite key="UI-REEL-FRAME" anchor={0.5} x={layout.x} y={layout.y} width={frame.width} height={frame.height} zIndex={-1} />
 {#if glow}
 	<Rectangle

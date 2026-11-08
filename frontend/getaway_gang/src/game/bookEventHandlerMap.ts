@@ -49,12 +49,14 @@ const animateSymbols = async ({ positions }: { positions: Position[] }) => {
 
 // ---------------------------------------------------------------- GETAWAY GANG presentation helpers
 // Every board change below is copied from the book event; the frontend never decides an outcome.
-const banner = (title: string, color: number, subtitle?: string, assetId?: string, ms?: number) =>
-	eventEmitter.broadcastAsync({ type: 'featureBanner', title, color, subtitle, assetId, ms });
+const banner = (title: string, color: number, subtitle?: string, assetId?: string, ms?: number, crew?: CrewKey[], level?: number) =>
+	eventEmitter.broadcastAsync({ type: 'featureBanner', title, color, subtitle, assetId, ms, crew, level });
+/** Ability card (fallback when the ANIM-*-ABILITY-FX clip cannot play): character, ability name, level. */
+const abilityBanner = (c: CrewKey, level: number, subtitle: string) =>
+	banner(CREW_INFO[c].ability, CREW_INFO[c].color, subtitle, `ANIM-${CREW_ID[c]}-ABILITY`, 1700, [c], level);
 const highlight = (positions: Position[], color: number, ms?: number) =>
 	eventEmitter.broadcastAsync({ type: 'cellHighlight', positions, color, ms });
 const crewColor = (c: CrewKey) => CREW_INFO[c].color;
-const crewTitle = (c: CrewKey, level: number) => `${CREW_INFO[c].name} · ${CREW_INFO[c].ability} · LV${level}`;
 const RESPIN_REASON_TEXT: Record<string, string> = {
 	crewChaos: 'Two or more crew members acted',
 	perfectlyBadPlan: 'Perfectly Bad Plan',
@@ -65,6 +67,9 @@ let nextRevealIsRespin = false;
 let lastFsTotal = 0;
 let crewThisRound = false;
 const CREW_ID = { R: 'ROXY', B: 'BYTE', T: 'TANK', F: 'FUSE' } as const;
+const SYMBOL_NAME: Record<string, string> = {
+	H1: 'Diamond', H2: 'Money Bag', H3: 'Gold Bars', H4: 'Watch', L1: 'Ace', L2: 'King', L3: 'Queen', L4: 'Jack', W: 'Wild',
+};
 const COMBO_CLIP: Record<string, string> = {
 	hotwiredClone: 'FX-COMBO-RB',
 	vaultClone: 'FX-COMBO-BT',
@@ -201,11 +206,11 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		mascotDo('ABILITY', CREW_ID[bookEvent.crew[0].character]);
 		await Promise.all([
 			...bookEvent.crew.map((c) => highlight(c.positions, crewColor(c.character), 900)),
-			clipOr('FX-CREW-CHAOS', () => banner('CREW CHAOS!', PALETTE.gold, names, 'FX-CREW-CHAOS', 900)),
+			clipOr('FX-CREW-CHAOS', () => banner('CREW CHAOS!', PALETTE.gold, names, 'FX-CREW-CHAOS', 1100, bookEvent.crew.map((c) => c.character))),
 		]);
 	},
 	laneSwitch: async (bookEvent: BookEventOfType<'laneSwitch'>) => {
-		await clipOr('ANIM-ROXY-ABILITY-FX', () => banner(crewTitle('R', bookEvent.level), PALETTE.roxy, CREW_INFO.R.line, 'ANIM-ROXY-ABILITY'));
+		await clipOr('ANIM-ROXY-ABILITY-FX', () => abilityBanner('R', bookEvent.level, CREW_INFO.R.line));
 		for (const swap of bookEvent.swaps) {
 			await highlight(
 				[1, 2, 3, 4].flatMap((row) => [
@@ -223,19 +228,19 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	systemClone: async (bookEvent: BookEventOfType<'systemClone'>) => {
 		const sym = bookEvent.symbol;
 		await clipOr('ANIM-BYTE-ABILITY-FX', () =>
-			banner(crewTitle('B', bookEvent.level), PALETTE.byte, sym ? `Cloning ${sym} ×${bookEvent.positions.length}` : CREW_INFO.B.line, 'ANIM-BYTE-ABILITY'),
+			abilityBanner('B', bookEvent.level, sym ? `Cloning ${SYMBOL_NAME[sym] ?? sym} ×${bookEvent.positions.length}` : CREW_INFO.B.line),
 		);
 		if (sym) bookEvent.positions.forEach((p) => setCell(p.reel, p.row, sym));
 		await cellFxOr('SYM-FX-CLONE-IN', bookEvent.positions, PALETTE.byte, 600);
 	},
 	vaultBreaker: async (bookEvent: BookEventOfType<'vaultBreaker'>) => {
-		await clipOr('ANIM-TANK-ABILITY-FX', () => banner(crewTitle('T', bookEvent.level), PALETTE.tank, CREW_INFO.T.line, 'ANIM-TANK-ABILITY'));
+		await clipOr('ANIM-TANK-ABILITY-FX', () => abilityBanner('T', bookEvent.level, CREW_INFO.T.line));
 		await highlight(bookEvent.area, PALETTE.tank, 500);
 		bookEvent.loot.forEach((c) => setCell(c.reel, c.row, c.symbol));
 		await cellFxOr('SYM-FX-VAULT-REVEAL', bookEvent.loot, PALETTE.gold);
 	},
 	bigBangUpgrade: async (bookEvent: BookEventOfType<'bigBangUpgrade'>) => {
-		await clipOr('ANIM-FUSE-ABILITY-FX', () => banner(crewTitle('F', bookEvent.level), PALETTE.fuse, CREW_INFO.F.line, 'ANIM-FUSE-ABILITY'));
+		await clipOr('ANIM-FUSE-ABILITY-FX', () => abilityBanner('F', bookEvent.level, CREW_INFO.F.line));
 		await highlight(bookEvent.area, PALETTE.fuse, 500);
 		bookEvent.upgrades.forEach((u) => setCell(u.reel, u.row, u.to));
 		await cellFxOr('SYM-FX-UPGRADE-IN', bookEvent.upgrades, PALETTE.gold);
@@ -250,6 +255,8 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 				color,
 				`${bookEvent.characters.map((c) => CREW_INFO[c].name).join(' + ')} · ${info?.detail ?? ''}`,
 				info?.assetId,
+				1500,
+				bookEvent.characters,
 			),
 		);
 		const sym = bookEvent.symbol;
@@ -324,7 +331,7 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		const ups = (Object.keys(bookEvent.levels) as CrewKey[]).filter((c) => bookEvent.levels[c] > stateGame.hud.levels[c]);
 		stateGame.hud.levels = { ...bookEvent.levels };
 		for (const c of ups) {
-			await banner(`${CREW_INFO[c].name} LEVEL ${bookEvent.levels[c]}`, crewColor(c), 'Upgrade persists for the rest of the Escape', 'UI-CREW-LEVELS', 900);
+			await banner(`${CREW_INFO[c].name} LEVEL UP!`, crewColor(c), 'Upgrade persists for the rest of the Escape', 'UI-CREW-LEVELS', 1100, [c], bookEvent.levels[c]);
 		}
 	},
 	chaosRespinAward: async (bookEvent: BookEventOfType<'chaosRespinAward'>) => {

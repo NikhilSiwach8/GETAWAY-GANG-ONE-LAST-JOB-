@@ -4,7 +4,7 @@ import type { RawSymbol, SymbolState } from './types';
 
 export const SYMBOL_SIZE = 100;
 
-export const REEL_PADDING = 0.53;
+export const REEL_PADDING = 0.5; // symbols centred in their column (between the dividers)
 
 // initial board: 6 reels x (4 rows + 1 padding symbol above and below)
 export const INITIAL_BOARD: RawSymbol[][] = [
