@@ -141,6 +141,107 @@ def write_console(layout, done):
         done.append(out_id)
 
 
+def blob_bbox(mask):
+    ys, xs = np.where(mask)
+    return (xs.min(), ys.min(), xs.max() + 1, ys.max() + 1) if len(xs) else None
+
+
+def trimmed(im, thr=16):
+    bbox = im.getchannel("A").point(lambda v: 255 if v > thr else 0).getbbox()
+    return im.crop(bbox) if bbox else im
+
+
+def gold_star(n):
+    from PIL import ImageDraw
+    ss = 4
+    N = n * ss
+    c = N / 2
+    R, r = N * 0.47, N * 0.47 * 0.48
+    ang = [(-90 + 36 * i) * np.pi / 180 for i in range(10)]
+    pts = [(c + (R if i % 2 == 0 else r) * np.cos(a), c + 4 * ss + (R if i % 2 == 0 else r) * np.sin(a)) for i, a in enumerate(ang)]
+    img = Image.new("RGBA", (N, N))
+    d = ImageDraw.Draw(img)
+    # outline + drop shadow
+    d.polygon([(x + 3 * ss, y + 5 * ss) for x, y in pts], fill=(40, 18, 0, 150))
+    d.polygon(pts, fill=(74, 36, 0, 255))
+    inset = [(c + (x - c) * 0.9, c + 4 * ss + (y - c - 4 * ss) * 0.9) for x, y in pts]
+    cen = (c, c + 4 * ss)
+    light = np.array([-0.6, -0.8])  # upper-left key light
+    for i in range(10):
+        p0, p1 = inset[i], inset[(i + 1) % 10]
+        # each facet: centre -> edge; brightness from its outward normal vs the light
+        mx, my = (p0[0] + p1[0]) / 2 - cen[0], (p0[1] + p1[1]) / 2 - cen[1]
+        nrm = np.array([mx, my]) / (np.hypot(mx, my) + 1e-6)
+        k = 0.55 + 0.45 * float(np.dot(nrm, light))
+        col = tuple(int(v) for v in np.array([255, 205, 60]) * (0.62 + 0.62 * k))
+        col = tuple(min(255, v) for v in col)
+        d.polygon([cen, p0, p1], fill=col + (255,))
+    return img.resize((n, n), Image.LANCZOS)
+
+
+def style_parts():
+    """Pieces cut from the delivered art so in-game overlays match it instead of being drawn in code
+    (point 4 of the review): star, close button, banner scroll, milestone plate, cell glow."""
+    out = {}
+    # lit gold star (the stars in the delivered art are ~26 px, too small to cut): a faceted, bevelled gold
+    # star in the art's gold palette, lit from the upper left like every asset, with a dark outline
+    out["UI-STAR-ON"] = gold_star(256)
+    # red close button from the settings panel's top-right corner
+    p = find("UI-SETTINGS-PANEL")
+    if p:
+        im = Image.open(p).convert("RGBA")
+        W, H = im.size
+        x_from = int(W * 0.865)  # right of the SETTINGS title plate
+        corner = np.asarray(im.crop((x_from, 0, W, int(H * 0.25)))).astype(int)
+        red = (corner[..., 0] > 140) & (corner[..., 0] - corner[..., 1] > 90) & (corner[..., 0] - corner[..., 2] > 90)
+        bb = blob_bbox(red)
+        if bb:
+            rr = (bb[2] - bb[0]) / 2          # the button is round: its width gives the radius
+            cx = x_from + (bb[0] + bb[2]) / 2
+            cy = bb[1] + rr
+            r = rr + 6
+            r = int(r)
+            padded = Image.new("RGBA", (W + 2 * r, H + 2 * r))  # the button touches the panel's top edge
+            padded.alpha_composite(im, (r, r))
+            btn = padded.crop((int(cx), int(cy), int(cx) + 2 * r, int(cy) + 2 * r))
+            n = btn.width
+            yy, xx = np.mgrid[0:n, 0:n]
+            d = np.hypot(xx - (n - 1) / 2, yy - (n - 1) / 2)
+            ba = np.asarray(btn).copy()
+            ba[..., 3] = (np.clip((n / 2 - 1 - d) / 2.5, 0, 1) * ba[..., 3]).astype(np.uint8)
+            out["UI-CLOSE"] = Image.fromarray(ba, "RGBA").resize((256, 256), Image.LANCZOS)
+    p = find("UI-INFO-HEADER")
+    if p:
+        out["UI-BANNER"] = fit(trimmed(Image.open(p).convert("RGBA")), 1600, None)
+    p = find("UI-MULT")
+    if p:
+        out["UI-MILESTONE"] = fit(trimmed(Image.open(p).convert("RGBA")), 600, None)
+    # cell glow: a bevelled rounded frame with a soft outer glow, near-white so the game tints it per crew
+    n, pad, rad = 512, 40, 70
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float32)
+    def sdf(x, y, half, r):
+        qx = np.abs(x - n / 2) - (half - r)
+        qy = np.abs(y - n / 2) - (half - r)
+        return np.hypot(np.maximum(qx, 0), np.maximum(qy, 0)) + np.minimum(np.maximum(qx, qy), 0) - r
+    dd = sdf(xx, yy, n / 2 - pad, rad)
+    ring = np.clip(1 - np.abs(dd + 9) / 10, 0, 1)            # 20 px frame
+    glow = np.exp(-np.maximum(dd, 0) / 14) * (dd > -2) * 0.75  # outside glow
+    inner = np.exp(-np.maximum(-dd, 0) / 26) * (dd < 0) * 0.35  # inner light
+    shade = 0.78 + 0.22 * np.clip((n / 2 - yy) / (n / 2), -1, 1)  # lit from the top
+    lum = np.clip(ring * shade + 0.0, 0, 1)
+    alpha = np.clip(np.maximum.reduce([ring, glow, inner]), 0, 1)
+    rgb = np.stack([np.clip(200 + 55 * lum, 0, 255)] * 3, -1)
+    out["UI-CELL-GLOW"] = Image.fromarray(np.dstack([rgb, alpha * 255]).astype(np.uint8), "RGBA")
+    return out
+
+
+def write_style_parts(layout, done):
+    for out_id, img in style_parts().items():
+        save(img, os.path.join(OUT, out_id + ".webp"))
+        layout[out_id] = {"width": img.width, "height": img.height}
+        done.append(out_id)
+
+
 def find(aid):
     for dirpath, _, files in os.walk(SRC):
         for f in files:
@@ -338,8 +439,9 @@ def main():
             save(img, os.path.join(OUT, out_id + ".webp"))
             layout[out_id] = {"width": img.width, "height": img.height}
             done.append(out_id)
-    # bet console rail pieces and the whole UI-BET unit
+    # bet console rail pieces, art-matched overlay pieces and the whole UI-BET unit
     write_console(layout, done)
+    write_style_parts(layout, done)
     bet_src = find("UI-BET")
     if bet_src:
         # whole plate (minus + value window + plus): the layout puts the -/+ touch zones on it; no trimming,
@@ -373,6 +475,7 @@ if __name__ == "__main__":
             if os.path.exists(os.path.join(OUT, k + ".webp")):
                 os.remove(os.path.join(OUT, k + ".webp"))
         write_console(lay, [])
+        write_style_parts(lay, [])
         json.dump(lay, open(os.path.join(OUT, "layout.json"), "w", encoding="UTF-8"), indent=1)
         write_ts(lay)
     else:

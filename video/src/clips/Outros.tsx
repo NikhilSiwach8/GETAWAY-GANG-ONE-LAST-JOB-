@@ -92,42 +92,17 @@ const Padlock: React.FC<{x: number; y: number; at: number}> = ({x, y, at}) => {
 	const shackle = interpolate(t, [4, 9], [-26, 0], {...clamp, easing: Easing.in(Easing.quad)}); // snaps shut
 	const glow = interpolate(t, [9, 11, 22], [0, 1, 0.25], clamp);
 	return (
-		<div style={{position: 'absolute', left: x, top: y, translate: '-50% -50%', scale: pop * 1.35, filter: `drop-shadow(0 0 ${10 + glow * 24}px rgba(255,214,110,${0.6 + glow * 0.4}))`}}>
-			<svg width={110} height={130} viewBox="0 0 110 130">
-				<path d={`M30 ${62 + shackle} V40 a25 25 0 0 1 50 0 V62`} fill="none" stroke="#c9ced8" strokeWidth={13} strokeLinecap="round" transform={`translate(0 ${shackle})`} />
-				<rect x={12} y={56} width={86} height={66} rx={14} fill="url(#lockGold)" stroke="#5a3300" strokeWidth={6} />
-				<circle cx={55} cy={84} r={9} fill="#5a3300" />
-				<rect x={51} y={86} width={8} height={18} rx={3} fill="#5a3300" />
-				<defs>
-					<linearGradient id="lockGold" x1="0" y1="0" x2="0" y2="1">
-						<stop offset="0" stopColor="#fff3b0" />
-						<stop offset="0.45" stopColor="#f7c947" />
-						<stop offset="1" stopColor="#b8860b" />
-					</linearGradient>
-				</defs>
-			</svg>
+		<div style={{position: 'absolute', left: x, top: y, translate: `-50% ${-50 + shackle * 0.6}%`, scale: pop * (1 + glow * 0.12), filter: `drop-shadow(0 0 ${10 + glow * 24}px rgba(255,214,110,${0.6 + glow * 0.4}))`}}>
+			{/* the gold padlock from the Chaos Re-spins meter art; it drops in and clamps shut */}
+			<Img src={art('UI-RESPIN-LOCK-ON')} style={{width: 150, height: 168}} />
 		</div>
 	);
 };
 
 /** Two-headed circular re-spin arrows. */
 const RespinRing: React.FC<{size: number; rotate: number}> = ({size, rotate}) => (
-	<svg width={size} height={size} viewBox="-100 -100 200 200" style={{rotate: `${rotate}deg`, filter: 'drop-shadow(0 8px 0 #5a3300) drop-shadow(0 0 30px rgba(247,201,71,0.8))'}}>
-		<defs>
-			<linearGradient id="ringGold" x1="0" y1="-1" x2="0" y2="1">
-				<stop offset="0" stopColor="#fffbe0" />
-				<stop offset="0.5" stopColor="#f7c947" />
-				<stop offset="1" stopColor="#c46a00" />
-			</linearGradient>
-		</defs>
-		{[0, 180].map((r) => (
-			<g key={r} transform={`rotate(${r})`}>
-				<path d="M -78 -18 A 80 80 0 0 1 52 -61" fill="none" stroke="#2a1200" strokeWidth={26} strokeLinecap="round" />
-				<path d="M -78 -18 A 80 80 0 0 1 52 -61" fill="none" stroke="url(#ringGold)" strokeWidth={16} strokeLinecap="round" />
-				<path d="M 34 -92 L 82 -56 L 28 -32 Z" fill="url(#ringGold)" stroke="#2a1200" strokeWidth={6} strokeLinejoin="round" />
-			</g>
-		))}
-	</svg>
+	// the red gear badge with gold re-spin arrows from the Chaos Re-spins meter art
+	<Img src={art('FX-RESPIN-BADGE')} style={{width: size, height: size, rotate: `${rotate}deg`, filter: 'drop-shadow(0 10px 0 rgba(42,18,0,0.6)) drop-shadow(0 0 34px rgba(247,201,71,0.75))'}} />
 );
 
 export const ChaosRespin: React.FC = () => {

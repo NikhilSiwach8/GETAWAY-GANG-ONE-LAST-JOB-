@@ -10,8 +10,8 @@
 </script>
 
 <script lang="ts">
-	/** TEMPORARY FX: coloured cell outlines marking what a feature touched (FX-* in ASSET_PROMPTS.md). */
-	import { Rectangle } from 'pixi-svelte';
+	/** Glowing frames (UI-CELL-GLOW, tinted in the crew's colour) on the cells a feature touched. */
+	import { Sprite } from 'pixi-svelte';
 	import { stateBet } from 'state-shared';
 	import BoardContainer from './BoardContainer.svelte';
 	import { getContext } from '../game/context';
@@ -36,17 +36,15 @@
 <BoardContainer>
 	{#each active as group (group.id)}
 		{#each group.positions as p}
-			<Rectangle
+			<Sprite
+				key="UI-CELL-GLOW"
 				anchor={0.5}
 				x={getSymbolX(p.reel)}
 				y={(p.row - 0.5) * SYMBOL_SIZE}
-				width={SYMBOL_SIZE * 0.98}
-				height={SYMBOL_SIZE * 0.98}
-				borderRadius={18}
-				backgroundColor={group.color}
-				backgroundAlpha={0.18}
-				borderColor={group.color}
-				borderWidth={6}
+				width={SYMBOL_SIZE * 1.16}
+				height={SYMBOL_SIZE * 1.16}
+				tint={group.color}
+				blendMode="add"
 				zIndex={10}
 			/>
 		{/each}

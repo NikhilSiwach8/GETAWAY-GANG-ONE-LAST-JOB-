@@ -87,7 +87,7 @@
 		{#each crew as c, ci}
 			{#each [0, 1, 2] as s}
 				{#if hud.levels[c] > s}
-					<Text anchor={0.5} x={W * (STARS[ci] + (s - 1) * 0.048)} y={h('UI-CREW-LEVELS') * 0.795} text="★" style={{ fontSize: 15, fill: CREW_INFO[c].color, stroke: { color: 0xfff1a8, width: 2 } }} />
+					<Sprite key="UI-STAR-ON" anchor={0.5} x={W * (STARS[ci] + (s - 1) * 0.048)} y={h('UI-CREW-LEVELS') * 0.795} width={15} height={15} />
 				{/if}
 			{/each}
 		{/each}

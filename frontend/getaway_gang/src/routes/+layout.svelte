@@ -4,6 +4,9 @@
 	import { Authenticate, LoaderStakeEngine, LoadI18n } from 'components-shared';
 	import '../lib/fonts/register';
 	import '../game/pixiDefaults';
+	import '../lib/gg-ui.css';
+	import { ggUrl } from '../game/ggAssets';
+	if (typeof document !== 'undefined') document.documentElement.style.setProperty('--gg-close', `url(${ggUrl('UI-CLOSE')})`);
 	import Game from '../components/Game.svelte';
 	import { setContext } from '../game/context';
 

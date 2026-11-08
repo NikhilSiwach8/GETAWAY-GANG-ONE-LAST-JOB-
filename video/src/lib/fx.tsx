@@ -122,17 +122,12 @@ export const Burst: React.FC<{
 				const common: React.CSSProperties = {position: 'absolute', left: px, top: py, translate: '-50% -50%', rotate: `${rot}deg`, opacity: fade};
 				switch (kind) {
 					case 'coin':
+						// the gold coin cut from the delivered art (FX-COIN), tumbling
 						return (
-							<div
+							<Img
 								key={i}
-								style={{
-									...common,
-									width: 46 * s,
-									height: 46 * s * Math.abs(Math.cos((t + r1 * 20) * 0.25)),
-									borderRadius: '50%',
-									background: 'radial-gradient(circle at 35% 30%, #fff3b0, #f7c947 40%, #b8860b 80%)',
-									border: `${3 * s}px solid #8a5a00`,
-								}}
+								src={art('FX-COIN')}
+								style={{...common, width: 56 * s, height: 45 * s, scale: `1 ${Math.max(0.2, Math.abs(Math.cos((t + r1 * 20) * 0.25)))}`}}
 							/>
 						);
 					case 'bill':
@@ -161,7 +156,7 @@ export const Burst: React.FC<{
 							/>
 						);
 					case 'star':
-						return <div key={i} style={{...common, fontSize: 40 * s, color, textShadow: `0 0 14px ${color}`}}>★</div>;
+						return <Img key={i} src={art('UI-STAR-ON')} style={{...common, width: 40 * s, height: 40 * s, filter: `drop-shadow(0 0 10px ${color})`}} />;
 					case 'pixel':
 						return <div key={i} style={{...common, width: 14 * s, height: 14 * s, background: color, boxShadow: `0 0 10px ${color}`, rotate: '0deg'}} />;
 					case 'debris':
@@ -205,17 +200,7 @@ export const Rain: React.FC<{from: number; count: number; image?: string; kind?:
 				return kind === 'bill' ? (
 					<div key={i} style={{...style, height: s * 0.48, borderRadius: 4, background: 'linear-gradient(135deg,#b9e6a5,#5c9e4a)', border: '2px solid #2f5f24'}} />
 				) : (
-					<div
-						key={i}
-						style={{
-							...style,
-							width: s * 0.4,
-							height: s * 0.4 * Math.abs(Math.cos(local * 0.2 + i)),
-							borderRadius: '50%',
-							background: 'radial-gradient(circle at 35% 30%, #fff3b0, #f7c947 40%, #b8860b 80%)',
-							border: '3px solid #8a5a00',
-						}}
-					/>
+					<Img key={i} src={art('FX-COIN')} style={{...style, width: s * 0.5, height: s * 0.4, scale: `1 ${Math.max(0.2, Math.abs(Math.cos(local * 0.2 + i)))}`}} />
 				);
 			})}
 		</AbsoluteFill>

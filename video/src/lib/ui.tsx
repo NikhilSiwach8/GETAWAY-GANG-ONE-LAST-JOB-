@@ -135,26 +135,45 @@ export const Prop: React.FC<{
 
 /** Small caption plate (e.g. ability name). */
 export const Plate: React.FC<{text: string; at: number; color: string; y?: number; size?: number}> = ({text, at, color, y = 300, size = 54}) => {
+	// the delivered blueprint scroll (UI-INFO-HEADER art, as in the game's feature banner); the text sits in
+	// its window with the crew colour as its outline
 	const frame = useCurrentFrame();
 	if (frame < at) return null;
+	const W = Math.max(760, text.length * size * 0.72 + 360);
 	return (
 		<AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', translate: `0px ${y}px`}}>
 			<div
 				style={{
-					fontFamily: TITLE_FONT,
-					fontSize: size,
-					color: '#fff',
-					background: `linear-gradient(180deg, ${color}, #1c1f26)`,
-					border: '6px solid #F7C947',
-					borderRadius: 18,
-					padding: '12px 46px 6px',
-					letterSpacing: 3,
-					boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+					position: 'relative',
+					width: W,
+					height: W * (416 / 1600),
 					scale: interpolate(frame, [at, at + 8], [0.4, 1], {...clamp, easing: Easing.out(Easing.back(2))}),
 					opacity: interpolate(frame, [at, at + 4], [0, 1], clamp),
+					filter: 'drop-shadow(0 12px 22px rgba(0,0,0,0.55))',
 				}}
 			>
-				{text}
+				<Img src={art('UI-BANNER')} style={{position: 'absolute', inset: 0, width: '100%', height: '100%'}} />
+				<div
+					style={{
+						position: 'absolute',
+						left: 0,
+						right: 0,
+						top: '38%',
+						bottom: '8%',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						fontFamily: TITLE_FONT,
+						fontSize: size,
+						color: '#fff',
+						letterSpacing: 3,
+						WebkitTextStroke: `${Math.round(size / 9)}px ${color}`,
+						paintOrder: 'stroke fill',
+						textShadow: '0 5px 0 #120a24, 0 8px 14px rgba(0,0,0,0.6)',
+					}}
+				>
+					{text}
+				</div>
 			</div>
 		</AbsoluteFill>
 	);

@@ -22,7 +22,7 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	await page.mouse.click(711, 400);
 	await page.waitForTimeout(9000);
 	await lgs(`/lgs/sessions/${s.sessionID}/force`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ force: { bookId: Number(bookId) } }) });
-	await page.mouse.click(331, 742);
+	await page.mouse.click(187, 740); // Buy Bonus on the console
 	await page.waitForTimeout(1500);
 	await page.locator('.pop-up-wrap button.buy').nth(Number(cardIndex)).click();
 	await page.waitForTimeout(1200);

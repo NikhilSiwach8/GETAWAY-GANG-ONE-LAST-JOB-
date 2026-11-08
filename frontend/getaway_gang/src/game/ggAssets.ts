@@ -353,6 +353,26 @@ export const GG_LAYOUT = {
 	"UI-CONSOLE-RIVET": {
 		"width": 88,
 		"height": 88
+	},
+	"UI-STAR-ON": {
+		"width": 256,
+		"height": 256
+	},
+	"UI-CLOSE": {
+		"width": 256,
+		"height": 256
+	},
+	"UI-BANNER": {
+		"width": 1600,
+		"height": 416
+	},
+	"UI-MILESTONE": {
+		"width": 600,
+		"height": 475
+	},
+	"UI-CELL-GLOW": {
+		"width": 512,
+		"height": 512
 	}
 } as const;
 
@@ -390,6 +410,7 @@ export const GG_ASSETS = {
 	'SYM-WILD-REEL': { type: 'sprite', src: new URL('../../assets/gg/SYM-WILD-REEL.webp', import.meta.url).href },
 	'UI-AUTOPLAY-0': { type: 'sprite', src: new URL('../../assets/gg/UI-AUTOPLAY-0.webp', import.meta.url).href },
 	'UI-BALANCE-PANEL': { type: 'sprite', src: new URL('../../assets/gg/UI-BALANCE-PANEL.webp', import.meta.url).href },
+	'UI-BANNER': { type: 'sprite', src: new URL('../../assets/gg/UI-BANNER.webp', import.meta.url).href },
 	'UI-BET-MINUS': { type: 'sprite', src: new URL('../../assets/gg/UI-BET-MINUS.webp', import.meta.url).href },
 	'UI-BET-PANEL': { type: 'sprite', src: new URL('../../assets/gg/UI-BET-PANEL.webp', import.meta.url).href },
 	'UI-BET-PLUS': { type: 'sprite', src: new URL('../../assets/gg/UI-BET-PLUS.webp', import.meta.url).href },
@@ -398,6 +419,8 @@ export const GG_ASSETS = {
 	'UI-BUY-BONUS-1': { type: 'sprite', src: new URL('../../assets/gg/UI-BUY-BONUS-1.webp', import.meta.url).href },
 	'UI-BUY-BONUS-2': { type: 'sprite', src: new URL('../../assets/gg/UI-BUY-BONUS-2.webp', import.meta.url).href },
 	'UI-BUY-BONUS-3': { type: 'sprite', src: new URL('../../assets/gg/UI-BUY-BONUS-3.webp', import.meta.url).href },
+	'UI-CELL-GLOW': { type: 'sprite', src: new URL('../../assets/gg/UI-CELL-GLOW.webp', import.meta.url).href },
+	'UI-CLOSE': { type: 'sprite', src: new URL('../../assets/gg/UI-CLOSE.webp', import.meta.url).href },
 	'UI-CONSOLE-CAP-L': { type: 'sprite', src: new URL('../../assets/gg/UI-CONSOLE-CAP-L.webp', import.meta.url).href },
 	'UI-CONSOLE-CAP-R': { type: 'sprite', src: new URL('../../assets/gg/UI-CONSOLE-CAP-R.webp', import.meta.url).href },
 	'UI-CONSOLE-PLATE': { type: 'sprite', src: new URL('../../assets/gg/UI-CONSOLE-PLATE.webp', import.meta.url).href },
@@ -411,6 +434,7 @@ export const GG_ASSETS = {
 	'UI-LOGO': { type: 'sprite', src: new URL('../../assets/gg/UI-LOGO.webp', import.meta.url).href },
 	'UI-METER-GETAWAY': { type: 'sprite', src: new URL('../../assets/gg/UI-METER-GETAWAY.webp', import.meta.url).href },
 	'UI-METER-LOOT': { type: 'sprite', src: new URL('../../assets/gg/UI-METER-LOOT.webp', import.meta.url).href },
+	'UI-MILESTONE': { type: 'sprite', src: new URL('../../assets/gg/UI-MILESTONE.webp', import.meta.url).href },
 	'UI-MULT': { type: 'sprite', src: new URL('../../assets/gg/UI-MULT.webp', import.meta.url).href },
 	'UI-PAYTABLE-0': { type: 'sprite', src: new URL('../../assets/gg/UI-PAYTABLE-0.webp', import.meta.url).href },
 	'UI-PAYTABLE-1': { type: 'sprite', src: new URL('../../assets/gg/UI-PAYTABLE-1.webp', import.meta.url).href },
@@ -426,6 +450,7 @@ export const GG_ASSETS = {
 	'UI-SOUND-1': { type: 'sprite', src: new URL('../../assets/gg/UI-SOUND-1.webp', import.meta.url).href },
 	'UI-SPIN-0': { type: 'sprite', src: new URL('../../assets/gg/UI-SPIN-0.webp', import.meta.url).href },
 	'UI-SPIN-1': { type: 'sprite', src: new URL('../../assets/gg/UI-SPIN-1.webp', import.meta.url).href },
+	'UI-STAR-ON': { type: 'sprite', src: new URL('../../assets/gg/UI-STAR-ON.webp', import.meta.url).href },
 	'UI-TURBO-0': { type: 'sprite', src: new URL('../../assets/gg/UI-TURBO-0.webp', import.meta.url).href },
 	'UI-TURBO-1': { type: 'sprite', src: new URL('../../assets/gg/UI-TURBO-1.webp', import.meta.url).href },
 	'UI-VAULT-GUARANTEE': { type: 'sprite', src: new URL('../../assets/gg/UI-VAULT-GUARANTEE.webp', import.meta.url).href },

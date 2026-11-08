@@ -194,7 +194,7 @@ export const BgHiddenLoop: React.FC = () => {
 				const x = x0 + Math.sin((p * 2 + i * 0.4) * Math.PI * 2) * 40;
 				const flip = Math.cos((p * (2 + (i % 2)) + i * 0.2) * Math.PI * 2);
 				return (
-					<div key={i} style={{position: 'absolute', left: x, top: y, width: s, height: s, translate: '-50% -50%', scale: `${Math.max(0.08, Math.abs(flip))} 1`, rotate: `${-20 + i * 9}deg`, borderRadius: '50%', background: flip > 0 ? 'radial-gradient(circle at 35% 30%, #fff6c0, #ffcc33 40%, #b87400 80%)' : 'radial-gradient(circle at 60% 60%, #ffe17a, #c98a00 70%)', border: '3px solid #8a5200', boxShadow: '0 0 18px rgba(255,200,60,0.7)'}} />
+<Img key={i} src={art('FX-COIN')} style={{position: 'absolute', left: x, top: y, width: s * 1.25, height: s, translate: '-50% -50%', scale: `${Math.max(0.12, Math.abs(flip))} 1`, rotate: `${-20 + i * 9}deg`, filter: 'drop-shadow(0 0 14px rgba(255,200,60,0.7))'}} />
 				);
 			})}
 			<Motes p={p} n={70} seed="hs" area={[0, 80, 1920, 1000]} color="rgba(255,214,110,0.95)" speed={1} />

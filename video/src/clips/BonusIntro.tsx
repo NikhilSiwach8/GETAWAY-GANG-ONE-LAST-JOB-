@@ -187,20 +187,10 @@ const Drift: React.FC<{kind: 'coin' | 'bill'; count: number; period: number; see
 					const y = -80 + t * (H + 160);
 					const spin = Math.abs(Math.cos((t * 4 + r('s')) * Math.PI));
 					return (
-						<div
+						<Img
 							key={i}
-							style={{
-								position: 'absolute',
-								left: x,
-								top: y,
-								width: 50,
-								height: 50 * Math.max(0.15, spin),
-								translate: '-50% -50%',
-								borderRadius: '50%',
-								background: 'radial-gradient(circle at 35% 30%, #fff3b0, #f7c947 40%, #b8860b 80%)',
-								border: '3px solid #8a5a00',
-								opacity: 0.9,
-							}}
+							src={art('FX-COIN')}
+							style={{position: 'absolute', left: x, top: y, width: 62, height: 50, translate: '-50% -50%', scale: `1 ${Math.max(0.18, spin)}`, opacity: 0.95}}
 						/>
 					);
 				}

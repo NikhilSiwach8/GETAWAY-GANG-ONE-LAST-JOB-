@@ -15,7 +15,7 @@
 	 * hex badges. Everything is laid out in the clips' 1920×1080 space inside one cover-fitted container.
 	 * Without clip support the cleaned still of the same screen is shown, so the positions still match.
 	 */
-	import { Container, Graphics, Rectangle, Sprite, Text } from 'pixi-svelte';
+	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
 	import { FadeContainer, WinCountUpProvider, ResponsiveBitmapText } from 'components-pixi';
 	import { bookEventAmountToCurrencyString } from 'utils-shared/amount';
 	import { waitForResolve } from 'utils-shared/wait';
@@ -157,26 +157,18 @@
 						<Text anchor={0.5} x={968} y={728} text="LOOT MILESTONES · {lootPoints} PTS" style={{ ...LABEL, fontSize: 34 }} />
 						{#each LOOT as t, i (t)}
 							{@const lit = lootPoints >= t}
-							<Container x={lootChipX(i)} y={815}>
-								<Rectangle
-									anchor={0.5}
-									width={176}
-									height={120}
-									borderRadius={18}
-									backgroundColor={lit ? 0xf7b928 : 0x1a1030}
-									backgroundAlpha={lit ? 0.95 : 0.6}
-									borderColor={lit ? 0xfff1a8 : 0x6b5a8a}
-									borderWidth={4}
-								/>
-								<Text anchor={0.5} y={-28} text="{t} PTS" style={{ ...LABEL, fontSize: 36, fill: lit ? 0x3b1d00 : 0x9c8fb8, stroke: { color: lit ? 0xfff1a8 : 0x0b0618, width: 3 } }} />
+							<!-- milestone plate (UI-MULT art): points in the navy window, reward on the red plate -->
+							<Container x={lootChipX(i)} y={818} alpha={lit ? 1 : 0.8}>
+								<Sprite key="UI-MILESTONE" anchor={0.5} width={176} height={176 * (475 / 600)} tint={lit ? 0xffffff : 0x6d6a80} />
+								<Text anchor={0.5} y={-14} text="{t} PTS" style={{ ...LABEL, fontSize: 30, fill: lit ? 0xffe27a : 0xa9a6c0, stroke: { color: 0x0b0618, width: 5 } }} />
 								<Text
 									anchor={0.5}
-									y={22}
+									y={38}
 									text={LOOT_REWARDS[i] ?? ''}
-									style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: 20, fill: lit ? 0x3b1d00 : 0x9c8fb8, align: 'center', wordWrap: true, wordWrapWidth: 160 }}
+									style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: 13, fill: lit ? 0xffffff : 0xb9b6cc, align: 'center', wordWrap: true, wordWrapWidth: 140, stroke: { color: 0x2a0606, width: 3 } }}
 								/>
 								{#if lit}
-									<Graphics x={70} y={-42} draw={(g) => g.star(0, 0, 5, 16, 7).fill(0xffffff).stroke({ color: 0x8a4a00, width: 3 })} />
+									<Sprite key="UI-STAR-ON" anchor={0.5} x={70} y={-52} width={40} height={40} />
 								{/if}
 							</Container>
 						{/each}
@@ -187,15 +179,7 @@
 							<Text anchor={0.5} x={c.hex[0]} y={c.hex[1] + 14} text={String(lv)} style={{ ...LABEL, fontSize: 44, fill: 0xffffff }} />
 							{#each Array.from({ length: MAX_LEVEL }, (_, i) => i) as i (i)}
 								{@const sx = c.stars[0] + ((c.stars[1] - c.stars[0]) * (i + 0.5)) / MAX_LEVEL}
-								<Graphics
-									x={sx}
-									y={c.stars[2]}
-									draw={(g) =>
-										g
-											.star(0, 0, 5, 21, 9)
-											.fill(i < lv ? 0xffd23a : 0x2a2440)
-											.stroke({ color: i < lv ? 0x7a3d00 : 0x0b0618, width: 4 })}
-								/>
+								<Sprite key="UI-STAR-ON" anchor={0.5} x={sx} y={c.stars[2]} width={44} height={44} tint={i < lv ? 0xffffff : 0x2c2648} alpha={i < lv ? 1 : 0.9} />
 							{/each}
 						{/each}
 					{/if}

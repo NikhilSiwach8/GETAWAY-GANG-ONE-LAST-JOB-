@@ -31,6 +31,7 @@
 		payTable: () => 'UI-PAYTABLE-0',
 		increase: () => 'UI-BET-PLUS',
 		decrease: () => 'UI-BET-MINUS',
+		menuExit: () => 'UI-CLOSE',
 	};
 	const key = $derived(ART[icon]?.(active));
 	// the paytable button has its own glow state for hover

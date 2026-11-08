@@ -1,0 +1,68 @@
+/*
+ * GETAWAY GANG skin for the shared web-sdk HTML windows (bet menu, autoplay, settings, messages) so they
+ * match the game's own panels (Buy Bonus, Paytable): navy glass with a gold rim and a steel outer ring,
+ * gold pill buttons, Luckiest Guy lettering, and the delivered red close button (UI-CLOSE).
+ * Global on purpose: the SDK components are scoped, their class names are stable.
+ */
+.pop-up-wrap .ui-popup-standard-content-wrap {
+	background: linear-gradient(180deg, #1d2a5c 0%, #101a3e 55%, #0b1230 100%);
+	border: 4px solid #f7c947;
+	border-radius: 22px;
+	box-shadow:
+		0 0 0 5px #8b8f99,
+		0 0 0 8px #2a2d35,
+		inset 0 2px 0 rgba(255, 255, 255, 0.14),
+		inset 0 -10px 24px rgba(0, 0, 0, 0.35),
+		0 20px 44px rgba(0, 0, 0, 0.6);
+	padding: 1.3rem 1.5rem 1.4rem;
+	min-width: min(88vw, 360px);
+	color: #fff;
+	font-family: 'Luckiest Guy', sans-serif;
+	letter-spacing: 0.03em;
+}
+.pop-up-wrap .ui-modal-title-wrap {
+	font-family: 'Luckiest Guy', sans-serif;
+	font-size: clamp(22px, 3.2vw, 34px);
+	color: #ffe27a;
+	-webkit-text-stroke: 1px #2a1200;
+	text-shadow: 0 3px 0 #b5470f, 0 5px 12px rgba(0, 0, 0, 0.7);
+	letter-spacing: 0.05em;
+}
+/* every SDK button face (BaseIcon) becomes a navy pill with a gold rim */
+.pop-up-wrap .rectangle {
+	background: linear-gradient(180deg, #2a3b78, #15204a) !important;
+	border: 2px solid #f7c947 !important;
+	border-radius: 999px !important;
+	box-shadow: 0 3px 0 #7a4a00, inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+/* selected option (the SDK marks it with a white border) and the full-width confirm/start buttons: gold */
+.pop-up-wrap .rectangle[style*='white'],
+.pop-up-wrap .ui-modal-button-wrap .rectangle {
+	background: linear-gradient(180deg, #ffe27a, #f7a928) !important;
+	border-color: #fff1a8 !important;
+	box-shadow: 0 4px 0 #a05a00, 0 0 14px rgba(255, 210, 90, 0.45);
+}
+.pop-up-wrap .rectangle[style*='white'] + .base-button-content,
+.pop-up-wrap .ui-modal-button-wrap .base-button-content {
+	color: #2a1600 !important;
+}
+.pop-up-wrap .base-button-content {
+	font-family: 'Luckiest Guy', sans-serif;
+	letter-spacing: 0.04em;
+}
+.pop-up-wrap button:disabled .rectangle {
+	filter: grayscale(1) brightness(0.7);
+}
+/* close button: the delivered red ✖ */
+.pop-up-wrap .close-button {
+	width: clamp(36px, 4.4vw, 54px) !important;
+	height: clamp(36px, 4.4vw, 54px) !important;
+	font-size: 0 !important;
+	color: transparent !important;
+	background: var(--gg-close) center / contain no-repeat !important;
+	border: none !important;
+	filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.6));
+}
+.pop-up-wrap .close-button:hover {
+	transform: scale(1.06);
+}

@@ -15,12 +15,13 @@
 
 <script lang="ts">
 	/**
-	 * Feature card in the slot's style: gold-bevelled navy plate, crew-coloured ribbon, title in the game's
-	 * comic font, crew characters popping in beside it, level stars. Names the exact reward after a feature
+	 * Feature card on the delivered blueprint scroll (UI-INFO-HEADER art): title in the scroll's window with
+	 * the crew colour as its outline, the reward line under it, crew characters popping in beside it, level
+	 * stars (UI-STAR-ON). Names the exact reward after a feature
 	 * clip and stands in for the clip when clips cannot play. Awaitable: the book player waits for it.
 	 */
 	import { onDestroy } from 'svelte';
-	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
+	import { Container, Sprite, Text } from 'pixi-svelte';
 	import { stateBet } from 'state-shared';
 	import { getContext } from '../game/context';
 	import { CREW_INFO } from '../game/tempArt';
@@ -62,7 +63,9 @@
 	const crew = $derived(banner?.crew ?? []);
 	const hasCrew = $derived(crew.length > 0);
 	const W = $derived(layout.width * (hasCrew ? 0.74 : 0.86));
-	const H = $derived(banner?.subtitle ? 118 : 88);
+	// the scroll keeps its art proportions
+	const SH = $derived(W * (416 / 1600));
+	const H = $derived(SH + (banner?.subtitle ? 30 : 0));
 	const x = $derived(layout.x + (hasCrew ? layout.width * 0.07 : 0));
 	const y = $derived(layout.y - layout.height * 0.5 + 78);
 	const hex = (c: number) => c;
@@ -82,48 +85,49 @@
 		{/each}
 
 		<Container scale={pop * pulse}>
-			<!-- gold bevel -->
-			<Rectangle anchor={0.5} width={W + 14} height={H + 14} borderRadius={22} backgroundColor={0x7a4a00} />
-			<Rectangle anchor={0.5} width={W + 8} height={H + 8} borderRadius={19} backgroundColor={0xf7c947} />
-			<Rectangle anchor={0.5} y={-(H + 8) / 4} width={W + 8} height={(H + 8) / 2} borderRadius={19} backgroundColor={0xffe27a} backgroundAlpha={0.55} />
-			<!-- navy glass -->
-			<Rectangle anchor={0.5} width={W} height={H} borderRadius={16} backgroundColor={0x0b1230} />
-			<Rectangle anchor={0.5} y={-H / 4} width={W - 6} height={H / 2 - 4} borderRadius={14} backgroundColor={0x1d2a5c} backgroundAlpha={0.6} />
-			<!-- crew-coloured ribbon behind the title -->
-			<Rectangle anchor={0.5} y={banner.subtitle ? -H * 0.16 : 0} width={W * 0.92} height={54} borderRadius={10} backgroundColor={hex(banner.color)} backgroundAlpha={0.9} />
-			<Rectangle anchor={0.5} y={(banner.subtitle ? -H * 0.16 : 0) - 14} width={W * 0.92} height={18} borderRadius={8} backgroundColor={0xffffff} backgroundAlpha={0.18} />
+			<!-- the blueprint scroll (UI-INFO-HEADER art); the title sits in its window -->
+			<Sprite key="UI-BANNER" anchor={0.5} width={W} height={SH} />
 			<Text
 				anchor={0.5}
-				y={banner.subtitle ? -H * 0.16 : 0}
+				y={SH * 0.1}
 				text={banner.title}
 				style={{
 					fontFamily: 'Luckiest Guy, sans-serif',
-					fontSize: Math.min(40, (W * 0.88) / Math.max(8, banner.title.length * 0.62)),
+					fontSize: Math.min(SH * 0.34, (W * 0.66) / Math.max(6, banner.title.length * 0.6)),
 					fill: 0xffffff,
-					stroke: { color: 0x1a0d00, width: 7 },
-					dropShadow: { color: 0x000000, alpha: 0.6, distance: 4, angle: Math.PI / 2, blur: 0 },
+					stroke: { color: hex(banner.color), width: 7 },
+					dropShadow: { color: 0x0b0618, alpha: 0.85, distance: 4, angle: Math.PI / 2, blur: 2 },
 					letterSpacing: 1,
 				}}
 			/>
 			{#if banner.subtitle}
 				<Text
-					anchor={0.5}
-					y={H * 0.27}
+					anchor={{ x: 0.5, y: 0 }}
+					y={SH * 0.5 + 2}
 					text={banner.subtitle}
-					style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: 18, fill: 0xffe9a8, stroke: { color: 0x0b1230, width: 3 } }}
+					style={{
+						fontFamily: 'Luckiest Guy, sans-serif',
+						fontSize: Math.min(22, (W * 0.9) / Math.max(10, banner.subtitle.length * 0.55)),
+						fill: 0xffe9a8,
+						stroke: { color: 0x120a24, width: 5 },
+						dropShadow: { color: 0x000000, alpha: 0.7, distance: 3, angle: Math.PI / 2, blur: 2 },
+					}}
 				/>
 			{/if}
 			{#if banner.level}
-				<!-- level stars on the right of the plate -->
+				<!-- level stars beside the scroll's wheel -->
 				{#each [1, 2, 3] as s (s)}
 					{@const on = s <= (banner.level ?? 0)}
-					<Text
+					{@const grow = on ? 1 + Math.max(0, 0.45 - (t - 0.15 - s * 0.08) * 2.2) : 1}
+					<Sprite
+						key="UI-STAR-ON"
 						anchor={0.5}
-						x={W / 2 - 92 + s * 24}
-						y={-H / 2 + 2}
-						text="★"
-						style={{ fontSize: 30, fill: on ? 0xffe27a : 0x2b3561, stroke: { color: on ? 0x7a4a00 : 0x111832, width: 4 } }}
-						scale={on ? 1 + Math.max(0, 0.4 - (t - 0.15 - s * 0.08) * 2) : 1}
+						x={W * 0.17 + s * 30}
+						y={-SH * 0.3}
+						width={28 * grow}
+						height={28 * grow}
+						tint={on ? 0xffffff : 0x3a4266}
+						alpha={on ? 1 : 0.85}
 					/>
 				{/each}
 			{/if}

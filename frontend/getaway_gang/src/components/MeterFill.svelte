@@ -5,7 +5,7 @@
 	 * and flashes when it grows.
 	 */
 	import { onDestroy } from 'svelte';
-	import { Container, Rectangle, Text } from 'pixi-svelte';
+	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
 
 	type Props = {
 		points: number;
@@ -62,18 +62,21 @@
 	const left = $derived(props.width * props.x0 + inset);
 	const fillW = $derived(Math.max(0, props.width * toX(shown) - left - inset));
 	const max = $derived(props.thresholds[props.thresholds.length - 1]);
+	const fullW = $derived(Math.max(1, props.width * props.x1 - left - inset));
 </script>
 
 {#if fillW > 0.5}
 	<Container x={left} y={cy + inset}>
-		<!-- gold body -->
-		<Rectangle width={fillW} height={ch - inset * 2} borderRadius={(ch - inset * 2) / 2} backgroundColor={0xf7a928} />
-		<!-- bright upper half -->
-		<Rectangle width={fillW} height={(ch - inset * 2) * 0.5} borderRadius={(ch - inset * 2) / 4} backgroundColor={0xffe27a} />
-		<!-- glint at the leading edge -->
-		<Rectangle x={Math.max(0, fillW - 6)} width={Math.min(6, fillW)} height={ch - inset * 2} borderRadius={3} backgroundColor={0xffffff} backgroundAlpha={0.55 + 0.45 * flash} />
+		<!-- the delivered gold fill bar (UI-LOADING-BAR-FILL) at the channel's full length, revealed up to the value -->
+		<Container>
+			<Sprite key="UI-LOADING-BAR-FILL" width={fullW} height={ch - inset * 2} />
+			<Rectangle isMask width={fillW} height={ch - inset * 2} borderRadius={(ch - inset * 2) / 2} backgroundColor={0xffffff} />
+		</Container>
 		{#if flash > 0}
-			<Rectangle width={fillW} height={ch - inset * 2} borderRadius={(ch - inset * 2) / 2} backgroundColor={0xffffff} backgroundAlpha={0.45 * flash} />
+			<Container alpha={0.5 * flash}>
+				<Sprite key="UI-LOADING-BAR-FILL" width={fullW} height={ch - inset * 2} tint={0xffffff} blendMode="add" />
+				<Rectangle isMask width={fillW} height={ch - inset * 2} borderRadius={(ch - inset * 2) / 2} backgroundColor={0xffffff} />
+			</Container>
 		{/if}
 	</Container>
 {/if}
