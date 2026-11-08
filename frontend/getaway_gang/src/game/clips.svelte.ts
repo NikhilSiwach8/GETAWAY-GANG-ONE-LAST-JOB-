@@ -21,21 +21,47 @@ const cache = new Map<string, Clip>();
 export const hasClip = (id: string) => id in CLIP_URLS && (clipsSupported || (vp9 && OPAQUE_CLIPS.has(id)));
 
 // ---------------------------------------------------------------- downloads
-// Clips are downloaded once into memory (Blob URLs). A <video> made from a Blob URL is ready within a
-// frame or two, so the game never stalls on the network mid-round, and no <video> element has to sit
-// around "preloading" (Chrome suspends idle players and re-creates their decoder on play, which stutters).
-const blobs = new Map<string, string>();
+// Clips are downloaded into memory (Blob URLs). A <video> made from a Blob URL is ready within a frame
+// or two, so the game never stalls on the network mid-round, and no <video> element has to sit around
+// "preloading" (Chrome suspends idle players and re-creates their decoder on play, which stutters).
+// The full-HD clips total ~500 MB, far more than a tab can hold: memory is capped at BLOB_BUDGET and the
+// least recently used clips that no player is showing are released first (they download again when needed).
+const BLOB_BUDGET = (/Android|iPhone|iPad|iPod|Mobile/i.test(ua) ? 96 : 240) * 1024 * 1024;
+type Blobbed = { url: string; size: number; used: number };
+const blobs = new Map<string, Blobbed>();
 const downloads = new Map<string, Promise<string | null>>();
+let blobBytes = 0;
+const inUse = (id: string) => [...cache.keys()].some((k) => k.startsWith(`${id}|`));
+/** Free least-recently-used clips (not on any player) until `need` more bytes fit in the budget. */
+const makeRoom = (need: number) => {
+	if (blobBytes + need <= BLOB_BUDGET) return true;
+	const idle = [...blobs.entries()].filter(([id]) => !inUse(id)).sort((x, y) => x[1].used - y[1].used);
+	for (const [id, b] of idle) {
+		URL.revokeObjectURL(b.url);
+		blobs.delete(id);
+		downloads.delete(id);
+		blobBytes -= b.size;
+		if (blobBytes + need <= BLOB_BUDGET) return true;
+	}
+	return blobBytes + need <= BLOB_BUDGET;
+};
 const download = (id: string): Promise<string | null> => {
-	if (blobs.has(id)) return Promise.resolve(blobs.get(id)!);
+	const have = blobs.get(id);
+	if (have) {
+		have.used = performance.now();
+		return Promise.resolve(have.url);
+	}
 	if (!downloads.has(id)) {
 		downloads.set(
 			id,
 			fetch(CLIP_URLS[id])
 				.then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
 				.then((b) => {
+					// no room even after freeing idle clips: play it straight from its URL instead
+					if (!makeRoom(b.size)) return CLIP_URLS[id];
 					const url = URL.createObjectURL(b);
-					blobs.set(id, url);
+					blobs.set(id, { url, size: b.size, used: performance.now() });
+					blobBytes += b.size;
 					return url;
 				})
 				.catch(() => null),
@@ -49,7 +75,7 @@ const download = (id: string): Promise<string | null> => {
  */
 export const ensureClip = (id: string, timeoutMs = 4000): Promise<boolean> => {
 	if (!hasClip(id)) return Promise.resolve(false);
-	if (blobs.has(id)) return Promise.resolve(true);
+	if (blobs.has(id)) return download(id).then(() => true);
 	return Promise.race([
 		download(id).then((u) => !!u),
 		new Promise<boolean>((r) => setTimeout(() => r(false), timeoutMs)),
@@ -62,7 +88,8 @@ export const isDownloaded = (id: string) => blobs.has(id);
 // At most MAX_PLAYERS <video> elements exist; the least recently used idle one is released first.
 // phones have far fewer hardware video decoders: keep fewer players alive there
 const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
-const MAX_PLAYERS = isMobile ? 8 : 20;
+// each full-HD player holds an 8 MB texture plus a hardware decoder
+const MAX_PLAYERS = isMobile ? 6 : 12;
 const release = (key: string, clip: Clip) => {
 	clip.video.pause();
 	clip.video.removeAttribute('src');
@@ -89,11 +116,14 @@ export const getClip = (id: string, channel = 'main'): Clip | undefined => {
 		video.preload = 'auto';
 		video.crossOrigin = 'anonymous';
 		const local = blobs.get(id);
-		if (local) video.src = local;
+		if (local) {
+			local.used = performance.now();
+			video.src = local.url;
+		}
 		else download(id).then((url) => (video.src = url ?? CLIP_URLS[id]));
 		// the background loops are slow parallax: half the texture uploads of the effect clips
 		const updateFPS = channel === 'bg' ? 15 : 30;
-		const source = new PIXI.VideoSource({ resource: video, autoPlay: false, autoLoad: true, updateFPS, autoGenerateMipmaps: false });
+		const source = new PIXI.VideoSource({ resource: video, autoPlay: false, autoLoad: true, updateFPS });
 		clip = { video, texture: new PIXI.Texture({ source }), lastUsed: 0, refs: 0 };
 		cache.set(key, clip);
 	}
@@ -211,11 +241,9 @@ export const LAYER_FADE_OUT_MS = 260;
  */
 export const playClip = async (id: string, readyMs = 1500): Promise<boolean> => {
 	if (!hasClip(id)) return false;
-	// not in memory yet: the title card is better than a pause while it downloads
-	if (!isDownloaded(id)) {
-		download(id);
-		return false;
-	}
+	// not in memory (never fetched, or released to save memory): give it a moment to download, else the
+	// caller shows its title card rather than pausing
+	if (!isDownloaded(id) && !(await ensureClip(id, 2500))) return false;
 	const clip = getClip(id, 'layer');
 	if (!clip || !(await whenReady(clip.video, readyMs))) return false;
 	retain(clip);
@@ -274,7 +302,8 @@ export const prefetchClips = () => {
 	const rest = Object.keys(CLIP_URLS).filter((id) => !first.includes(id));
 	const queue = [...first, ...rest].filter((id) => hasClip(id));
 	let i = 0;
-	const next = (): unknown => i < queue.length && download(queue[i++]).then(next);
+	// background prefetch fills at most 80% of the memory budget, most frequent clips first
+	const next = (): unknown => i < queue.length && blobBytes < BLOB_BUDGET * 0.8 && download(queue[i++]).then(next);
 	for (let k = 0; k < 3; k++) next();
 };
 
