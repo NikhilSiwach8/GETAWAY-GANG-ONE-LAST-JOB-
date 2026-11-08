@@ -93,7 +93,7 @@ export const getClip = (id: string, channel = 'main'): Clip | undefined => {
 		else download(id).then((url) => (video.src = url ?? CLIP_URLS[id]));
 		// the background loops are slow parallax: half the texture uploads of the effect clips
 		const updateFPS = channel === 'bg' ? 15 : 30;
-		const source = new PIXI.VideoSource({ resource: video, autoPlay: false, autoLoad: true, updateFPS });
+		const source = new PIXI.VideoSource({ resource: video, autoPlay: false, autoLoad: true, updateFPS, autoGenerateMipmaps: false });
 		clip = { video, texture: new PIXI.Texture({ source }), lastUsed: 0, refs: 0 };
 		cache.set(key, clip);
 	}

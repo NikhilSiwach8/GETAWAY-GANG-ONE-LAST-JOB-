@@ -11,7 +11,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SRC = os.path.join(ROOT, "art", "delivery", "round2")
 OUT = os.path.join(ROOT, "frontend", "getaway_gang", "static", "assets", "fonts")
 ROW2 = [",", ".", "×", "$", "€", "£", "+"]
-GLYPH_H = 160  # rendered digit height in the atlas
+GLYPH_H = 320  # max digit height in the atlas (capped at the delivered height: never upscaled)
 
 
 def bands(mask):
@@ -90,7 +90,7 @@ def build(sheet, face_name, folder):
     for ch, (x0, x1) in zip(ROW2, segments(alpha[r2y0:r2y1].any(0))):
         glyphs[ch] = im.crop((x0, r1y0 + (r2y0 - r1y0), x1, r2y1))
     # trim each glyph horizontally to its own pixels; keep a common vertical frame per row
-    scale = GLYPH_H / (r1y1 - r1y0)
+    scale = min(1.0, GLYPH_H / (r1y1 - r1y0))
     base_h = round((r1y1 - r1y0) * scale)
     pad = 4
     tiles = {}

@@ -3,6 +3,7 @@
 	import { GlobalStyle } from 'components-ui-html';
 	import { Authenticate, LoaderStakeEngine, LoadI18n } from 'components-shared';
 	import '../lib/fonts/register';
+	import '../game/pixiDefaults';
 	import Game from '../components/Game.svelte';
 	import { setContext } from '../game/context';
 

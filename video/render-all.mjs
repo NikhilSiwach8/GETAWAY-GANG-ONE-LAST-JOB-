@@ -9,8 +9,6 @@ import path from 'node:path';
 const BROWSER = '/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell';
 // Full-frame clips with their own background; everything else is an overlay with transparency.
 const OPAQUE = new Set(['BG-MAIN-LOOP', 'BG-ESCAPE-LOOP', 'BG-HEIST-LOOP', 'BG-HIDDEN-LOOP', 'CIN-MAX-WIN', 'CIN-FINAL-ESCAPE', 'CIN-PERFECTLY-BAD-PLAN', 'SCR-HEIST-OUTRO', 'SCR-ESCAPE-OUTRO', 'SCR-HEIST-INTRO', 'SCR-HEIST-INTRO-LOOP', 'SCR-ESCAPE-INTRO', 'SCR-ESCAPE-INTRO-LOOP', 'SCR-HIDDEN-INTRO', 'SCR-HIDDEN-INTRO-LOOP', 'SCR-HIDDEN-OUTRO', 'FX-MYSTERY-HIDDEN', 'FX-MYSTERY-ESCAPE', 'FX-MYSTERY-NONE']);
-// rendered at native size (already authored at display size)
-const NATIVE = new Set(['FX-ANTICIPATION', 'UI-BUY-BONUS-ANIM']);
 const prefixes = process.argv.slice(2);
 const out = path.resolve('out');
 fs.mkdirSync(out, {recursive: true});
@@ -31,11 +29,14 @@ for (const comp of comps) {
 		codec: 'vp9',
 		outputLocation: file,
 		browserExecutable: BROWSER,
+		// lossless frames into the encoder (PNG, or JPEG at 100 for opaque clips)
 		imageFormat: transparent ? 'png' : 'jpeg',
+		jpegQuality: 100,
 		pixelFormat: transparent ? 'yuva420p' : 'yuv420p',
-		// render at the size the game displays: HD clips at 720p, character clips 512px, symbol clips 256px
-		scale: NATIVE.has(comp.id) ? 1 : comp.id.startsWith('BG-') && comp.id.endsWith('-LOOP') ? 0.5 : comp.width === 1920 ? 2 / 3 : 0.5,
-		crf: comp.width === 1920 ? Number(process.env.HD_CRF ?? 42) : 32,
+		// highest quality: every clip at its full authored size (HD 1920x1080, characters 1024, symbols 512)
+		// and near-lossless VP9 (CRF 10, constant quality: bits go wherever the detail needs them)
+		scale: 1,
+		crf: Number(process.env.CRF ?? 10),
 		concurrency: 4,
 		logLevel: 'error',
 	});
