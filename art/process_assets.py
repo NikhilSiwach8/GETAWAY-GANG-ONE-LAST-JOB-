@@ -44,6 +44,9 @@ PLAN = {
     "SCR-HIDDEN-INTRO": (1920, 1080),
     "UI-MYSTERY-BADGE": (900, None),
     "SCR-HIDDEN-OUTRO": (1920, 1080),
+    # cleaned outro stills (art/prep_outros.py): fallback when transparent WebM is unsupported
+    "SCR-HEIST-OUTRO-CLEAN": (1920, 1080),
+    "SCR-ESCAPE-OUTRO-CLEAN": (1920, 1080),
     "UI-VAULT-GUARANTEE": (1000, None),
 }
 # assets only used by the HTML modals: written to GG_HTML (URLs) instead of the Pixi asset loader

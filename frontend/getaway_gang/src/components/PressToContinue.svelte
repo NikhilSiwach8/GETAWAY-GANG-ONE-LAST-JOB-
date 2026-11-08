@@ -10,6 +10,8 @@
 
 	type Props = {
 		onpress: () => void;
+		/** keep the hotkey/tap but hide the graphic (end screens with the prompt painted in) */
+		hideArt?: boolean;
 	};
 
 	const props: Props = $props();
@@ -31,6 +33,7 @@
 	const pulse = $derived(1 + Math.sin(t * 3.2) * 0.03);
 </script>
 
+{#if !props.hideArt}
 <MainContainer alignVertical="bottom">
 	<Sprite
 		{key}
@@ -42,5 +45,6 @@
 		y={context.stateLayoutDerived.mainLayout().height - 20}
 	/>
 </MainContainer>
+{/if}
 <OnHotkey hotkey="Space" onpress={() => props.onpress()} />
 <OnPressFullScreen onpress={() => props.onpress()} />

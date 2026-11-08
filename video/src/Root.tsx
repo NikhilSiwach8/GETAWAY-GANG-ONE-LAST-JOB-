@@ -3,10 +3,11 @@ import React from 'react';
 import {Composition, Folder} from 'remotion';
 import {BonusIntro, BonusIntroLoop} from './clips/BonusIntro';
 import {HiddenOutro, MysteryReveal, VaultGuarantee} from './clips/Mystery';
-import {Anticipation, BillSprite, BuyBonusSheen, CoinSprite, EscapeOutro, GlintSprite, HeistOutro, Transition} from './clips/Round2';
+import {ChaosRespin, OutroScreen} from './clips/Outros';
+import {Anticipation, BillSprite, BuyBonusSheen, CoinSprite, GlintSprite, Transition} from './clips/Round2';
 import {ABILITY_SECONDS, AbilityFx, CrewChaos} from './clips/Abilities';
 import {COMBO_SECONDS, CleanGetaway, Combo, PerfectlyBadPlan} from './clips/Combos';
-import {LootMilestone, MeterStage, Respin, Retrigger} from './clips/Feature';
+import {LootMilestone, MeterStage, Retrigger} from './clips/Feature';
 import {MaxWin, WinBig, WinEpic, WinMega, WinSuper} from './clips/Wins';
 import {BgEscapeLoop, BgMainLoop, FinalEscape} from './clips/Loops';
 import {SymbolAnim, SymbolTransform} from './clips/Symbols';
@@ -46,7 +47,7 @@ export const RemotionRoot: React.FC = () => {
 				<Composition id="ANIM-BYTE-ABILITY-FX" component={AbilityFx} durationInFrames={Math.round(ABILITY_SECONDS * FPS)} {...HD} defaultProps={{crew: 'B' as const}} />
 				<Composition id="ANIM-TANK-ABILITY-FX" component={AbilityFx} durationInFrames={Math.round(ABILITY_SECONDS * FPS)} {...HD} defaultProps={{crew: 'T' as const}} />
 				<Composition id="ANIM-FUSE-ABILITY-FX" component={AbilityFx} durationInFrames={Math.round(ABILITY_SECONDS * FPS)} {...HD} defaultProps={{crew: 'F' as const}} />
-				<Composition id="FX-RESPIN" component={Respin} durationInFrames={36} {...HD} />
+				<Composition id="FX-RESPIN" component={ChaosRespin} durationInFrames={54} {...HD} />
 				<Composition id="FX-RETRIGGER" component={Retrigger} durationInFrames={45} {...HD} />
 				<Composition id="FX-METER-STAGE" component={MeterStage} durationInFrames={30} {...HD} />
 				<Composition id="FX-LOOT-MILESTONE" component={LootMilestone} durationInFrames={40} {...HD} />
@@ -92,8 +93,8 @@ export const RemotionRoot: React.FC = () => {
 				<Composition id="FX-MYSTERY-ESCAPE" component={MysteryReveal} durationInFrames={126} {...HD} defaultProps={{result: 'escape' as const}} />
 				<Composition id="FX-MYSTERY-NONE" component={MysteryReveal} durationInFrames={114} {...HD} defaultProps={{result: 'none' as const}} />
 				<Composition id="FX-VAULT-GUARANTEE" component={VaultGuarantee} durationInFrames={66} {...HD} />
-				<Composition id="SCR-HEIST-OUTRO" component={HeistOutro} durationInFrames={150} {...HD} />
-				<Composition id="SCR-ESCAPE-OUTRO" component={EscapeOutro} durationInFrames={150} {...HD} />
+				<Composition id="SCR-HEIST-OUTRO" component={OutroScreen} durationInFrames={150} {...HD} defaultProps={{bonus: 'heist' as const}} />
+				<Composition id="SCR-ESCAPE-OUTRO" component={OutroScreen} durationInFrames={150} {...HD} defaultProps={{bonus: 'escape' as const}} />
 				<Composition id="UI-BUY-BONUS-ANIM" component={BuyBonusSheen} durationInFrames={60} fps={FPS} width={600} height={260} />
 				<Composition id="FX-COINS-COIN" component={CoinSprite} durationInFrames={8} fps={FPS} width={128} height={128} />
 				<Composition id="FX-COINS-BILL" component={BillSprite} durationInFrames={8} fps={FPS} width={128} height={128} />

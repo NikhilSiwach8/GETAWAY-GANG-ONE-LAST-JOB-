@@ -202,6 +202,14 @@ export const GG_LAYOUT = {
 		"width": 1920,
 		"height": 1080
 	},
+	"SCR-HEIST-OUTRO-CLEAN": {
+		"width": 1920,
+		"height": 1080
+	},
+	"SCR-ESCAPE-OUTRO-CLEAN": {
+		"width": 1920,
+		"height": 1080
+	},
 	"UI-VAULT-GUARANTEE": {
 		"width": 1000,
 		"height": 600
@@ -327,7 +335,9 @@ export const GG_ASSETS = {
 	'CHR-ROXY-POSE': { type: 'sprite', src: new URL('../../assets/gg/CHR-ROXY-POSE.webp', import.meta.url).href },
 	'CHR-TANK-POSE': { type: 'sprite', src: new URL('../../assets/gg/CHR-TANK-POSE.webp', import.meta.url).href },
 	'SCR-ESCAPE-INTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-ESCAPE-INTRO.webp', import.meta.url).href },
+	'SCR-ESCAPE-OUTRO-CLEAN': { type: 'sprite', src: new URL('../../assets/gg/SCR-ESCAPE-OUTRO-CLEAN.webp', import.meta.url).href },
 	'SCR-HEIST-INTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-HEIST-INTRO.webp', import.meta.url).href },
+	'SCR-HEIST-OUTRO-CLEAN': { type: 'sprite', src: new URL('../../assets/gg/SCR-HEIST-OUTRO-CLEAN.webp', import.meta.url).href },
 	'SCR-HIDDEN-INTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-HIDDEN-INTRO.webp', import.meta.url).href },
 	'SCR-HIDDEN-OUTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-HIDDEN-OUTRO.webp', import.meta.url).href },
 	'SCR-LOADING': { type: 'sprite', src: new URL('../../assets/gg/SCR-LOADING.webp', import.meta.url).href, preload: true },
