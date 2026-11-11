@@ -360,7 +360,7 @@ export const GG_LAYOUT = {
 	},
 	"UI-MILESTONE": {
 		"width": 600,
-		"height": 474
+		"height": 475
 	},
 	"UI-CELL-GLOW": {
 		"width": 512,
@@ -389,6 +389,10 @@ export const GG_LAYOUT = {
 	"SYM-WILD-REEL": {
 		"width": 512,
 		"height": 2048
+	},
+	"UI-ANTE-PANEL": {
+		"width": 1024,
+		"height": 341
 	}
 } as const;
 
@@ -425,6 +429,7 @@ export const GG_ASSETS = {
 	'SYM-TANK': { type: 'sprite', src: new URL('../../assets/gg/SYM-TANK.webp', import.meta.url).href },
 	'SYM-WILD': { type: 'sprite', src: new URL('../../assets/gg/SYM-WILD.webp', import.meta.url).href },
 	'SYM-WILD-REEL': { type: 'sprite', src: new URL('../../assets/gg/SYM-WILD-REEL.webp', import.meta.url).href },
+	'UI-ANTE-PANEL': { type: 'sprite', src: new URL('../../assets/gg/UI-ANTE-PANEL.webp', import.meta.url).href },
 	'UI-AUTOPLAY-0': { type: 'sprite', src: new URL('../../assets/gg/UI-AUTOPLAY-0.webp', import.meta.url).href },
 	'UI-BALANCE-PANEL': { type: 'sprite', src: new URL('../../assets/gg/UI-BALANCE-PANEL.webp', import.meta.url).href },
 	'UI-BANNER': { type: 'sprite', src: new URL('../../assets/gg/UI-BANNER.webp', import.meta.url).href },

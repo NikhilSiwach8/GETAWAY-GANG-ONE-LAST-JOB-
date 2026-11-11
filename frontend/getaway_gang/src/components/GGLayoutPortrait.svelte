@@ -111,9 +111,6 @@
 		<Container x={cx + 410} y={railY - 410} scale={1.05}>
 			{@render props.buttonBuyBonus({ anchor: 0.5 })}
 		</Container>
-		<Container x={cx + 410} y={railY - 560}>
-			<ButtonAnte width={240} />
-		</Container>
 		<Container x={cx - 262} y={railY - 190}>
 			{@render props.amountBalance({ stacked: true, width: 470 } as never)}
 		</Container>
@@ -143,6 +140,11 @@
 			</Container>
 		</Container>
 	{/if}
+
+	<!-- ante capsule on the rail, left of the BET plate (the drawer button sits on the right) -->
+	<Container x={cx - 428} y={railY - 4}>
+		<ButtonAnte width={210} />
+	</Container>
 
 	<!-- drawer button -->
 	<FadeContainer

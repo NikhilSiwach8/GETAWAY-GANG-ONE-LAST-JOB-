@@ -256,6 +256,25 @@ def style_parts():
     beams = np.clip(np.cos(ang * 18) * 1.6 - 0.6, 0, 1) ** 1.5
     fall = np.clip(1 - rad, 0, 1) ** 1.4 * np.clip(rad * 6, 0, 1)
     out["UI-RAYS"] = Image.fromarray(np.dstack([np.full((n, n, 3), 255), beams * fall * 255]).astype(np.uint8), "RGBA")
+    # ANTE capsule: the WIN panel with its "WIN" lettering painted out of the tab (the game letters ANTE there)
+    wp = os.path.join(OUT, "UI-WIN-PANEL.webp")
+    if os.path.exists(wp):
+        import cv2
+        panel = Image.open(wp).convert("RGBA")
+        kx = panel.width / 1024
+        a = np.asarray(panel).copy()
+        x0, x1, y0, y1 = (round(v * kx) for v in (412, 618, 22, 104))
+        # the tab interior is a smooth dark slate: refill every dark row between the rivets with a linear blend of
+        # the colours just left and right of the lettering (no inpainting texture, so no ghost letters)
+        src = np.asarray(Image.open(wp).convert("RGBA")).astype(np.float32)
+        xl, xr = round(404 * kx), round(621 * kx)
+        for y in range(y0, y1):
+            cl, cr = src[y, xl, :3], src[y, xr, :3]
+            if cl.max() > 110 or cr.max() > 110:  # gold bevel row, not the dark interior
+                continue
+            t = np.linspace(0, 1, xr - xl)[:, None]
+            a[y, xl:xr, :3] = (cl * (1 - t) + cr * t).astype(np.uint8)
+        out["UI-ANTE-PANEL"] = Image.fromarray(a, "RGBA")
     # gold coin cut from BG-HIDDEN (art/prep_fx.py) for the live coin showers
     coin = os.path.join(ROOT, "video", "public", "gg", "FX-COIN.webp")
     if os.path.exists(coin):

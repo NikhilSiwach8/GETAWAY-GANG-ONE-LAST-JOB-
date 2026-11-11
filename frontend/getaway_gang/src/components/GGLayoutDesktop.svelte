@@ -21,8 +21,8 @@
 	const context = getContext();
 	const std = $derived(context.stateLayoutDerived.mainLayoutStandard());
 	// positions on the 1920-wide rail (x, standard px) and sizes; touch screens get bigger SPIN/BET targets
-	const DESK = { anteW: 190, menu: 80, buy: 252, buyS: 0.78, bal: 560, plateW: 290, side: 168, sideD: 118, spinD: 196, win: 1340, betW: 400, smallD: 104 };
-	const TOUCH = { anteW: 210, menu: 90, buy: 300, buyS: 0.72, bal: 600, plateW: 260, side: 160, sideD: 120, spinD: 212, win: 1320, betW: 440, smallD: 116 };
+	const DESK = { anteW: 290, menu: 80, buy: 252, buyS: 0.78, bal: 560, plateW: 290, side: 168, sideD: 118, spinD: 196, win: 1340, betW: 400, smallD: 104 };
+	const TOUCH = { anteW: 300, menu: 90, buy: 300, buyS: 0.72, bal: 600, plateW: 260, side: 160, sideD: 120, spinD: 212, win: 1320, betW: 440, smallD: 116 };
 	const P = $derived(context.stateLayoutDerived.layoutType() === 'desktop' ? DESK : TOUCH);
 
 	const RAIL_H = 134;
@@ -61,8 +61,8 @@
 		{@render props.buttonBuyBonus({ anchor: 0.5 })}
 	</Container>
 
-	<!-- ante toggle, sitting on the rail's top edge above Buy Bonus -->
-	<Container x={P.buy} y={railY - 112}>
+	<!-- ante toggle: a capsule standing on the rail's top edge, centred over Buy Bonus -->
+	<Container x={P.buy} y={railY - RAIL_H / 2 - (P.anteW * 341) / 1024 / 2 + 10}>
 		<ButtonAnte width={P.anteW} />
 	</Container>
 

@@ -1,7 +1,8 @@
 <!--
-  ANTE SPIN toggle on the bet console: a steel plate cut from the reel frame (UI-CONSOLE-PLATE) with a
-  switch lamp. ON = every spin costs anteCost x the bet with anteBonusFactor x the bonus chance (math:
-  ante bet mode). Only changeable while idle; centred on (0, 0), `width` wide.
+  ANTE SPIN toggle in the console's own capsule style (UI-ANTE-PANEL: the WIN capsule with a blank tab):
+  "ANTE" on the tab, the state in the navy window (lamp + ON/OFF + what it does), a gold glow while on.
+  ON = every spin costs anteCost x the bet with anteBonusFactor x the bonus chance. Changeable only while
+  idle. Centred on (0, 0), `width` wide.
 -->
 <script lang="ts">
 	import { Container, Sprite, Text } from 'pixi-svelte';
@@ -11,16 +12,21 @@
 	import { getContext } from 'components-ui-pixi/src/context';
 	import config from '../game/config';
 	import { ante, setAnte } from '../game/ante.svelte';
+	import { GG_LAYOUT } from '../game/ggAssets';
 
 	type Props = { width?: number };
 	const props: Props = $props();
 	const { stateXstateDerived, eventEmitter } = getContext();
-	const W = $derived(props.width ?? 200);
-	const H = $derived(W * (134 / 272));
+	const art = GG_LAYOUT['UI-ANTE-PANEL'];
+	const W = $derived(props.width ?? 240);
+	const H = $derived((W * art.height) / art.width);
+	// measured on the art (fractions of its height): tab centre and navy window centre
+	const TAB_Y = 62 / 341 - 0.5;
+	const WIN_Y = 192 / 341 - 0.5;
 	const disabled = $derived(!stateXstateDerived.isIdle());
-	const knob = new Tween(ante.on ? 1 : 0, { duration: 220, easing: cubicOut });
+	const on = new Tween(ante.on ? 1 : 0, { duration: 220, easing: cubicOut });
 	$effect(() => {
-		knob.set(ante.on ? 1 : 0);
+		on.set(ante.on ? 1 : 0);
 	});
 	const f = config.features;
 	const onpress = () => {
@@ -34,16 +40,15 @@
 <Button anchor={0.5} sizes={{ width: W, height: H }} {disabled} {onpress}>
 	{#snippet children({ center, hovered, pressed })}
 		<Container {...center} scale={pressed ? 0.96 : hovered ? 1.03 : 1} alpha={disabled ? 0.6 : 1}>
-			<Sprite key="UI-CONSOLE-PLATE" anchor={0.5} width={W} height={H} />
-			<!-- glow while on -->
-			<Sprite key="UI-SOFT-GLOW" anchor={0.5} width={W * 1.15} height={H * 1.3} tint={0xffc93c} alpha={0.55 * knob.current} blendMode="add" />
-			<Text anchor={0.5} x={-W * 0.13} y={-H * 0.13} text="ANTE" style={{ ...font, fontSize: H * 0.3, fill: ante.on ? 0xffe27a : 0xffffff, stroke: { color: 0x2a1200, width: 5 } }} />
-			<Text anchor={0.5} x={-W * 0.13} y={H * 0.19} text={`${f.anteBonusFactor}× BONUS · ${f.anteCost}× BET`} style={{ ...font, fontSize: H * 0.13, fill: 0xdbe7ff, stroke: { color: 0x0a1633, width: 3 } }} />
-			<!-- lamp: a steel rivet that lights up gold when the ante is on -->
-			<Container x={W * 0.3}>
-				<Sprite key="UI-CONSOLE-RIVET" anchor={0.5} y={-H * 0.1} width={H * 0.34} height={H * 0.34} />
-				<Sprite key="UI-SOFT-GLOW" anchor={0.5} y={-H * 0.1} width={H * 0.7} height={H * 0.7} tint={0xffd23a} alpha={0.95 * knob.current} blendMode="add" />
-				<Text anchor={0.5} y={H * 0.24} text={ante.on ? 'ON' : 'OFF'} style={{ ...font, fontSize: H * 0.15, fill: ante.on ? 0xffe27a : 0x9aa6c8 }} />
+			<Sprite key="UI-SOFT-GLOW" anchor={0.5} width={W * 1.25} height={H * 1.6} tint={0xffc93c} alpha={0.6 * on.current} blendMode="add" />
+			<Sprite key="UI-ANTE-PANEL" anchor={0.5} width={W} height={H} />
+			<Text anchor={0.5} y={H * TAB_Y} text="ANTE" style={{ ...font, fontSize: H * 0.22, fill: 0xffe27a, stroke: { color: 0x2a1200, width: 4 }, letterSpacing: 2 }} />
+			<Container y={H * WIN_Y}>
+				<!-- lamp -->
+				<Sprite key="UI-SOFT-GLOW" anchor={0.5} x={-W * 0.33} width={H * 0.42} height={H * 0.42} tint={ante.on ? 0xffd23a : 0x5a6688} alpha={0.55 + 0.45 * on.current} />
+				<Sprite key="UI-SOFT-GLOW" anchor={0.5} x={-W * 0.33} width={H * 0.18} height={H * 0.18} tint={0xffffff} alpha={0.9 * on.current} blendMode="add" />
+				<Text anchor={{ x: 0, y: 0.5 }} x={-W * 0.28} y={-H * 0.005} text={ante.on ? 'ON' : 'OFF'} style={{ ...font, fontSize: H * 0.27, fill: ante.on ? 0xffe27a : 0x9aa6c8, stroke: { color: 0x0a1633, width: 3 } }} />
+				<Text anchor={{ x: 1, y: 0.5 }} x={W * 0.38} y={H * 0.005} text={`${f.anteBonusFactor}× BONUS · ${f.anteCost}× BET`} style={{ ...font, fontSize: H * 0.16, fill: 0xdbe7ff, stroke: { color: 0x0a1633, width: 3 } }} />
 			</Container>
 		</Container>
 	{/snippet}
