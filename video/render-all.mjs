@@ -21,6 +21,8 @@ const comps = (await getCompositions(serveUrl, {browserExecutable: BROWSER})).fi
 console.log(`rendering ${comps.length} compositions`);
 for (const comp of comps) {
 	const file = path.join(out, `${comp.id}.webm`);
+	// SKIP_EXISTING=1: resume an interrupted run (clips already in out/ are kept)
+	if (process.env.SKIP_EXISTING && fs.existsSync(file)) continue;
 	const t0 = Date.now();
 	const transparent = !OPAQUE.has(comp.id);
 	await renderMedia({
@@ -37,7 +39,7 @@ for (const comp of comps) {
 		// and near-lossless VP9 (CRF 10, constant quality: bits go wherever the detail needs them)
 		scale: 1,
 		crf: Number(process.env.CRF ?? 10),
-		concurrency: 4,
+		concurrency: Number(process.env.CONC ?? 4),
 		logLevel: 'error',
 	});
 	console.log(`${comp.id}  ${((Date.now() - t0) / 1000).toFixed(0)}s  ${(fs.statSync(file).size / 1e6).toFixed(2)} MB`);

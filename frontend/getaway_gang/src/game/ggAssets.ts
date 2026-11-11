@@ -73,58 +73,58 @@ export const GG_LAYOUT = {
 		"height": 1440
 	},
 	"SCR-LOADING": {
-		"width": 1673,
-		"height": 941
+		"width": 1920,
+		"height": 1080
 	},
 	"SCR-HEIST-INTRO": {
-		"width": 1673,
-		"height": 941
+		"width": 1920,
+		"height": 1080
 	},
 	"SCR-ESCAPE-INTRO": {
-		"width": 1673,
-		"height": 941
+		"width": 1920,
+		"height": 1080
 	},
 	"UI-LOGO": {
-		"width": 1100,
-		"height": 550
+		"width": 1600,
+		"height": 799
 	},
 	"UI-REEL-FRAME": {
-		"width": 1536,
-		"height": 1024,
+		"width": 2600,
+		"height": 1733,
 		"window": {
-			"x": 0.08723958333333333,
-			"y": 0.17578125,
-			"w": 0.826171875,
-			"h": 0.6748046875
+			"x": 0.0876923076923077,
+			"y": 0.17599538372763993,
+			"w": 0.8253846153846154,
+			"h": 0.6739757645701097
 		}
 	},
 	"UI-REEL-BG": {
-		"width": 1200,
-		"height": 800
+		"width": 2000,
+		"height": 1333
 	},
 	"UI-METER-GETAWAY": {
-		"width": 1000,
-		"height": 334
+		"width": 1400,
+		"height": 466
 	},
 	"UI-METER-LOOT": {
-		"width": 1000,
-		"height": 334
+		"width": 1400,
+		"height": 466
 	},
 	"UI-CREW-LEVELS": {
-		"width": 1000,
-		"height": 500
+		"width": 1400,
+		"height": 699
 	},
 	"UI-FS-COUNTER": {
-		"width": 640,
-		"height": 427
+		"width": 900,
+		"height": 600
 	},
 	"UI-MULT": {
-		"width": 520,
-		"height": 347
+		"width": 720,
+		"height": 480
 	},
 	"UI-RESPIN": {
-		"width": 800,
-		"height": 267
+		"width": 1400,
+		"height": 466
 	},
 	"CHR-ROXY-POSE": {
 		"width": 1254,
@@ -143,64 +143,64 @@ export const GG_LAYOUT = {
 		"height": 1254
 	},
 	"BUY-HEIST-CARD": {
-		"width": 1280,
-		"height": 720
+		"width": 1920,
+		"height": 1080
 	},
 	"BUY-ESCAPE-CARD": {
-		"width": 1280,
-		"height": 720
+		"width": 1920,
+		"height": 1080
 	},
 	"UI-INFO-HEADER": {
-		"width": 1400,
-		"height": 467
+		"width": 2000,
+		"height": 666
 	},
 	"UI-BUY-PANEL": {
-		"width": 1200,
-		"height": 900
+		"width": 2000,
+		"height": 1500
 	},
 	"RULE-CREW-CHAOS": {
-		"width": 1100,
-		"height": 619
-	},
-	"RULE-RESPIN": {
-		"width": 1100,
-		"height": 619
-	},
-	"RULE-PBP": {
-		"width": 1100,
-		"height": 619
-	},
-	"RULE-FINAL-ESCAPE": {
-		"width": 1100,
-		"height": 619
-	},
-	"RULE-METER": {
-		"width": 1100,
-		"height": 412
-	},
-	"RULE-LOOT-METER": {
-		"width": 643,
+		"width": 1600,
 		"height": 900
 	},
+	"RULE-RESPIN": {
+		"width": 1600,
+		"height": 900
+	},
+	"RULE-PBP": {
+		"width": 1600,
+		"height": 900
+	},
+	"RULE-FINAL-ESCAPE": {
+		"width": 1600,
+		"height": 900
+	},
+	"RULE-METER": {
+		"width": 1600,
+		"height": 600
+	},
+	"RULE-LOOT-METER": {
+		"width": 929,
+		"height": 1300
+	},
 	"BUY-MYSTERY-CARD": {
-		"width": 1280,
-		"height": 720
+		"width": 1920,
+		"height": 1080
 	},
 	"BG-HIDDEN": {
 		"width": 2560,
 		"height": 1440
 	},
 	"SCR-HIDDEN-INTRO": {
-		"width": 1673,
-		"height": 941
+		"width": 1920,
+		"height": 1080
 	},
 	"UI-MYSTERY-BADGE": {
-		"width": 900,
-		"height": 300
+		"width": 1300,
+		"height": 433
 	},
 	"SCR-HIDDEN-OUTRO": {
-		"width": 1673,
-		"height": 941
+		"width": 1920,
+		"height": 1080
 	},
 	"SCR-HEIST-OUTRO-CLEAN": {
 		"width": 1920,
@@ -211,32 +211,32 @@ export const GG_LAYOUT = {
 		"height": 1080
 	},
 	"UI-VAULT-GUARANTEE": {
-		"width": 1000,
-		"height": 600
+		"width": 1400,
+		"height": 841
 	},
 	"UI-BUY-BONUS-0": {
-		"width": 731,
-		"height": 301
+		"width": 1040,
+		"height": 430
 	},
 	"UI-BUY-BONUS-1": {
-		"width": 733,
-		"height": 302
+		"width": 1040,
+		"height": 427
 	},
 	"UI-BUY-BONUS-2": {
-		"width": 731,
-		"height": 304
+		"width": 1040,
+		"height": 434
 	},
 	"UI-BUY-BONUS-3": {
-		"width": 738,
-		"height": 305
+		"width": 1040,
+		"height": 430
 	},
 	"UI-PAYTABLE-0": {
-		"width": 461,
-		"height": 469
+		"width": 503,
+		"height": 512
 	},
 	"UI-PAYTABLE-1": {
-		"width": 473,
-		"height": 495
+		"width": 489,
+		"height": 512
 	},
 	"UI-VOL-ON": {
 		"width": 150,
@@ -248,7 +248,7 @@ export const GG_LAYOUT = {
 	},
 	"UI-LOADING-BAR-FRAME": {
 		"width": 1400,
-		"height": 200
+		"height": 199
 	},
 	"UI-LOADING-BAR-FILL": {
 		"width": 1300,
@@ -256,11 +256,11 @@ export const GG_LAYOUT = {
 	},
 	"UI-PRESS-CONTINUE-TAP": {
 		"width": 1400,
-		"height": 186
+		"height": 187
 	},
 	"UI-PRESS-CONTINUE-PRESS": {
 		"width": 1400,
-		"height": 184
+		"height": 183
 	},
 	"UI-SPIN-0": {
 		"width": 510,
@@ -271,11 +271,11 @@ export const GG_LAYOUT = {
 		"height": 512
 	},
 	"UI-TURBO-0": {
-		"width": 504,
+		"width": 505,
 		"height": 512
 	},
 	"UI-TURBO-1": {
-		"width": 505,
+		"width": 504,
 		"height": 512
 	},
 	"UI-SOUND-0": {
@@ -295,44 +295,36 @@ export const GG_LAYOUT = {
 		"height": 512
 	},
 	"UI-INFO-0": {
-		"width": 500,
+		"width": 501,
 		"height": 512
 	},
 	"UI-BET-MINUS": {
-		"width": 360,
-		"height": 360
+		"width": 512,
+		"height": 511
 	},
 	"UI-BET-PLUS": {
-		"width": 360,
-		"height": 360
+		"width": 512,
+		"height": 511
 	},
 	"UI-BET-PANEL": {
 		"width": 1024,
-		"height": 644
+		"height": 643
 	},
 	"UI-BALANCE-PANEL": {
 		"width": 1024,
-		"height": 342
+		"height": 341
 	},
 	"UI-WIN-PANEL": {
 		"width": 1024,
-		"height": 342
+		"height": 341
 	},
 	"UI-RESPIN-BASE": {
-		"width": 800,
-		"height": 267
+		"width": 1400,
+		"height": 466
 	},
 	"UI-RESPIN-LOCK-ON": {
-		"width": 132,
-		"height": 148
-	},
-	"UI-BET-UNIT": {
-		"width": 1400,
-		"height": 467
-	},
-	"SYM-WILD-REEL": {
-		"width": 512,
-		"height": 2048
+		"width": 231,
+		"height": 259
 	},
 	"UI-CONSOLE-CAP-L": {
 		"width": 430,
@@ -368,7 +360,7 @@ export const GG_LAYOUT = {
 	},
 	"UI-MILESTONE": {
 		"width": 600,
-		"height": 475
+		"height": 474
 	},
 	"UI-CELL-GLOW": {
 		"width": 512,
@@ -389,6 +381,14 @@ export const GG_LAYOUT = {
 	"FX-COIN": {
 		"width": 153,
 		"height": 123
+	},
+	"UI-BET-UNIT": {
+		"width": 1400,
+		"height": 466
+	},
+	"SYM-WILD-REEL": {
+		"width": 512,
+		"height": 2048
 	}
 } as const;
 

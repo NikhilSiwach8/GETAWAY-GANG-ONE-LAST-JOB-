@@ -31,34 +31,34 @@ PLAN = {
                                "SYM-WILD", "SYM-SCATTER", "SYM-ROXY", "SYM-BYTE", "SYM-TANK", "SYM-FUSE"]},
     **{b: (2560, 1440) for b in ["BG-MAIN", "BG-HEIST", "BG-ESCAPE", "BG-LOADING"]},
     **{s: (1920, 1080) for s in ["SCR-LOADING", "SCR-HEIST-INTRO", "SCR-ESCAPE-INTRO"]},
-    "UI-LOGO": (1100, None),
-    "UI-REEL-FRAME": (1536, None),
-    "UI-REEL-BG": (1200, 800),
-    "UI-METER-GETAWAY": (1000, None),
-    "UI-METER-LOOT": (1000, None),
-    "UI-CREW-LEVELS": (1000, None),
-    "UI-FS-COUNTER": (640, None),
-    "UI-MULT": (520, None),
-    "UI-RESPIN": (800, None),
+    "UI-LOGO": (1600, None),
+    "UI-REEL-FRAME": (2600, None),
+    "UI-REEL-BG": (2000, 1333),
+    "UI-METER-GETAWAY": (1400, None),
+    "UI-METER-LOOT": (1400, None),
+    "UI-CREW-LEVELS": (1400, None),
+    "UI-FS-COUNTER": (900, None),
+    "UI-MULT": (720, None),
+    "UI-RESPIN": (1400, None),
     **{c: (None, 1254) for c in ["CHR-ROXY-POSE", "CHR-BYTE-POSE", "CHR-TANK-POSE", "CHR-FUSE-POSE"]},
     # round 2: HTML-only art (Buy Bonus, Paytable, How to Play) -- not loaded as Pixi textures
-    "BUY-HEIST-CARD": (1280, 720),
-    "BUY-ESCAPE-CARD": (1280, 720),
-    "UI-INFO-HEADER": (1400, None),
-    "UI-BUY-PANEL": (1200, None),
-    **{r: (1100, None) for r in ["RULE-CREW-CHAOS", "RULE-RESPIN", "RULE-PBP", "RULE-FINAL-ESCAPE"]},
-    "RULE-METER": (1100, None),
-    "RULE-LOOT-METER": (None, 900),
+    "BUY-HEIST-CARD": (1920, 1080),
+    "BUY-ESCAPE-CARD": (1920, 1080),
+    "UI-INFO-HEADER": (2000, None),
+    "UI-BUY-PANEL": (2000, None),
+    **{r: (1600, None) for r in ["RULE-CREW-CHAOS", "RULE-RESPIN", "RULE-PBP", "RULE-FINAL-ESCAPE"]},
+    "RULE-METER": (1600, None),
+    "RULE-LOOT-METER": (None, 1300),
     # Mystery Vault / Hidden Bonus (docs/ASSET_PROMPTS_HIDDEN_BONUS.txt); picked up automatically when delivered
-    "BUY-MYSTERY-CARD": (1280, 720),
+    "BUY-MYSTERY-CARD": (1920, 1080),
     "BG-HIDDEN": (2560, 1440),
     "SCR-HIDDEN-INTRO": (1920, 1080),
-    "UI-MYSTERY-BADGE": (900, None),
+    "UI-MYSTERY-BADGE": (1300, None),
     "SCR-HIDDEN-OUTRO": (1920, 1080),
     # cleaned outro stills (art/prep_outros.py): fallback when transparent WebM is unsupported
     "SCR-HEIST-OUTRO-CLEAN": (1920, 1080),
     "SCR-ESCAPE-OUTRO-CLEAN": (1920, 1080),
-    "UI-VAULT-GUARANTEE": (1000, None),
+    "UI-VAULT-GUARANTEE": (1400, None),
 }
 # assets only used by the HTML modals: written to GG_HTML (URLs) instead of the Pixi asset loader
 HTML_ONLY = {"BUY-HEIST-CARD", "BUY-ESCAPE-CARD", "UI-INFO-HEADER", "UI-BUY-PANEL", "RULE-CREW-CHAOS", "RULE-RESPIN",
@@ -135,7 +135,10 @@ def write_console(layout, done):
     frame_src = find("UI-REEL-FRAME")
     if not frame_src:
         return
-    for out_id, img in console_parts(Image.open(frame_src).convert("RGBA")).items():
+    fr = Image.open(frame_src).convert("RGBA")
+    if fr.width != 1536:  # console_parts measures in the 1536-wide frame; the 2x copy downsamples cleanly
+        fr = fr.resize((1536, round(fr.height * 1536 / fr.width)), Image.LANCZOS)
+    for out_id, img in console_parts(fr, scale=2.0 * fr.width / 1536).items():
         save(img, os.path.join(OUT, out_id + ".webp"))
         layout[out_id] = {"width": img.width, "height": img.height}
         done.append(out_id)
@@ -267,11 +270,16 @@ def write_style_parts(layout, done):
         done.append(out_id)
 
 
-def find(aid):
-    for dirpath, _, files in os.walk(SRC):
-        for f in files:
-            if os.path.splitext(f)[0].upper() == aid:
-                return os.path.join(dirpath, f)
+HQ = os.path.join(ROOT, "art", "delivery_hq")
+
+
+def find(aid, hq=True):
+    """Delivered file for an asset id; the Real-ESRGAN 2x copy (art/upscale) is preferred when present."""
+    for base in ([HQ] if hq else []) + [SRC]:
+        for dirpath, _, files in os.walk(base):
+            for f in files:
+                if os.path.splitext(f)[0].upper() == aid:
+                    return os.path.join(dirpath, f)
     return None
 
 

@@ -16,11 +16,9 @@ jobs:
         run: |
           mkdir -p out/math
           cat downloads/parts/getaway_gang_frontend.zip.part* > out/getaway_gang_frontend.zip
-          for m in base heist escape mystery; do
+          for m in base ante heist escape mystery; do
             cat downloads/parts/books_$m.jsonl.zst.part* > out/math/books_$m.jsonl.zst
           done
-          # Ante Spin serves exactly the base-game books (only its weights differ): same file, own name
-          cp out/math/books_base.jsonl.zst out/math/books_ante.jsonl.zst
           for m in base ante heist escape mystery; do cp downloads/parts/lookUpTable_${m}_0.csv out/math/; done
           cp downloads/parts/index.json out/math/
           (cd out && cp math/* . && sha256sum -c ../downloads/SHA256SUMS.txt)

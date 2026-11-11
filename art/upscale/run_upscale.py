@@ -16,7 +16,15 @@ SRC = os.path.join(ROOT, "art", "delivery")
 DST = os.path.join(ROOT, "art", "delivery_hq")
 SKIP_DIRS = {"rig", "generated"}
 
-sess = e.session(sys.argv[1])
+# one image per process (onnxruntime occasionally stalls in a long-running process): `run_upscale.py W in out`
+if len(sys.argv) == 4:
+    up = e.upscale_image(e.session(sys.argv[1]), Image.open(sys.argv[2]))
+    up.save(sys.argv[3] + ".tmp.webp", "WEBP", lossless=True, quality=100, method=2, exact=True)
+    os.replace(sys.argv[3] + ".tmp.webp", sys.argv[3])
+    sys.exit(0)
+
+import subprocess  # noqa: E402
+
 jobs = []
 for root, dirs, files in os.walk(SRC):
     dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
@@ -29,9 +37,14 @@ for k, path in enumerate(jobs):
     if os.path.exists(out):
         continue
     os.makedirs(os.path.dirname(out), exist_ok=True)
-    t = time.time()
-    im = Image.open(path)
-    up = e.upscale_image(sess, im)
-    up.save(out, "WEBP", lossless=True, quality=100, method=2, exact=True)
-    print(f"[{k + 1}/{len(jobs)}] {os.path.relpath(path, SRC)} {im.size} -> {up.size} {time.time() - t:.0f}s", flush=True)
+    for attempt in range(3):
+        t = time.time()
+        try:
+            subprocess.run([sys.executable, "-I", __file__, sys.argv[1], path, out], timeout=300, check=True,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            break
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError) as err:
+            print(f"  retry {os.path.relpath(path, SRC)}: {type(err).__name__}", flush=True)
+    print(f"[{k + 1}/{len(jobs)}] {os.path.relpath(path, SRC)} {Image.open(path).size} -> "
+          f"{Image.open(out).size if os.path.exists(out) else 'FAILED'} {time.time() - t:.0f}s", flush=True)
 print("done", flush=True)

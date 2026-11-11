@@ -56,16 +56,7 @@
 									<span class="cardcost">{costOf(b.mode)}× BET</span>
 								</div>
 								<div class="body">
-									<div class="vol" title="Volatility {b.volatility} of 5">
-										<span>VOLATILITY</span>
-										{#each [1, 2, 3, 4, 5] as v}<img src={ggUrl(v <= b.volatility ? 'UI-VOL-ON' : 'UI-VOL-OFF')} alt="" />{/each}
-									</div>
-									{#if b.key === 'MYSTERY' && GG_HTML['UI-MYSTERY-BADGE']}
-										<img class="odds" src={GG_HTML['UI-MYSTERY-BADGE']} alt="20% Hidden Bonus, 30% Perfect Escape, 50% empty" />
-									{/if}
-									<ul>
-										{#each b.points as p}<li>{p}</li>{/each}
-									</ul>
+									<!-- price + BUY first, so it is always on screen; details underneath -->
 									<button
 										class="buy"
 										disabled={!affordable(b.mode, b.key)}
@@ -79,6 +70,16 @@
 									{#if overLimit(b.key, b.mode)}
 										<div class="limit">Max bet for this buy: {numberToCurrencyString(maxBetFor(b.key, b.mode))}</div>
 									{/if}
+									<div class="vol" title="Volatility {b.volatility} of 5">
+										<span>VOLATILITY</span>
+										{#each [1, 2, 3, 4, 5] as v}<img src={ggUrl(v <= b.volatility ? 'UI-VOL-ON' : 'UI-VOL-OFF')} alt="" />{/each}
+									</div>
+									{#if b.key === 'MYSTERY' && GG_HTML['UI-MYSTERY-BADGE']}
+										<img class="odds" src={GG_HTML['UI-MYSTERY-BADGE']} alt="20% Hidden Bonus, 30% Perfect Escape, 50% empty" />
+									{/if}
+									<ul>
+										{#each b.points as p}<li>{p}</li>{/each}
+									</ul>
 								</div>
 							</div>
 						{/each}
@@ -108,8 +109,9 @@
 	.panel {
 		position: relative;
 		z-index: 100;
-		width: min(94vw, calc(92vh * 4 / 3), 1180px);
-		aspect-ratio: 4 / 3;
+		/* as large as the screen allows: the frame art stretches to fill (it is a plain bevelled frame) */
+		width: min(97vw, 1600px);
+		height: min(96vh, 1100px);
 		background: var(--panel) center / 100% 100% no-repeat;
 		filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
 		color: #fff;
@@ -147,6 +149,7 @@
 	.cards {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
+		height: calc(100% - 3.2rem);
 		gap: clamp(8px, 2cqw, 22px);
 	}
 	.card {
@@ -157,10 +160,12 @@
 		box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
 		display: flex;
 		flex-direction: column;
+		min-height: 0;
 	}
 	.art {
 		position: relative;
-		aspect-ratio: 16 / 9;
+		/* wider crop than the 16:9 card art so the whole card (and its BUY button) fits without scrolling */
+		aspect-ratio: 16 / 7.4;
 		background-size: cover;
 		background-position: center;
 	}
@@ -215,6 +220,7 @@
 		flex-direction: column;
 		gap: 0.4rem;
 		flex: 1;
+		min-height: 0;
 	}
 	.vol {
 		display: flex;
@@ -239,6 +245,9 @@
 		font-size: clamp(11px, 1.35cqw, 15px);
 		line-height: 1.35;
 		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		scrollbar-width: thin;
 	}
 	button {
 		cursor: pointer;
@@ -274,7 +283,8 @@
 		margin-top: 0.4rem;
 	}
 	.odds {
-		width: 100%;
+		width: 82%;
+		margin: 0 auto;
 		display: block;
 	}
 	.limit {
@@ -297,6 +307,7 @@
 	@media (max-aspect-ratio: 1/1) {
 		.panel {
 			width: 94vw;
+			height: auto;
 			aspect-ratio: auto;
 			max-height: 90vh;
 			background: linear-gradient(180deg, #1b2547, #0d1530);
@@ -318,6 +329,10 @@
 		}
 		.cards {
 			grid-template-columns: 1fr;
+			height: auto;
+		}
+		ul {
+			overflow: visible;
 		}
 		.cardtitle {
 			font-size: 22px;
