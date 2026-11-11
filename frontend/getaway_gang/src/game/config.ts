@@ -22,6 +22,13 @@ export default {
 			"rtp": 0.96,
 			"max_win": 12000
 		},
+		"ante": {
+			"cost": 1.6,
+			"feature": true,
+			"buyBonus": false,
+			"rtp": 0.96,
+			"max_win": 12000
+		},
 		"heist": {
 			"cost": 43,
 			"feature": false,
@@ -215,6 +222,10 @@ export default {
 		"freegame": ""
 	},
 	"features": {
+		"anteCost": 1.6,
+		"anteBonusFactor": 2,
+		"anteBonusOneIn": 58.3,
+		"baseBonusOneIn": 117.5,
 		"meterThresholds": [
 			3,
 			6,

@@ -21,6 +21,7 @@
 	import { getContext } from 'components-ui-pixi/src/context';
 	import { UI_BASE_SIZE } from 'components-ui-pixi/src/constants';
 	import GGConsole from './GGConsole.svelte';
+	import ButtonAnte from './ButtonAnte.svelte';
 	import { BET_ZONE } from '../game/betConsole';
 
 	const props: LayoutUiProps = $props();
@@ -109,6 +110,9 @@
 		</Container>
 		<Container x={cx + 410} y={railY - 410} scale={1.05}>
 			{@render props.buttonBuyBonus({ anchor: 0.5 })}
+		</Container>
+		<Container x={cx + 410} y={railY - 560}>
+			<ButtonAnte width={240} />
 		</Container>
 		<Container x={cx - 262} y={railY - 190}>
 			{@render props.amountBalance({ stacked: true, width: 470 } as never)}

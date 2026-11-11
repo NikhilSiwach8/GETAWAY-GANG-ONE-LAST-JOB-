@@ -11,6 +11,7 @@ import { stateGame, stateGameDerived, setCell, swapReels, resetHud } from './sta
 import { CREW_INFO, COMBO_INFO, METER_STAGE_REWARDS, LOOT_REWARDS, LOOT_THRESHOLDS, PALETTE, type CrewKey } from './tempArt';
 import config from './config';
 import { playClip, playCellFx, mascotDo, ensureClip } from './clips.svelte';
+import { restoreAnte } from './ante.svelte';
 import type { BookEvent, BookEventOfType, BookEventContext } from './typesBookEvent';
 import type { Position } from './types';
 
@@ -231,6 +232,7 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		eventEmitter.broadcast({ type: 'winHide' });
 	},
 	finalWin: async (bookEvent: BookEventOfType<'finalWin'>) => {
+		restoreAnte(); // a bought round hands back to the player's ante choice
 		// comedic shrug only when the crew tried and the round still paid nothing
 		if (bookEvent.amount === 0 && crewThisRound) mascotDo('LOSE');
 		crewThisRound = false;

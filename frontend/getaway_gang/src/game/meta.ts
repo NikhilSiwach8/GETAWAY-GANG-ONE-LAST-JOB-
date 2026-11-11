@@ -68,6 +68,24 @@ const meta: BetModeMeta = {
 		maxWin: config.wincap,
 	},
 };
+// ANTE SPIN: same base-game spin at a higher price with twice the bonus chance (toggle on the console)
+meta.ANTE = {
+	mode: 'ANTE',
+	costMultiplier: costOf('ante'),
+	type: 'activate',
+	parent: '',
+	children: '',
+	assets: empty,
+	text: {
+		title: 'ANTE SPIN',
+		description: `${fs.anteBonusFactor}× the chance to trigger a bonus`,
+		dialog: '',
+		button: 'ANTE',
+		tickerIdle: 'ANTE SPIN ON',
+		tickerSpin: 'ANTE SPIN',
+	},
+	maxWin: config.wincap,
+};
 for (const b of BUY_MODES) {
 	meta[b.key] = {
 		mode: b.key,

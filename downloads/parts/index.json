@@ -7,6 +7,12 @@
             "weights": "lookUpTable_base_0.csv"
         },
         {
+            "name": "ante",
+            "cost": 1.6,
+            "events": "books_ante.jsonl.zst",
+            "weights": "lookUpTable_ante_0.csv"
+        },
+        {
             "name": "heist",
             "cost": 43.0,
             "events": "books_heist.jsonl.zst",

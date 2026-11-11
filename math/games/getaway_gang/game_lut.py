@@ -261,3 +261,99 @@ def write_mystery_lut(config, mode="mystery"):
     print(f"[LUT] {mode}: {info['cost']}x, split {info['stratum_probabilities']}, table RTP {info['table_rtp']*100:.4f}%, "
           f"Hidden min {info['hidden_min_payout_x_bet']}x (floor {info['hidden_floor_x_bet']}x)")
     return info
+
+
+# --------------------------------------------------------------------------------------------- ante spin
+def derive_ante_files(config):
+    """Ante spins have exactly the base game's outcomes: link the base books and copy the base book tables,
+    so the ante mode is served the same events with its own weights (no extra simulation)."""
+    import shutil
+
+    lib = config.library_path
+    pairs = [
+        (os.path.join(config.publish_path, "books_base.jsonl.zst"), os.path.join(config.publish_path, "books_ante.jsonl.zst")),
+    ]
+    for src, dst in pairs:
+        if os.path.exists(dst):
+            os.remove(dst)
+        os.link(src, dst)  # hard link: identical bytes, no extra disk
+    for sub, name in [("lookup_tables", "lookUpTable_{}.csv"), ("lookup_tables", "lookUpTableSegmented_{}.csv"),
+                      ("forces", "force_record_{}.json"), ("configs", "event_config_{}.json"),
+                      ("configs", "books_{}.verification.json")]:
+        src = os.path.join(lib, sub, name.format("base"))
+        if os.path.exists(src):
+            shutil.copyfile(src, os.path.join(lib, sub, name.format("ante")))
+
+
+def build_ante_weights(config, mode="ante"):
+    """Base-game books, with the two bonus strata (heist, escape) at ANTE_BONUS_FACTOR x their natural
+    probability and the basegame stratum taking the rest. At ANTE_COST the natural RTP lands a little below
+    target, so the zero-win basegame books are trimmed (same single-factor method as the base table) until
+    the table RTP / cost is exactly TARGET_RTP. The trim removes a sliver of losing spins, so the bonus is
+    at least ANTE_BONUS_FACTOR x as likely as on a base spin (reported)."""
+    from game_config import ANTE_COST, ANTE_BONUS_FACTOR
+
+    rows = read_rows(config, mode)
+    cost = Fraction(ANTE_COST).limit_denominator(1000)
+    nat = {k: Fraction(v) for k, v in stratum_probabilities(config).items()}
+    k_ = Fraction(ANTE_BONUS_FACTOR)
+    probs = {"heist": nat["heist"] * k_, "escape": nat["escape"] * k_}
+    probs["basegame"] = 1 - probs["heist"] - probs["escape"]
+    counts, pay_sum, zero_count = {}, {}, 0
+    for r in rows.values():
+        c = r["criteria"]
+        counts[c] = counts.get(c, 0) + 1
+        pay_sum[c] = pay_sum.get(c, 0) + r["payout"]
+        zero_count += c == "basegame" and r["payout"] == 0
+    paid = sum(probs[c] * Fraction(pay_sum[c], counts[c]) for c in counts) / 100  # x bet, per spin
+    target = TARGET_RTP * cost
+    zero_mass = probs["basegame"] * Fraction(zero_count, counts["basegame"])
+    f = 1 + (paid / target - 1) / zero_mass
+    if f <= 0 or abs(float(f) - 1) > MAX_TRIM:
+        raise RuntimeError(f"[ante] trim factor {float(f):.4f} outside +/-{MAX_TRIM}; re-price the ante "
+                           f"(natural RTP {float(paid / cost):.5f} at {float(cost)}x)")
+    total = 1 + zero_mass * (f - 1)
+    unit = {c: probs[c] / counts[c] / total * TOTAL_WEIGHT for c in counts}
+    weights, zero_ids = {}, []
+    for i, r in rows.items():
+        if r["criteria"] == "basegame" and r["payout"] == 0:
+            weights[i] = int(unit["basegame"] * f)
+            zero_ids.append(i)
+        else:
+            weights[i] = int(unit[r["criteria"]])
+    tw = sum(weights.values())
+    tp = sum(weights[i] * rows[i]["payout"] for i in weights)
+    k = 0
+    while Fraction(tp, 100 * tw) / cost > TARGET_RTP:
+        weights[zero_ids[k % len(zero_ids)]] += 1000
+        tw += 1000
+        k += 1
+    for i, w in weights.items():
+        assert w > 0, f"book {i} has zero weight"
+    bonus = {c: Fraction(sum(weights[i] for i, r in rows.items() if r["criteria"] == c), tw) for c in ("heist", "escape")}
+    p_bonus = bonus["heist"] + bonus["escape"]
+    p_nat = nat["heist"] + nat["escape"]
+    return rows, weights, {
+        "cost": float(cost),
+        "bonus_factor_target": ANTE_BONUS_FACTOR,
+        "bonus_probability": float(p_bonus),
+        "bonus_one_in": float(1 / p_bonus),
+        "base_bonus_one_in": float(1 / p_nat),
+        "bonus_factor_actual": float(p_bonus / p_nat),
+        "natural_rtp_at_cost": float(paid / cost),
+        "table_rtp": float(Fraction(tp, 100 * tw) / cost),
+        "zero_win_trim_factor": float(f),
+    }
+
+
+def write_ante_lut(config, mode="ante"):
+    rows, weights, info = build_ante_weights(config, mode)
+    out = os.path.join(config.publish_path, f"lookUpTable_{mode}_0.csv")
+    with open(out, "w", encoding="UTF-8", newline="") as fh:
+        for i in sorted(weights):
+            fh.write(f"{i},{weights[i]},{rows[i]['payout']}\n")
+    with open(os.path.join(config.library_path, f"lut_weighting_{mode}.json"), "w", encoding="UTF-8") as fh:
+        json.dump(info, fh, indent=1)
+    print(f"[LUT] ante: {info['cost']}x, bonus 1 in {info['bonus_one_in']:.1f} (base 1 in {info['base_bonus_one_in']:.1f}, "
+          f"x{info['bonus_factor_actual']:.3f}), table RTP {info['table_rtp']*100:.4f}% (zero-win trim x{info['zero_win_trim_factor']:.5f})")
+    return info

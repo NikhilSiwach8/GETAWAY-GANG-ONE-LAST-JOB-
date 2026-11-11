@@ -179,6 +179,13 @@
 						A bought bonus plays exactly like a naturally triggered one: it starts on a board showing the trigger
 						Scatters. Wins are multiplied by your bet, not by the price paid.
 					</p>
+					<h3>Ante Spin</h3>
+					<p>
+						Switch <b>ANTE</b> on (on the console) to play every spin at <b>{f.anteCost}× bet ({money(f.anteCost)})</b>.
+						Ante spins are normal base-game spins with <b>{f.anteBonusFactor}× the chance to trigger a bonus</b>: about
+						1 in {Math.round(f.anteBonusOneIn)} spins instead of 1 in {Math.round(f.baseBonusOneIn)}. Wins are paid on your bet,
+						not on the ante price. It stays on until you switch it off, and can only be changed between spins.
+					</p>
 					<h3>Mystery Vault</h3>
 					<p>
 						For <b>{costOf('mystery')}× bet ({money(costOf('mystery'))})</b> the vault is cracked and reveals one of three
@@ -196,7 +203,7 @@
 			{:else}
 				<section>
 					<ul>
-						<li>Theoretical RTP: <b>{rtp}</b> for the base game and for each bonus buy.</li>
+						<li>Theoretical RTP: <b>{rtp}</b> for the base game, Ante Spin and each bonus buy.</li>
 						<li>Maximum win: <b>{cap}× bet</b> ({money(config.wincap)} at the current bet) per round. When it is reached the round ends immediately and all remaining features are forfeited.</li>
 						<li>Volatility: high.</li>
 						<li>Every outcome is decided by the server before the round is shown; animations and skipping never change it.</li>

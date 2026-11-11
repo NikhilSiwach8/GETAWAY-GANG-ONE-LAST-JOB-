@@ -263,6 +263,16 @@ floor was solved from the simulated Hidden distribution so that the mode still r
 about 39% of Hidden Bonus rounds are topped up, and the mean Hidden payout is about 1,373× bet.
 The Hidden Bonus exists only in this mode; a natural 5-Scatter trigger in the base game remains The Perfect Escape.
 
+## 9b. ANTE SPIN
+
+A console toggle (**ANTE**, on/off) that plays every spin at **1.6x the bet** with **twice the chance to
+trigger a bonus**: about 1 in 58 spins instead of 1 in 118. Ante spins are ordinary base-game spins, with the
+same reels, features and payouts, and the same books as the base mode. Only the published weights differ
+(`game_lut.write_ante_lut`): the Heist and Perfect Escape strata get 2x their natural probability, and the
+zero-win base spins are trimmed by under 1% so the table pays exactly **96.00%** of the 1.6x price. Wins are
+paid on the bet, not on the ante price. Bonus buys can be used with ante on; the ante comes back after the
+bought round. Max win: 12,000x bet (about 1 in 248,000 ante spins, against 1 in 504,000 base spins).
+
 ## 10. Maximum win
 
 The cap controller (`GameExecutables.pay`) is the only place any payout is credited. It tracks the

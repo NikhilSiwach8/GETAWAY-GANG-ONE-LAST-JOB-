@@ -18,11 +18,15 @@ jobs:
           cat downloads/parts/getaway_gang_frontend.zip.part* > out/getaway_gang_frontend.zip
           for m in base heist escape mystery; do
             cat downloads/parts/books_$m.jsonl.zst.part* > out/math/books_$m.jsonl.zst
-            cp downloads/parts/lookUpTable_${m}_0.csv out/math/
           done
+          # Ante Spin serves exactly the base-game books (only its weights differ): same file, own name
+          cp out/math/books_base.jsonl.zst out/math/books_ante.jsonl.zst
+          for m in base ante heist escape mystery; do cp downloads/parts/lookUpTable_${m}_0.csv out/math/; done
           cp downloads/parts/index.json out/math/
           (cd out && cp math/* . && sha256sum -c ../downloads/SHA256SUMS.txt)
-          (cd out/math && zip -0 -q ../getaway_gang_math.zip *)
+          # two zips (a release asset must be under 2 GB); extract both into the same folder
+          (cd out/math && zip -0 -q ../getaway_gang_math_1of2.zip index.json lookUpTable_*_0.csv books_base.jsonl.zst books_ante.jsonl.zst)
+          (cd out/math && zip -0 -q ../getaway_gang_math_2of2.zip books_heist.jsonl.zst books_escape.jsonl.zst books_mystery.jsonl.zst)
           cp downloads/SHA256SUMS.txt out/
           ls -l out
       - name: Publish release
@@ -32,6 +36,6 @@ jobs:
           TAG=stake-upload
           gh release delete "$TAG" --yes --cleanup-tag || true
           gh release create "$TAG" --target "$GITHUB_SHA" --title "Stake Engine upload files" \
-            --notes "Frontend build zip and math publish files for GETAWAY GANG: ONE LAST JOB! (modes: base 1x, heist 43x, escape 450x and mystery 420x bonus buys; all 96.00% RTP). getaway_gang_math.zip contains index.json plus the books and lookup table of every mode." \
-            out/getaway_gang_frontend.zip out/getaway_gang_math.zip out/index.json \
+            --notes "Frontend build zip and math publish files for GETAWAY GANG: ONE LAST JOB! (modes: base 1x, ante 1.6x, heist 43x, escape 450x and mystery 420x bonus buys; all 96.00% RTP). The math is split in two zips (getaway_gang_math_1of2.zip: index.json, every lookup table, base and ante books; getaway_gang_math_2of2.zip: heist, escape and mystery books): extract both into the same folder." \
+            out/getaway_gang_frontend.zip out/getaway_gang_math_1of2.zip out/getaway_gang_math_2of2.zip out/index.json \
             out/lookUpTable_*_0.csv out/books_*.jsonl.zst out/SHA256SUMS.txt

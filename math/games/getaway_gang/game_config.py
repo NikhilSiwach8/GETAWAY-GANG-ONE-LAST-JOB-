@@ -110,6 +110,10 @@ FINAL_ESCAPE_ALL_MASTERS = 300  # x bet paid instead if all four are level 3
 # BONUS BUY prices, in multiples of the base bet (the books pay in base-bet multiples).
 # Each is the bonus' mean value / 0.96; game_lut.py trims the table to exactly 96.00% RTP.
 BUY_COST = {"heist": 43, "escape": 450, "mystery": 420}
+# ANTE SPIN: a base-game spin at ANTE_COST x the bet with ANTE_BONUS_FACTOR x the natural bonus chance.
+# Same outcomes (books) as the base game; only the published weights differ (game_lut.write_ante_lut).
+ANTE_COST = 1.6
+ANTE_BONUS_FACTOR = 2
 
 # --------------------------------------------------------------------------------------
 # MYSTERY VAULT (bonus buy only): a vault reveal decides the round
@@ -256,6 +260,29 @@ class GameConfig(Config):
             BetMode(
                 name="base",
                 cost=1.0,
+                rtp=self.rtp,
+                max_win=self.wincap,
+                auto_close_disabled=False,
+                is_feature=True,
+                is_buybonus=False,
+                distributions=[
+                    escape_dist(0.15),
+                    heist_dist(0.25),
+                    Distribution(
+                        criteria="basegame",
+                        quota=0.60,
+                        conditions={
+                            "reel_weights": {self.basegame_type: {"BR0": 1}},
+                            "force_wincap": False,
+                            "force_freegame": False,
+                        },
+                    ),
+                ],
+            ),
+            # ANTE SPIN: base-game spins (same distributions/books as base) at 1.6x with twice the bonus chance
+            BetMode(
+                name="ante",
+                cost=ANTE_COST,
                 rtp=self.rtp,
                 max_win=self.wincap,
                 auto_close_disabled=False,

@@ -19,6 +19,8 @@ for s in PAYING:
 for prop, names in c.special_symbols.items():
     for n in names:
         symbols.setdefault(n, {"paytable": None, "special_properties": []})["special_properties"].append(prop)
+_ante_path = os.path.join(os.path.dirname(gc.__file__), "library", "lut_weighting_ante.json")
+_ante = json.load(open(_ante_path)) if os.path.exists(_ante_path) else {}
 cfg = {
     "providerName": "getaway_gang_studio",
     "gameName": "getaway_gang",
@@ -34,6 +36,10 @@ cfg = {
     "symbols": symbols,
     "paddingReels": {"basegame": "", "freegame": ""},
     "features": {
+        "anteCost": gc.ANTE_COST,
+        "anteBonusFactor": gc.ANTE_BONUS_FACTOR,
+        "anteBonusOneIn": round(_ante.get("bonus_one_in", 0), 1),
+        "baseBonusOneIn": round(_ante.get("base_bonus_one_in", 0), 1),
         "meterThresholds": gc.METER_THRESHOLDS,
         "lootThresholds": [t for t, _ in gc.LOOT_MILESTONES],
         "maxRespinsPerChain": gc.MAX_RESPINS_PER_CHAIN,
