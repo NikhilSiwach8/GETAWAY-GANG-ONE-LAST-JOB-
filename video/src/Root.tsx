@@ -1,9 +1,10 @@
 import './lib/font';
 import React from 'react';
 import {Composition, Folder} from 'remotion';
-import {BonusIntro, BonusIntroLoop} from './clips/BonusIntro';
-import {HiddenOutro, MysteryReveal, VaultGuarantee} from './clips/Mystery';
-import {ChaosRespin, OutroScreen} from './clips/Outros';
+import {BonusIntroLoop} from './clips/BonusIntro';
+import {MysteryReveal, VaultGuarantee} from './clips/Mystery';
+import {ChaosRespin} from './clips/Outros';
+import {EscapeIntroStory, HeistIntroStory, HiddenIntroStory, INTRO_STORY, OUTRO_STORY, TotalWinStory} from './clips/Stories';
 import {Anticipation, BillSprite, BuyBonusSheen, CoinSprite, GlintSprite, Transition} from './clips/Round2';
 import {ABILITY_SECONDS, AbilityFx, CrewChaos} from './clips/Abilities';
 import {COMBO_SECONDS, CleanGetaway, Combo, PerfectlyBadPlan} from './clips/Combos';
@@ -84,19 +85,19 @@ export const RemotionRoot: React.FC = () => {
 			<Folder name="Round-2">
 				<Composition id="FX-ANTICIPATION" component={Anticipation} durationInFrames={30} fps={FPS} width={300} height={1000} />
 				<Composition id="FX-TRANSITION" component={Transition} durationInFrames={36} {...HD} />
-				<Composition id="SCR-HEIST-INTRO" component={BonusIntro} durationInFrames={48} {...HD} defaultProps={{bonus: 'heist' as const}} />
+				<Composition id="SCR-HEIST-INTRO" component={HeistIntroStory} durationInFrames={INTRO_STORY.total} {...HD} />
 				<Composition id="SCR-HEIST-INTRO-LOOP" component={BonusIntroLoop} durationInFrames={90} {...HD} defaultProps={{bonus: 'heist' as const}} />
-				<Composition id="SCR-ESCAPE-INTRO" component={BonusIntro} durationInFrames={48} {...HD} defaultProps={{bonus: 'escape' as const}} />
+				<Composition id="SCR-ESCAPE-INTRO" component={EscapeIntroStory} durationInFrames={INTRO_STORY.total} {...HD} />
 				<Composition id="SCR-ESCAPE-INTRO-LOOP" component={BonusIntroLoop} durationInFrames={90} {...HD} defaultProps={{bonus: 'escape' as const}} />
-				<Composition id="SCR-HIDDEN-INTRO" component={BonusIntro} durationInFrames={48} {...HD} defaultProps={{bonus: 'hidden' as const}} />
+				<Composition id="SCR-HIDDEN-INTRO" component={HiddenIntroStory} durationInFrames={INTRO_STORY.total} {...HD} />
 				<Composition id="SCR-HIDDEN-INTRO-LOOP" component={BonusIntroLoop} durationInFrames={90} {...HD} defaultProps={{bonus: 'hidden' as const}} />
-				<Composition id="SCR-HIDDEN-OUTRO" component={HiddenOutro} durationInFrames={150} {...HD} />
+				<Composition id="SCR-HIDDEN-OUTRO" component={TotalWinStory} durationInFrames={OUTRO_STORY.total} {...HD} defaultProps={{bonus: 'hidden' as const}} />
 				<Composition id="FX-MYSTERY-HIDDEN" component={MysteryReveal} durationInFrames={150} {...HD} defaultProps={{result: 'hidden' as const}} />
 				<Composition id="FX-MYSTERY-ESCAPE" component={MysteryReveal} durationInFrames={126} {...HD} defaultProps={{result: 'escape' as const}} />
 				<Composition id="FX-MYSTERY-NONE" component={MysteryReveal} durationInFrames={114} {...HD} defaultProps={{result: 'none' as const}} />
 				<Composition id="FX-VAULT-GUARANTEE" component={VaultGuarantee} durationInFrames={66} {...HD} />
-				<Composition id="SCR-HEIST-OUTRO" component={OutroScreen} durationInFrames={150} {...HD} defaultProps={{bonus: 'heist' as const}} />
-				<Composition id="SCR-ESCAPE-OUTRO" component={OutroScreen} durationInFrames={150} {...HD} defaultProps={{bonus: 'escape' as const}} />
+				<Composition id="SCR-HEIST-OUTRO" component={TotalWinStory} durationInFrames={OUTRO_STORY.total} {...HD} defaultProps={{bonus: 'heist' as const}} />
+				<Composition id="SCR-ESCAPE-OUTRO" component={TotalWinStory} durationInFrames={OUTRO_STORY.total} {...HD} defaultProps={{bonus: 'escape' as const}} />
 				<Composition id="UI-BUY-BONUS-ANIM" component={BuyBonusSheen} durationInFrames={60} fps={FPS} width={600} height={260} />
 				<Composition id="FX-COINS-COIN" component={CoinSprite} durationInFrames={8} fps={FPS} width={128} height={128} />
 				<Composition id="FX-COINS-BILL" component={BillSprite} durationInFrames={8} fps={FPS} width={128} height={128} />

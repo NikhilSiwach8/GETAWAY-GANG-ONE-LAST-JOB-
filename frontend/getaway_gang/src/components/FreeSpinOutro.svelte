@@ -69,7 +69,17 @@
 	const useClip = $derived(hasClip(clipId) && !clipFailed);
 	const hasStill = $derived(hasArt(stillId));
 	// the amount and count-up wait for the clip's first frame (or start at once without a clip)
-	const ready = $derived(!useClip || clipShown);
+	// the end-screen clip opens with a short story (getaway, counting the loot) and reaches the total-win
+	// layout at STORY_HANDOVER_MS (video/src/clips/Stories.tsx OUTRO_STORY.final = 125 frames @30 fps);
+	// the amount, loot and crew overlays appear and the count-up starts only from then
+	const STORY_HANDOVER_MS = (125 / 30) * 1000;
+	let handedOver = $state(false);
+	$effect(() => {
+		if (!clipShown) return;
+		const id = setTimeout(() => (handedOver = true), STORY_HANDOVER_MS + 250);
+		return () => clearTimeout(id);
+	});
+	const ready = $derived(!useClip || (clipShown && handedOver));
 	const amt = $derived(AMOUNT[bonus]);
 	// snapshot of the progression to show (resetHud runs only after this screen closes)
 	const lootPoints = $derived(context.stateGame.hud.lootPoints);
@@ -81,6 +91,7 @@
 		freeSpinOutroShow: () => {
 			bonus = context.stateGame.hud.bonus ?? 'heist';
 			clipShown = false;
+			handedOver = false;
 			clipFailed = false;
 			show = true;
 		},
@@ -122,7 +133,6 @@
 						height={cover.height}
 						fadeMs={250}
 						zIndex={1}
-						fallback={still}
 						onready={() => (clipShown = true)}
 						onended={(ok) => !ok && !clipShown && (clipFailed = true)}
 					/>

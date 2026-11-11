@@ -70,8 +70,8 @@
 
 <FadeContainer {show} zIndex={30}>
 	<Rectangle {...sizes} backgroundColor={0x000000} />
-	<!-- still = the clip's first frame: placeholder until the video has a frame, or the whole screen without clips -->
-	{#if !useClip || !clipShown}
+	<!-- the intro clip is a story that opens on its own scene: the still is only the no-clip fallback -->
+	{#if !useClip}
 		<Sprite {key} {...cover} />
 	{/if}
 	{#if show && useClip}
