@@ -25,7 +25,7 @@
 	import { stateBet } from 'state-shared';
 	import { getContext } from '../game/context';
 	import { CREW_INFO } from '../game/tempArt';
-	import { GG_LAYOUT } from '../game/ggAssets';
+	import LivePose from './LivePose.svelte';
 
 	const context = getContext();
 	let banner = $state<EmitterEventFeatureBanner | null>(null);
@@ -70,7 +70,6 @@
 	const y = $derived(layout.y - layout.height * 0.5 + 78);
 	const hex = (c: number) => c;
 	const poseH = 300;
-	const poseW = (k: CrewKey) => (poseH * GG_LAYOUT[CREW_INFO[k].assetId + '-POSE' as keyof typeof GG_LAYOUT].width) / GG_LAYOUT[CREW_INFO[k].assetId + '-POSE' as keyof typeof GG_LAYOUT].height;
 	const pulse = $derived(1 + Math.sin(t * 9) * 0.015 * (t > 0.22 ? 1 : 0));
 </script>
 
@@ -80,7 +79,7 @@
 		{#each crew as k, i (k)}
 			{@const enter = ease((t - 0.06 * i) / 0.28)}
 			<Container x={-W / 2 + 20 - i * 58} y={H / 2 - (1 - enter) * 60} alpha={enter}>
-				<Sprite key={`${CREW_INFO[k].assetId}-POSE`} anchor={{ x: 0.5, y: 1 }} width={poseW(k)} height={poseH} />
+				<LivePose id={CREW_INFO[k].assetId.replace('CHR-', '') as never} x={0} y={0} height={poseH} action="ability" seed={i} shine={false} />
 			</Container>
 		{/each}
 

@@ -6,7 +6,7 @@
 	 */
 	import { onDestroy } from 'svelte';
 	import { Container, Sprite, Text } from 'pixi-svelte';
-	import { GG_LAYOUT } from '../game/ggAssets';
+	import LivePose from './LivePose.svelte';
 	import { getContext } from '../game/context';
 
 	type Props = { alias: string };
@@ -59,7 +59,6 @@
 	const shake = $derived(t > 0.1 && t < 0.45 ? Math.sin(t * 90) * 14 * k * (1 - (t - 0.1) / 0.35) : 0);
 	const raysIn = $derived(clamp01(t / 0.5));
 	const poseH = $derived(620 * k);
-	const poseW = (id: string) => (poseH * GG_LAYOUT[`CHR-${id}-POSE` as keyof typeof GG_LAYOUT].width) / GG_LAYOUT[`CHR-${id}-POSE` as keyof typeof GG_LAYOUT].height;
 </script>
 
 <Container x={shake} y={shake * 0.4}>
@@ -71,11 +70,11 @@
 	<!-- crew slide in from both sides, staggered, then bob -->
 	{#each crew[0] as id, i (id)}
 		{@const e = backOut((t - 0.25 - i * 0.12) / 0.55)}
-		<Sprite key={`CHR-${id}-POSE`} anchor={{ x: 0.5, y: 1 }} x={cx - (560 + i * 250) * k - (1 - e) * 900 * k} y={cs.height + 20 * k + Math.sin(t * 2.4 + i) * 8 * k} width={poseW(id) * (1 - i * 0.12)} height={poseH * (1 - i * 0.12)} />
+		<LivePose id={id as never} x={cx - (560 + i * 250) * k - (1 - e) * 900 * k} y={cs.height + 20 * k} height={poseH * (1 - i * 0.12)} action="cheer" nonce={Math.floor(t / 1.8)} seed={i} />
 	{/each}
 	{#each crew[1] as id, i (id)}
 		{@const e = backOut((t - 0.3 - i * 0.12) / 0.55)}
-		<Sprite key={`CHR-${id}-POSE`} anchor={{ x: 0.5, y: 1 }} x={cx + (560 + i * 250) * k + (1 - e) * 900 * k} y={cs.height + 20 * k + Math.sin(t * 2.4 + 1.5 + i) * 8 * k} width={poseW(id) * (1 - i * 0.12)} height={poseH * (1 - i * 0.12)} />
+		<LivePose id={id as never} x={cx + (560 + i * 250) * k + (1 - e) * 900 * k} y={cs.height + 20 * k} height={poseH * (1 - i * 0.12)} action="cheer" nonce={Math.floor((t + 0.9) / 1.8)} seed={i + 2} flip />
 	{/each}
 
 	<!-- title -->

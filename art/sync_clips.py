@@ -11,13 +11,18 @@ TS = os.path.join(ROOT, "frontend", "getaway_gang", "src", "game", "clipUrls.ts"
 
 # rendered but not used by the game (the Buy Bonus button uses its delivered still states)
 SKIP = {"UI-BUY-BONUS-ANIM", "WIN-BIG", "WIN-SUPER", "WIN-MEGA", "WIN-EPIC"}  # big wins are live (BigWinScene)
+def is_char_clip(i):
+    """ANIM-<CREW>-<ACTION> character videos: the crew are animated live now (LivePose); -ABILITY-FX stays."""
+    return i.startswith("ANIM-") and not i.endswith("-FX")
+
+
 os.makedirs(DST, exist_ok=True)
 for f in os.listdir(DST):  # remove clips that are no longer shipped
-    if (f.startswith("SYM-") and "-ANIM-" in f) or f[:-5] in SKIP:
+    if (f.startswith("SYM-") and "-ANIM-" in f) or f[:-5] in SKIP or is_char_clip(f[:-5]):
         os.remove(os.path.join(DST, f))
 # symbol land/win animations are drawn live in the game (SymbolArt.svelte), not played from video
 ids = sorted(f[:-5] for f in os.listdir(SRC) if f.endswith(".webm") and f[:-5] not in SKIP
-             and not (f.startswith("SYM-") and "-ANIM-" in f))
+             and not (f.startswith("SYM-") and "-ANIM-" in f) and not is_char_clip(f[:-5]))
 for i in ids:
     shutil.copy2(os.path.join(SRC, i + ".webm"), os.path.join(DST, i + ".webm"))
 def has_alpha(path):
