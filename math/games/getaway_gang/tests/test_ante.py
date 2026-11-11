@@ -1,5 +1,5 @@
-"""Ante Spin invariants: registered at 1.6x as a non-buy mode, and its published table (if built) is exactly
-96% RTP at the ante price with twice the base game's bonus chance."""
+"""Ante Spin invariants: registered at 1.6x as a non-buy mode with the base distributions, and its published
+table (if built) is exactly 96% RTP at the ante price with about twice the base game's bonus chance."""
 import json
 import os
 import sys
@@ -33,8 +33,8 @@ def test_ante_table_rtp_and_bonus_factor():
     path = os.path.join(PUB, "lookUpTable_ante_0.csv")
     if not os.path.exists(path):
         return  # tables not built in this checkout
-    ante, base = _table("ante"), _table("base")
-    assert [r[0] for r in ante] == [r[0] for r in base], "ante must serve exactly the base books"
+    ante = _table("ante")
+    assert [r[0] for r in ante] == list(range(len(ante))), "one row per ante book, ids 0..n-1"
     tw = sum(w for _, w, _ in ante)
     rtp = Fraction(sum(w * p for _, w, p in ante), 100 * tw) / Fraction(gc.ANTE_COST).limit_denominator(1000)
     assert Fraction(9599, 10000) < rtp <= Fraction(96, 100)

@@ -224,7 +224,7 @@ export default {
 	"features": {
 		"anteCost": 1.6,
 		"anteBonusFactor": 2,
-		"anteBonusOneIn": 58.3,
+		"anteBonusOneIn": 57.7,
 		"baseBonusOneIn": 117.5,
 		"meterThresholds": [
 			3,

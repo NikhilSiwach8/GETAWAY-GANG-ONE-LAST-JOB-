@@ -264,29 +264,8 @@ def write_mystery_lut(config, mode="mystery"):
 
 
 # --------------------------------------------------------------------------------------------- ante spin
-def derive_ante_files(config):
-    """Ante spins have exactly the base game's outcomes: link the base books and copy the base book tables,
-    so the ante mode is served the same events with its own weights (no extra simulation)."""
-    import shutil
-
-    lib = config.library_path
-    pairs = [
-        (os.path.join(config.publish_path, "books_base.jsonl.zst"), os.path.join(config.publish_path, "books_ante.jsonl.zst")),
-    ]
-    for src, dst in pairs:
-        if os.path.exists(dst):
-            os.remove(dst)
-        os.link(src, dst)  # hard link: identical bytes, no extra disk
-    for sub, name in [("lookup_tables", "lookUpTable_{}.csv"), ("lookup_tables", "lookUpTableSegmented_{}.csv"),
-                      ("forces", "force_record_{}.json"), ("configs", "event_config_{}.json"),
-                      ("configs", "books_{}.verification.json")]:
-        src = os.path.join(lib, sub, name.format("base"))
-        if os.path.exists(src):
-            shutil.copyfile(src, os.path.join(lib, sub, name.format("ante")))
-
-
 def build_ante_weights(config, mode="ante"):
-    """Base-game books, with the two bonus strata (heist, escape) at ANTE_BONUS_FACTOR x their natural
+    """Ante books (a simulation of the base game: same reels, strata and features), with the two bonus strata (heist, escape) at ANTE_BONUS_FACTOR x their natural
     probability and the basegame stratum taking the rest. At ANTE_COST the natural RTP lands a little below
     target, so the zero-win basegame books are trimmed (same single-factor method as the base table) until
     the table RTP / cost is exactly TARGET_RTP. The trim removes a sliver of losing spins, so the bonus is
