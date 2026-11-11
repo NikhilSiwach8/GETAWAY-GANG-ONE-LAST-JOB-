@@ -10,9 +10,14 @@ DST = os.path.join(ROOT, "frontend", "getaway_gang", "static", "assets", "clips"
 TS = os.path.join(ROOT, "frontend", "getaway_gang", "src", "game", "clipUrls.ts")
 
 os.makedirs(DST, exist_ok=True)
+for f in os.listdir(DST):  # remove clips that are no longer shipped
+    if f.startswith("SYM-") and "-ANIM-" in f:
+        os.remove(os.path.join(DST, f))
 # rendered but not used by the game (the Buy Bonus button uses its delivered still states)
 SKIP = {"UI-BUY-BONUS-ANIM"}
-ids = sorted(f[:-5] for f in os.listdir(SRC) if f.endswith(".webm") and f[:-5] not in SKIP)
+# symbol land/win animations are drawn live in the game (SymbolArt.svelte), not played from video
+ids = sorted(f[:-5] for f in os.listdir(SRC) if f.endswith(".webm") and f[:-5] not in SKIP
+             and not (f.startswith("SYM-") and "-ANIM-" in f))
 for i in ids:
     shutil.copy2(os.path.join(SRC, i + ".webm"), os.path.join(DST, i + ".webm"))
 def has_alpha(path):

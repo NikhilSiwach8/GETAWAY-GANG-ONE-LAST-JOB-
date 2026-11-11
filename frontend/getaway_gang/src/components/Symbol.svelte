@@ -6,8 +6,7 @@
 	import { onDestroy } from 'svelte';
 	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
 	import { hasArt } from '../game/ggAssets';
-	import ClipSprite from './ClipSprite.svelte';
-	import { hasClip } from '../game/clips.svelte';
+	import SymbolArt from './SymbolArt.svelte';
 	import { stateBet } from 'state-shared';
 
 	import { getSymbolInfo } from '../game/utils';
@@ -28,14 +27,6 @@
 	const art = $derived(info.art);
 	const size = SYMBOL_SIZE * 0.92;
 	const isWin = $derived(props.state === 'win');
-	// clip animations: win for every symbol, land for the specials (Wild, Scatter, crew)
-	const winClip = $derived(art && hasClip(`${art.assetId}-ANIM-WIN`) ? `${art.assetId}-ANIM-WIN` : null);
-	const landClip = $derived(
-		art && ['W', 'S', 'R', 'B', 'T', 'F'].includes(props.rawSymbol.name) && hasClip(`${art.assetId}-ANIM-LAND`)
-			? `${art.assetId}-ANIM-LAND`
-			: null,
-	);
-	const clipSize = (SYMBOL_SIZE * 512) / 460;
 
 	let timer: ReturnType<typeof setTimeout> | undefined;
 	$effect(() => {
@@ -43,9 +34,9 @@
 		const state = props.state;
 		clearTimeout(timer);
 		if (state === 'win') {
-			timer = setTimeout(() => props.oncomplete?.(), stateBet.isTurbo ? 500 : 1000);
-		} else if (state === 'land' && landClip) {
-			timer = setTimeout(() => props.oncomplete?.(), stateBet.isTurbo ? 200 : 400);
+			timer = setTimeout(() => props.oncomplete?.(), stateBet.isTurbo ? 600 : 1150);
+		} else if (state === 'land') {
+			timer = setTimeout(() => props.oncomplete?.(), stateBet.isTurbo ? 180 : 340);
 		} else {
 			props.oncomplete?.();
 		}
@@ -54,23 +45,14 @@
 </script>
 
 {#if art && hasArt(art.assetId)}
-	<!-- Production art (art/delivery), win = scale pulse + glow until Spine animations arrive -->
-	{#snippet still()}
-		<Container scale={isWin ? 1.12 : 1}>
-			{#if isWin}
-				<Rectangle anchor={0.5} width={size} height={size} borderRadius={18} backgroundColor={0xf7c947} backgroundAlpha={0.28} borderColor={0xfff1a8} borderWidth={5} />
-			{/if}
-			<Sprite key={art.assetId} anchor={0.5} width={SYMBOL_SIZE} height={SYMBOL_SIZE} />
-		</Container>
-	{/snippet}
+	<!-- production art, animated live (SymbolArt): squash on landing, pop/shine/sparkle on wins -->
 	<Container x={props.x} y={props.y}>
-		{#if isWin && winClip}
-			<ClipSprite id={winClip} channel="sym" width={clipSize} height={clipSize} fallback={still} />
-		{:else if props.state === 'land' && landClip}
-			<ClipSprite id={landClip} channel="sym-land" width={clipSize} height={clipSize} fadeMs={0} fallback={still} />
-		{:else}
-			{@render still()}
-		{/if}
+		<SymbolArt
+			assetId={art.assetId}
+			mode={isWin ? 'win' : props.state === 'land' ? 'land' : 'static'}
+			special={['W', 'S', 'R', 'B', 'T', 'F'].includes(props.rawSymbol.name)}
+			durationMs={stateBet.isTurbo ? 500 : 1000}
+		/>
 	</Container>
 {:else if art}
 	<Container x={props.x} y={props.y} scale={isWin ? 1.08 : 1}>

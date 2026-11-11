@@ -373,6 +373,14 @@ export const GG_LAYOUT = {
 	"UI-CELL-GLOW": {
 		"width": 512,
 		"height": 512
+	},
+	"UI-SHINE": {
+		"width": 160,
+		"height": 512
+	},
+	"UI-SOFT-GLOW": {
+		"width": 256,
+		"height": 256
 	}
 } as const;
 
@@ -446,6 +454,8 @@ export const GG_ASSETS = {
 	'UI-RESPIN-BASE': { type: 'sprite', src: new URL('../../assets/gg/UI-RESPIN-BASE.webp', import.meta.url).href },
 	'UI-RESPIN-LOCK-ON': { type: 'sprite', src: new URL('../../assets/gg/UI-RESPIN-LOCK-ON.webp', import.meta.url).href },
 	'UI-SETTINGS-0': { type: 'sprite', src: new URL('../../assets/gg/UI-SETTINGS-0.webp', import.meta.url).href },
+	'UI-SHINE': { type: 'sprite', src: new URL('../../assets/gg/UI-SHINE.webp', import.meta.url).href },
+	'UI-SOFT-GLOW': { type: 'sprite', src: new URL('../../assets/gg/UI-SOFT-GLOW.webp', import.meta.url).href },
 	'UI-SOUND-0': { type: 'sprite', src: new URL('../../assets/gg/UI-SOUND-0.webp', import.meta.url).href },
 	'UI-SOUND-1': { type: 'sprite', src: new URL('../../assets/gg/UI-SOUND-1.webp', import.meta.url).href },
 	'UI-SPIN-0': { type: 'sprite', src: new URL('../../assets/gg/UI-SPIN-0.webp', import.meta.url).href },

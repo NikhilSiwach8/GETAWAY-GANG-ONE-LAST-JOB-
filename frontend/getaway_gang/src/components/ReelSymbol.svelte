@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { Container } from 'pixi-svelte';
+	import { Tween } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
+	import { boardFx } from '../game/stateGame.svelte';
 	import Symbol from './Symbol.svelte';
 	import SymbolWrap from './SymbolWrap.svelte';
 	import { getSymbolX } from '../game/utils';
@@ -15,6 +18,16 @@
 	// ability transformations (setCell / swapReels) mark the new rawSymbol with `morph`: the symbol shrinks
 	// away and pops back in as the new one (ease-out-back) instead of switching in a single frame
 	const MORPH_MS = 340;
+	// non-winning symbols fade darker while a win is shown, and back afterwards
+	const dimTarget = $derived(boardFx.dim && props.reelSymbol.symbolState !== 'win' ? 1 : 0);
+	const dim = new Tween(0, { duration: 220, easing: cubicOut });
+	$effect(() => {
+		dim.set(dimTarget);
+	});
+	const tint = $derived.by(() => {
+		const v = Math.round(255 - 125 * dim.current);
+		return (v << 16) | (v << 8) | Math.min(255, v + 18);
+	});
 	let scale = $state(1);
 	let alpha = $state(1);
 	let raf = 0;
@@ -44,7 +57,7 @@
 	y={props.reelSymbol.symbolY.current}
 	animating={props.reelSymbol.symbolState === 'land' || props.reelSymbol.symbolState === 'win'}
 >
-	<Container {scale} {alpha}>
+	<Container {scale} {alpha} {tint}>
 	<Symbol
 		state={props.reelSymbol.symbolState}
 		rawSymbol={props.reelSymbol.rawSymbol}

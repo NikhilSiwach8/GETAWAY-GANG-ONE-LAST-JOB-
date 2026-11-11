@@ -9,6 +9,8 @@
 
 <script lang="ts">
 	import { Container, Text } from 'pixi-svelte';
+	import { Tween } from 'svelte/motion';
+	import { backOut, elasticOut } from 'svelte/easing';
 	import { FadeContainer, WinCountUpProvider, ResponsiveBitmapText } from 'components-pixi';
 	import { waitForResolve, waitForTimeout } from 'utils-shared/wait';
 	import { bookEventAmountToCurrencyString } from 'utils-shared/amount';
@@ -34,6 +36,18 @@
 	const WIN_TITLES: Record<string, string> = { big: 'BIG WIN', superwin: 'SUPER WIN', mega: 'MEGA WIN', epic: 'EPIC WIN', max: 'MAXIMUM WIN' };
 
 	const context = getContext();
+	// the amount pops in with an elastic bounce, breathes while counting, and lands with a final beat
+	const punch = new Tween(1, { duration: 520, easing: backOut });
+	const beat = new Tween(0, { duration: 0 });
+	let beatRaf = 0;
+	const beatLoop = (now: number) => {
+		beat.set(now / 90, { duration: 0 });
+		beatRaf = requestAnimationFrame(beatLoop);
+	};
+	$effect(() => {
+		if (show) beatRaf = requestAnimationFrame(beatLoop);
+		return () => cancelAnimationFrame(beatRaf);
+	});
 
 	let show = $state(false);
 	let amount = $state(0);
@@ -70,7 +84,10 @@
 
 				<OnMount
 					onmount={async () => {
+						punch.set(0.2, { duration: 0 });
+						punch.set(1);
 						await startCountUp();
+						punch.set(1.18, { duration: 120 }).then(() => punch.set(1, { duration: 380, easing: elasticOut }));
 						await waitForTimeout(300);
 						oncomplete();
 					}}
@@ -80,6 +97,7 @@
 					<Container
 						x={context.stateGameDerived.boardLayout().x}
 						y={context.stateGameDerived.boardLayout().y}
+						scale={punch.current * (1 + (countUpCompleted ? 0 : 0.03 * Math.sin(beat.current)))}
 					>
 						{#if winClip}
 							<ResponsiveBitmapText

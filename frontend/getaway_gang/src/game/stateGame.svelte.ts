@@ -101,6 +101,9 @@ export const resetHud = () => {
 // ---------------------------------------------------------------- board mutation helpers
 // Feature events change individual cells or swap whole reels; positions include the padding row.
 /** Ability transformation: the cell pops into its new symbol (see ReelSymbol), after `delayMs`. */
+/** Board presentation flags: `dim` darkens every symbol that is not part of the win being shown. */
+export const boardFx = $state({ dim: false });
+
 export const setCell = (reel: number, row: number, name: RawSymbol['name'], delayMs = 0) => {
 	const reelSymbol = stateGame.board[reel]?.reelState.symbols[row];
 	if (!reelSymbol) return;

@@ -372,5 +372,13 @@
  "UI-CELL-GLOW": {
   "width": 512,
   "height": 512
+ },
+ "UI-SHINE": {
+  "width": 160,
+  "height": 512
+ },
+ "UI-SOFT-GLOW": {
+  "width": 256,
+  "height": 256
  }
 }

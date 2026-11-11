@@ -232,6 +232,19 @@ def style_parts():
     alpha = np.clip(np.maximum.reduce([ring, glow, inner]), 0, 1)
     rgb = np.stack([np.clip(200 + 55 * lum, 0, 255)] * 3, -1)
     out["UI-CELL-GLOW"] = Image.fromarray(np.dstack([rgb, alpha * 255]).astype(np.uint8), "RGBA")
+    # shine band for the symbol win sweep: soft white vertical stripe with a bright core
+    w, h = 160, 512
+    xx = np.linspace(-1, 1, w)[None, :].repeat(h, 0)
+    band = np.exp(-(xx / 0.42) ** 2) * 0.75 + np.exp(-(xx / 0.1) ** 2) * 0.25
+    yy = np.linspace(-1, 1, h)[:, None].repeat(w, 1)
+    band *= np.clip((1 - np.abs(yy)) * 6, 0, 1)
+    out["UI-SHINE"] = Image.fromarray(np.dstack([np.full((h, w, 3), 255), band * 255]).astype(np.uint8), "RGBA")
+    # soft radial glow (halo behind winning symbols, flashes)
+    n = 256
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float32)
+    d = np.hypot(xx - n / 2 + 0.5, yy - n / 2 + 0.5) / (n / 2)
+    g = np.clip(1 - d, 0, 1) ** 2.2
+    out["UI-SOFT-GLOW"] = Image.fromarray(np.dstack([np.full((n, n, 3), 255), g * 255]).astype(np.uint8), "RGBA")
     return out
 
 

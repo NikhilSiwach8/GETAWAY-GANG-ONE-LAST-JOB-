@@ -13,6 +13,7 @@
 
 <script lang="ts">
 	import { waitForResolve } from 'utils-shared/wait';
+	import { boardFx } from '../game/stateGame.svelte';
 	import { BoardContext } from 'components-shared';
 
 	import { getContext } from '../game/context';
@@ -38,7 +39,9 @@
 					reelSymbol.symbolState = 'postWinStatic';
 				});
 
+			boardFx.dim = true;
 			await Promise.all(getPromises());
+			boardFx.dim = false;
 		},
 	});
 
