@@ -245,6 +245,18 @@ def style_parts():
     d = np.hypot(xx - n / 2 + 0.5, yy - n / 2 + 0.5) / (n / 2)
     g = np.clip(1 - d, 0, 1) ** 2.2
     out["UI-SOFT-GLOW"] = Image.fromarray(np.dstack([np.full((n, n, 3), 255), g * 255]).astype(np.uint8), "RGBA")
+    # light rays for the big-win backdrop: 18 soft tapered beams fading out from the centre
+    n = 1024
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float32)
+    ang = np.arctan2(yy - n / 2, xx - n / 2)
+    rad = np.hypot(xx - n / 2, yy - n / 2) / (n / 2)
+    beams = np.clip(np.cos(ang * 18) * 1.6 - 0.6, 0, 1) ** 1.5
+    fall = np.clip(1 - rad, 0, 1) ** 1.4 * np.clip(rad * 6, 0, 1)
+    out["UI-RAYS"] = Image.fromarray(np.dstack([np.full((n, n, 3), 255), beams * fall * 255]).astype(np.uint8), "RGBA")
+    # gold coin cut from BG-HIDDEN (art/prep_fx.py) for the live coin showers
+    coin = os.path.join(ROOT, "video", "public", "gg", "FX-COIN.webp")
+    if os.path.exists(coin):
+        out["FX-COIN"] = Image.open(coin).convert("RGBA")
     return out
 
 

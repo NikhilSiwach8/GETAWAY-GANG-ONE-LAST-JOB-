@@ -381,6 +381,14 @@ export const GG_LAYOUT = {
 	"UI-SOFT-GLOW": {
 		"width": 256,
 		"height": 256
+	},
+	"UI-RAYS": {
+		"width": 1024,
+		"height": 1024
+	},
+	"FX-COIN": {
+		"width": 153,
+		"height": 123
 	}
 } as const;
 
@@ -394,6 +402,7 @@ export const GG_ASSETS = {
 	'CHR-FUSE-POSE': { type: 'sprite', src: new URL('../../assets/gg/CHR-FUSE-POSE.webp', import.meta.url).href },
 	'CHR-ROXY-POSE': { type: 'sprite', src: new URL('../../assets/gg/CHR-ROXY-POSE.webp', import.meta.url).href },
 	'CHR-TANK-POSE': { type: 'sprite', src: new URL('../../assets/gg/CHR-TANK-POSE.webp', import.meta.url).href },
+	'FX-COIN': { type: 'sprite', src: new URL('../../assets/gg/FX-COIN.webp', import.meta.url).href },
 	'SCR-ESCAPE-INTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-ESCAPE-INTRO.webp', import.meta.url).href },
 	'SCR-ESCAPE-OUTRO-CLEAN': { type: 'sprite', src: new URL('../../assets/gg/SCR-ESCAPE-OUTRO-CLEAN.webp', import.meta.url).href },
 	'SCR-HEIST-INTRO': { type: 'sprite', src: new URL('../../assets/gg/SCR-HEIST-INTRO.webp', import.meta.url).href },
@@ -448,6 +457,7 @@ export const GG_ASSETS = {
 	'UI-PAYTABLE-1': { type: 'sprite', src: new URL('../../assets/gg/UI-PAYTABLE-1.webp', import.meta.url).href },
 	'UI-PRESS-CONTINUE-PRESS': { type: 'sprite', src: new URL('../../assets/gg/UI-PRESS-CONTINUE-PRESS.webp', import.meta.url).href, preload: true },
 	'UI-PRESS-CONTINUE-TAP': { type: 'sprite', src: new URL('../../assets/gg/UI-PRESS-CONTINUE-TAP.webp', import.meta.url).href, preload: true },
+	'UI-RAYS': { type: 'sprite', src: new URL('../../assets/gg/UI-RAYS.webp', import.meta.url).href },
 	'UI-REEL-BG': { type: 'sprite', src: new URL('../../assets/gg/UI-REEL-BG.webp', import.meta.url).href },
 	'UI-REEL-FRAME': { type: 'sprite', src: new URL('../../assets/gg/UI-REEL-FRAME.webp', import.meta.url).href },
 	'UI-RESPIN': { type: 'sprite', src: new URL('../../assets/gg/UI-RESPIN.webp', import.meta.url).href },

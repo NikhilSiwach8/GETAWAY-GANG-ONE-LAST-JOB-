@@ -23,7 +23,7 @@
 
 	import { getContext } from '../game/context';
 	import PressToContinue from './PressToContinue.svelte';
-	import WinCoins from './WinCoins.svelte';
+	import CoinShower from './CoinShower.svelte';
 	import ClipSprite from './ClipSprite.svelte';
 	import { hasClip } from '../game/clips.svelte';
 	import { hasArt } from '../game/ggAssets';
@@ -185,7 +185,7 @@
 					{/if}
 				</Container>
 
-				<WinCoins emit={!countUpCompleted} levelAlias={winLevelData?.alias} />
+				<CoinShower emit={!countUpCompleted} levelAlias={winLevelData?.alias ?? 'big'} />
 
 				<!-- the Heist/Escape art has the prompt painted in; keep the key/tap only -->
 				<PressToContinue hideArt={bonus !== 'hidden' && (useClip || hasStill)} onpress={() => (countUpCompleted ? oncomplete() : finishCountUp())} />

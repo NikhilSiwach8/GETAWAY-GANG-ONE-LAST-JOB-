@@ -17,14 +17,13 @@
 	import { CanvasSizeRectangle, MainContainer } from 'components-layout';
 	import { OnMount } from 'components-shared';
 
-	import WinCoins from './WinCoins.svelte';
+	import CoinShower from './CoinShower.svelte';
+	import BigWinScene from './BigWinScene.svelte';
 	import PressToContinue from './PressToContinue.svelte';
 	import { SYMBOL_SIZE } from '../game/constants';
 	import { getContext } from '../game/context';
-	import ClipSprite from './ClipSprite.svelte';
-	import { hasClip } from '../game/clips.svelte';
 
-	// Win celebration clips by win level (the game draws the counting amount on top)
+	// count-up length per win level (the celebration itself is BigWinScene)
 	const WIN_CLIPS: Record<string, { id: string; seconds: number }> = {
 		big: { id: 'WIN-BIG', seconds: 4 },
 		superwin: { id: 'WIN-SUPER', seconds: 5 },
@@ -32,8 +31,6 @@
 		epic: { id: 'WIN-EPIC', seconds: 8 },
 		max: { id: 'WIN-EPIC', seconds: 8 }, // the 12,000x cap also plays CIN-MAX-WIN on the wincap event
 	};
-	// titles drawn when clips cannot play (no transparent-WebM support)
-	const WIN_TITLES: Record<string, string> = { big: 'BIG WIN', superwin: 'SUPER WIN', mega: 'MEGA WIN', epic: 'EPIC WIN', max: 'MAXIMUM WIN' };
 
 	const context = getContext();
 	// the amount pops in with an elastic bounce, breathes while counting, and lands with a final beat
@@ -69,17 +66,16 @@
 <FadeContainer {show}>
 	{#if winLevelData}
 		{@const isBigWin = winLevelData.type === 'big'}
-		{@const winClip = WIN_CLIPS[winLevelData.alias] && hasClip(WIN_CLIPS[winLevelData.alias].id) ? WIN_CLIPS[winLevelData.alias] : null}
+		{@const winClip = WIN_CLIPS[winLevelData.alias] ?? null}
 		{@const duration = winClip ? (winClip.seconds - 1) * 1000 : winLevelData.presentDuration}
 		<WinCountUpProvider {amount} {duration} oncomplete={() => onCountUpComplete()}>
 			{#snippet children({ countUpAmount, startCountUp, finishCountUp, countUpCompleted })}
 				{#if isBigWin}
-					<CanvasSizeRectangle backgroundColor={0x000000} backgroundAlpha={0.5} />
+					<CanvasSizeRectangle backgroundColor={0x05070f} backgroundAlpha={0.72} />
 				{/if}
-				{#if winClip}
-					{@const cs = context.stateLayoutDerived.canvasSizes()}
-					{@const k = Math.min(cs.width / 1920, cs.height / 1080)}
-					<ClipSprite id={winClip.id} channel="win" x={cs.width / 2} y={cs.height / 2} width={1920 * k} height={1080 * k} />
+				{#if isBigWin}
+					<!-- live celebration: rays, tier title, crew (works everywhere, no video) -->
+					<BigWinScene alias={winLevelData.alias} />
 				{/if}
 
 				<OnMount
@@ -99,24 +95,10 @@
 						y={context.stateGameDerived.boardLayout().y}
 						scale={punch.current * (1 + (countUpCompleted ? 0 : 0.03 * Math.sin(beat.current)))}
 					>
-						{#if winClip}
+						{#if isBigWin}
 							<ResponsiveBitmapText
 								anchor={0.5}
-								y={SYMBOL_SIZE * 0.9}
-								maxWidth={context.stateLayoutDerived.canvasSizes().width / context.stateLayoutDerived.mainLayout().scale}
-								text={bookEventAmountToCurrencyString(countUpAmount)}
-								style={{ fontFamily: 'ggGold', fontSize: SYMBOL_SIZE * 1.6, align: 'center', fontWeight: 'bold', letterSpacing: 0 }}
-							/>
-						{:else if isBigWin}
-							<Text
-								anchor={0.5}
-								y={-SYMBOL_SIZE * 0.9}
-								text={WIN_TITLES[winLevelData.alias] ?? 'BIG WIN'}
-								style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: SYMBOL_SIZE * 1.2, fill: 0xffe27a, stroke: { color: 0x2a1200, width: 14 }, dropShadow: { color: 0xff4c36, distance: 8, angle: Math.PI / 2, blur: 0, alpha: 1 } }}
-							/>
-							<ResponsiveBitmapText
-								anchor={0.5}
-								y={SYMBOL_SIZE * 0.6}
+								y={SYMBOL_SIZE * 0.75}
 								maxWidth={context.stateLayoutDerived.canvasSizes().width / context.stateLayoutDerived.mainLayout().scale}
 								text={bookEventAmountToCurrencyString(countUpAmount)}
 								style={{ fontFamily: 'ggGold', fontSize: SYMBOL_SIZE * 1.6, align: 'center', letterSpacing: 0 }}
@@ -139,7 +121,7 @@
 					</Container>
 				</MainContainer>
 
-				<WinCoins emit={!countUpCompleted} levelAlias={winLevelData?.alias} />
+				<CoinShower emit={!countUpCompleted} levelAlias={winLevelData?.alias} />
 
 				<PressToContinue onpress={() => (countUpCompleted ? oncomplete() : finishCountUp())} />
 			{/snippet}

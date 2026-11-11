@@ -44,6 +44,7 @@ const board = _.range(BOARD_DIMENSIONS.x).map((reelIndex) => {
 		initialSymbols: INITIAL_BOARD[reelIndex],
 		initialSymbolState: INITIAL_SYMBOL_STATE,
 		onReelStopping: () => {
+			boardFx.jolt = performance.now(); // the board takes a small hit as each reel stops
 			eventEmitter.broadcast({
 				type: 'soundOnce',
 				name: 'sfx_reel_stop_1',
@@ -102,7 +103,7 @@ export const resetHud = () => {
 // Feature events change individual cells or swap whole reels; positions include the padding row.
 /** Ability transformation: the cell pops into its new symbol (see ReelSymbol), after `delayMs`. */
 /** Board presentation flags: `dim` darkens every symbol that is not part of the win being shown. */
-export const boardFx = $state({ dim: false });
+export const boardFx = $state({ dim: false, jolt: 0 });
 
 export const setCell = (reel: number, row: number, name: RawSymbol['name'], delayMs = 0) => {
 	const reelSymbol = stateGame.board[reel]?.reelState.symbols[row];

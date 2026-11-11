@@ -9,12 +9,12 @@ SRC = os.path.join(ROOT, "art", "animations")
 DST = os.path.join(ROOT, "frontend", "getaway_gang", "static", "assets", "clips")
 TS = os.path.join(ROOT, "frontend", "getaway_gang", "src", "game", "clipUrls.ts")
 
+# rendered but not used by the game (the Buy Bonus button uses its delivered still states)
+SKIP = {"UI-BUY-BONUS-ANIM", "WIN-BIG", "WIN-SUPER", "WIN-MEGA", "WIN-EPIC"}  # big wins are live (BigWinScene)
 os.makedirs(DST, exist_ok=True)
 for f in os.listdir(DST):  # remove clips that are no longer shipped
-    if f.startswith("SYM-") and "-ANIM-" in f:
+    if (f.startswith("SYM-") and "-ANIM-" in f) or f[:-5] in SKIP:
         os.remove(os.path.join(DST, f))
-# rendered but not used by the game (the Buy Bonus button uses its delivered still states)
-SKIP = {"UI-BUY-BONUS-ANIM"}
 # symbol land/win animations are drawn live in the game (SymbolArt.svelte), not played from video
 ids = sorted(f[:-5] for f in os.listdir(SRC) if f.endswith(".webm") and f[:-5] not in SKIP
              and not (f.startswith("SYM-") and "-ANIM-" in f))

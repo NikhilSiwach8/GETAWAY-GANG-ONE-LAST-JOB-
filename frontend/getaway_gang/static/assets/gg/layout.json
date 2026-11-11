@@ -380,5 +380,13 @@
  "UI-SOFT-GLOW": {
   "width": 256,
   "height": 256
+ },
+ "UI-RAYS": {
+  "width": 1024,
+  "height": 1024
+ },
+ "FX-COIN": {
+  "width": 153,
+  "height": 123
  }
 }
