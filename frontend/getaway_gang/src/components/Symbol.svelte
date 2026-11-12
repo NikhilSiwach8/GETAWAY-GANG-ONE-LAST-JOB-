@@ -43,7 +43,8 @@
 		const state = props.state;
 		clearTimeout(timer);
 		if (state === 'win') {
-			timer = setTimeout(() => props.oncomplete?.(), stateBet.isTurbo ? 600 : 1150);
+			// SymbolView completes on its own clock; this is only a safety net if rendering stalls
+			timer = setTimeout(() => props.oncomplete?.(), (stateBet.isTurbo ? 600 : 1150) * 3);
 		} else if (state === 'land') {
 			timer = setTimeout(() => props.oncomplete?.(), stateBet.isTurbo ? 180 : 340);
 		} else {
@@ -55,7 +56,7 @@
 
 {#if art && look && hasArt(art.assetId)}
 	<Container x={props.x} y={props.y}>
-		<SymbolView {look} state={props.state} dimmed={props.dimmed} highlight={props.highlight} glintAt={props.glintAt} />
+		<SymbolView {look} state={props.state} dimmed={props.dimmed} highlight={props.highlight} glintAt={props.glintAt} oncomplete={isWin ? () => props.oncomplete?.() : undefined} />
 	</Container>
 {:else if art}
 	<Container x={props.x} y={props.y} scale={isWin ? 1.08 : 1}>

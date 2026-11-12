@@ -25,6 +25,7 @@
 	import { BOARD_DIMENSIONS } from '../game/constants';
 	import { highlightCells, startIdleGlints, stopIdleGlints, symbolFx } from '../game/symbols/symbolFx.svelte';
 	import { SYMBOL_LOOKS } from '../game/symbols/catalog';
+	import { winFx, winHooks } from '../game/wins/winDirector.svelte';
 	import { getContextApp } from 'pixi-svelte';
 
 	const context = getContext();
@@ -47,14 +48,17 @@
 					reelSymbol.symbolState = 'postWinStatic';
 				});
 
-			boardFx.dim = true;
+			// inside a win presentation the win director owns the dimming (no flicker between wins)
+			const owned = winFx.phase !== 'idle';
+			if (!owned) boardFx.dim = true;
 			await Promise.all(getPromises());
-			boardFx.dim = false;
+			if (!owned) boardFx.dim = false;
 		},
 	});
 
 	context.stateGameDerived.enhancedBoard.readyToSpinEffect();
 	onMount(() => startIdleGlints(BOARD_DIMENSIONS.x, BOARD_DIMENSIONS.y));
+	winHooks.jolt = () => (boardFx.jolt = performance.now());
 	// dev builds only: lets frontend/tests/symbol_check.cjs drive symbol states and check asset references
 	if (import.meta.env.DEV) {
 		const app = getContextApp();

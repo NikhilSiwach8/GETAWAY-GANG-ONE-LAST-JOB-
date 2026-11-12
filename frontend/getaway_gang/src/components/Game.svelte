@@ -31,14 +31,19 @@
 	import Hud from './Hud.svelte';
 	import FeatureBanner from './FeatureBanner.svelte';
 	import CellHighlights from './CellHighlights.svelte';
+	import WinBoardFx from './WinBoardFx.svelte';
 	import WildReels from './WildReels.svelte';
 	import ClipLayer from './ClipLayer.svelte';
 	import CrewMascot from './CrewMascot.svelte';
 	import CellFxLayer from './CellFxLayer.svelte';
 	import { prefetchClips } from '../game/clips.svelte';
+	import { playBookEvents } from '../game/utils';
 
 	const context = getContext();
 	installMeta(); // bet modes (bonus buys) for the shared UI
+
+	// dev builds only: replay real book events through the game's own handlers (frontend/tests/win_record.cjs)
+	if (import.meta.env.DEV) (window as unknown as { __playEvents: unknown }).__playEvents = (events: never[]) => playBookEvents(events);
 
 	onMount(() => {
 		context.stateLayout.showLoadingScreen = true;
@@ -77,6 +82,7 @@
 			<WildReels />
 			<CellFxLayer />
 			<CellHighlights />
+			<WinBoardFx />
 			<CrewMascot />
 			<Hud />
 			<FreeSpinCounter />

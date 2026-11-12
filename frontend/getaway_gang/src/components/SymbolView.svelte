@@ -18,6 +18,8 @@
 	import type { SymbolLook } from '../game/symbols/catalog';
 	import { CHANNELS, RESET_TAU, resolveVisualState } from '../game/symbols/symbolStates';
 	import { glintTexture } from '../game/env/textures';
+	import { SYMBOL_WIN, TURBO_TIME, WIN_TIMING } from '../game/wins/sequences';
+	import { sample } from '../game/wins/easing';
 
 	type Props = {
 		look: SymbolLook;
@@ -27,6 +29,8 @@
 		highlight?: number;
 		/** performance.now() of an idle glint aimed at this cell (0 = none) */
 		glintAt?: number;
+		/** called once when the win sequence has played (the board then moves the symbol on) */
+		oncomplete?: () => void;
 	};
 	const props: Props = $props();
 
@@ -51,9 +55,12 @@
 	let tGlint = $state(-1);
 	let tPulse = $state(0);
 
-	const turbo = $derived(stateBet.isTurbo ? 1.8 : 1);
+	// fast play compresses the authored timing (game/wins/sequences)
+	const turbo = $derived(stateBet.isTurbo ? 1 / TURBO_TIME : 1);
+	let completed = false;
 	$effect(() => {
 		tWin = visual === 'winning' ? 0 : -1;
+		completed = false;
 	});
 	$effect(() => {
 		tLand = visual === 'animated' ? 0 : -1;
@@ -83,7 +90,13 @@
 		dim += (target.dim - dim) * k;
 		shadow += (target.shadow - shadow) * k;
 		tPulse += dt;
-		if (tWin >= 0) tWin += dt * turbo;
+		if (tWin >= 0) {
+			tWin += dt * turbo;
+			if (!completed && tWin >= WIN_TIMING.normal.perWin) {
+				completed = true;
+				props.oncomplete?.();
+			}
+		}
 		if (tLand >= 0) tLand = tLand + dt * turbo > 0.36 ? -1 : tLand + dt * turbo;
 		if (tGlint >= 0) tGlint = tGlint + dt > 0.7 ? -1 : tGlint + dt;
 		if (settled()) {
@@ -116,10 +129,6 @@
 
 	// ---------------------------------------------------------------- sequences
 	const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-	const backOut = (x: number, c = 2.2) => {
-		const p = clamp01(x) - 1;
-		return 1 + (c + 1) * p * p * p + c * p * p;
-	};
 	// land: damped squash & stretch, planted on the body's floor
 	const land = $derived.by(() => {
 		if (tLand < 0) return { sx: 1, sy: 1, flash: 0 };
@@ -127,23 +136,21 @@
 		const s = 0.16 * Math.exp(-ms / 85) * Math.cos(ms / 38);
 		return { sx: 1 + s * 0.65, sy: 1 - s, flash: props.look.special ? Math.max(0, 1 - ms / 300) : 0 };
 	});
-	// win: anticipation dip, back-eased pop, damped wobble, halo, one shine sweep, star burst, held pulse
+	// win: the symbol family's keyframe tracks (anticipation, pop, impact squash & stretch, settle, held pulse)
+	const tracks = $derived(SYMBOL_WIN[props.look.family]);
 	const win = $derived.by(() => {
 		if (tWin < 0) return null;
-		const ms = tWin * 1000;
-		const wind = ms < 110 ? 1 - 0.08 * Math.sin((ms / 110) * Math.PI) : 1;
-		const pop = ms < 110 ? 1 : 1 + 0.2 * backOut((ms - 110) / 230) - 0.08 * clamp01((ms - 340) / 260);
-		const hold = ms > 600 ? 0.025 * Math.sin((ms - 600) / 140) : 0;
-		const rot = 0.1 * Math.exp(-Math.max(0, ms - 110) / 260) * Math.sin(Math.max(0, ms - 110) / 55);
+		const tr = tracks;
 		return {
-			scale: wind * (pop + hold),
-			rot,
-			halo: clamp01((ms - 80) / 160) * (0.75 + 0.25 * Math.sin(ms / 120)),
-			sweep: clamp01((ms - 220) / 420),
-			burst: clamp01((ms - 140) / 650),
+			scale: sample(tr.scale, tWin),
+			sx: sample(tr.sx, tWin),
+			sy: sample(tr.sy, tWin),
+			y: sample(tr.y, tWin),
+			rot: sample(tr.rot, tWin),
+			halo: sample(tr.halo, tWin),
+			sweep: sample(tr.shine, tWin),
 		};
 	});
-	const SPARKS = [0, 1, 2, 3, 4, 5, 6].map((i) => ({ a: (i / 7) * Math.PI * 2 + 0.4, d: 0.62 + (i % 3) * 0.12, s: 0.16 + (i % 2) * 0.06 }));
 
 	// ---------------------------------------------------------------- derived drawing values
 	const accent = $derived(props.highlight ? props.highlight : props.look.accent);
@@ -201,7 +208,12 @@
 	/>
 {/if}
 
-<Container x={fit.dx * S} y={fit.dy * S + (floorY - fit.dy * S) * (1 - land.sy)} scale={{ x: artScale * land.sx, y: artScale * land.sy }} rotation={win?.rot ?? 0}>
+<Container
+	x={fit.dx * S}
+	y={fit.dy * S + (floorY - fit.dy * S) * (1 - land.sy * (win?.sy ?? 1)) + (win?.y ?? 0) * S}
+	scale={{ x: artScale * land.sx * (win?.sx ?? 1), y: artScale * land.sy * (win?.sy ?? 1) }}
+	rotation={win?.rot ?? 0}
+>
 	<Sprite key={props.look.assetId} anchor={0.5} width={S} height={S} {tint} />
 	{#if win && win.sweep > 0 && win.sweep < 1}
 		<Container>
@@ -240,18 +252,3 @@
 	/>
 {/if}
 
-{#if win && win.burst > 0 && win.burst < 1}
-	{#each SPARKS as p, i (i)}
-		{@const e = 1 - Math.pow(1 - win.burst, 3)}
-		<Sprite
-			key="UI-STAR-ON"
-			anchor={0.5}
-			x={Math.cos(p.a) * S * p.d * (0.35 + e)}
-			y={Math.sin(p.a) * S * p.d * (0.35 + e)}
-			width={S * p.s * (1 - win.burst * 0.5)}
-			height={S * p.s * (1 - win.burst * 0.5)}
-			rotation={win.burst * 3 + i}
-			alpha={1 - win.burst}
-		/>
-	{/each}
-{/if}

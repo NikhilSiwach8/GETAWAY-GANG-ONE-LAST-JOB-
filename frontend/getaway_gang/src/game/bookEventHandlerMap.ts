@@ -12,6 +12,7 @@ import { CREW_INFO, COMBO_INFO, METER_STAGE_REWARDS, LOOT_REWARDS, LOOT_THRESHOL
 import config from './config';
 import { playClip, playCellFx, mascotDo, ensureClip } from './clips.svelte';
 import { restoreAnte } from './ante.svelte';
+import { presentAmount, presentWins, settle } from './wins/winDirector.svelte';
 import type { BookEvent, BookEventOfType, BookEventContext } from './typesBookEvent';
 import type { Position } from './types';
 
@@ -121,7 +122,7 @@ const playPendingMystery = async () => {
 	}
 };
 
-export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContext> = {
+const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 	reveal: async (bookEvent: BookEventOfType<'reveal'>, { bookEvents }: BookEventContext) => {
 		const isBonusGame = checkIsMultipleRevealEvents({ bookEvents });
 		if (isBonusGame) {
@@ -139,9 +140,8 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 	},
 	winInfo: async (bookEvent: BookEventOfType<'winInfo'>) => {
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_winlevel_small' });
-		await sequence(bookEvent.wins, async (win) => {
-			await animateSymbols({ positions: win.positions });
-		});
+		// the win director presents the event's wins in book order (see game/wins/winDirector.svelte.ts)
+		await presentWins(bookEvent.wins, (positions) => animateSymbols({ positions }));
 	},
 	setTotalWin: async (bookEvent: BookEventOfType<'setTotalWin'>) => {
 		stateBet.winBookEventAmount = bookEvent.amount;
@@ -222,12 +222,8 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		if (winLevelData?.type !== 'big' && bookEvent.amount > 0) mascotDo('WIN');
 
 		eventEmitter.broadcast({ type: 'winShow' });
-		winLevelSoundsPlay({ winLevelData });
-		await eventEmitter.broadcastAsync({
-			type: 'winUpdate',
-			amount: bookEvent.amount,
-			winLevelData,
-		});
+		// the counter counts the event's amount; big tiers start (and their sounds play) after the symbol cycle
+		await presentAmount(bookEvent.amount, winLevelData ?? { alias: 'standard', type: 'small' }, () => winLevelSoundsPlay({ winLevelData }));
 		winLevelSoundsStop();
 		eventEmitter.broadcast({ type: 'winHide' });
 	},
@@ -475,3 +471,20 @@ export const bookEventHandlerMap: BookEventHandlerMap<BookEvent, BookEventContex
 		}
 	},
 };
+
+/**
+ * No overlapping presentations: every book event except the win events themselves waits until the current
+ * win presentation has fully finished (and reset) before it runs. Handlers and their order are unchanged.
+ */
+const WIN_EVENTS = new Set(['winInfo', 'setWin', 'setTotalWin']);
+export const bookEventHandlerMap = Object.fromEntries(
+	Object.entries(handlers).map(([type, handler]) => [
+		type,
+		WIN_EVENTS.has(type)
+			? handler
+			: async (...args: unknown[]) => {
+					await settle();
+					return (handler as (...a: unknown[]) => unknown)(...args);
+				},
+	]),
+) as typeof handlers;

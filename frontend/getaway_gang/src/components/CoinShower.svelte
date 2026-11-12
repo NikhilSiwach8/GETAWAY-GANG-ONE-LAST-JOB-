@@ -1,81 +1,128 @@
 <script lang="ts">
 	/**
-	 * Live coin shower with the gold coin cut from the delivered art (FX-COIN): coins burst up in a fountain
-	 * from below the amount and (for the bigger tiers) rain down from the top, tumbling (flip + spin) under
-	 * gravity. Replaces the SDK sample coin emitter. Canvas coordinates; one rAF loop for all coins.
+	 * Coin shower with the gold coin cut from the delivered art (FX-COIN): a fountain from below the amount
+	 * and, for the bigger tiers, rain from the top; coins tumble (flip + spin) under gravity.
+	 * One pooled PixiJS ParticleContainer (no per-frame allocation, no Svelte work per coin); emission rates
+	 * per tier come from game/wins/sequences.ts and are fixed (an accumulator, not random gaps); the ticker
+	 * callback is attached only while coins are emitted or alive. Phones get half the pool and half the rate.
+	 * `burst` adds an instant spray (tier stage impacts). Canvas coordinates.
 	 */
 	import { onDestroy } from 'svelte';
-	import { Container, Sprite } from 'pixi-svelte';
+	import * as PIXI from 'pixi.js';
+	import { getContextApp, getContextParent } from 'pixi-svelte';
 	import { getContext } from '../game/context';
+	import { TIER_LOOK } from '../game/wins/sequences';
 
-	type Props = { emit: boolean; levelAlias?: string };
+	type Props = { emit: boolean; levelAlias?: string; burst?: number };
 	const props: Props = $props();
 	const context = getContext();
+	const app = getContextApp();
+	const parent = getContextParent();
+	const ticker = app.stateApp.pixiApplication!.ticker;
+	const mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || matchMedia('(pointer: coarse)').matches;
+	const N = mobile ? 110 : 220;
+	const SMALL: Record<string, [number, number]> = { nice: [10, 0], substantial: [18, 0] };
+	const rate = $derived(((TIER_LOOK as Record<string, { coins: [number, number] }>)[props.levelAlias ?? '']?.coins ?? SMALL[props.levelAlias ?? ''] ?? [0, 0]).map((r) => r * (mobile ? 0.5 : 1)));
 
-	// coins per second: fountain / rain, by win level
-	const RATE: Record<string, [number, number]> = {
-		nice: [10, 0],
-		substantial: [18, 0],
-		big: [34, 6],
-		superwin: [44, 14],
-		mega: [54, 24],
-		epic: [64, 36],
-		max: [70, 46],
-	};
-	type Coin = { x: number; y: number; vx: number; vy: number; ph: number; vph: number; rot: number; vr: number; s: number };
-	let coins = $state.raw<Coin[]>([]);
+	const tex = app.stateApp.loadedAssets?.['FX-COIN'] as PIXI.Texture | undefined;
+	const pc = new PIXI.ParticleContainer({ dynamicProperties: { position: true, rotation: true, vertex: true, color: true, uvs: false } });
+	pc.zIndex = 40;
+	const ps: PIXI.Particle[] = [];
+	const st = { vx: new Float32Array(N), vy: new Float32Array(N), ph: new Float32Array(N), vph: new Float32Array(N), vr: new Float32Array(N), s: new Float32Array(N), on: new Uint8Array(N) };
+	if (tex) {
+		for (let i = 0; i < N; i++) {
+			const p = new PIXI.Particle({ texture: tex, anchorX: 0.5, anchorY: 0.5, alpha: 0 });
+			ps.push(p);
+			pc.addParticle(p);
+		}
+	}
+	parent.addToParent(pc);
+
 	const cs = $derived(context.stateLayoutDerived.canvasSizes());
 	const k = $derived(Math.min(cs.width / 1920, cs.height / 1080));
+	$effect(() => {
+		pc.boundsArea = new PIXI.Rectangle(0, -200, cs.width, cs.height + 400);
+	});
 
-	let raf = 0;
-	let last = 0;
 	let acc = [0, 0];
-	const MAX = 220;
-	const step = (now: number) => {
-		const dt = Math.min(0.05, last ? (now - last) / 1000 : 0.016);
-		last = now;
-		const [fr, rr] = RATE[props.levelAlias ?? ''] ?? [0, 0];
-		const next: Coin[] = [];
+	let seq = 0; // deterministic variety: a golden-ratio sequence instead of random numbers
+	const q = () => ((seq = (seq + 0.6180339887) % 1), seq);
+	let cursor = 0;
+	const spawn = (fountain: boolean) => {
+		if (!ps.length) return;
+		const i = cursor;
+		cursor = (cursor + 1) % N;
+		const p = ps[i];
+		if (fountain) {
+			const a = -Math.PI / 2 + (q() - 0.5) * 1.1;
+			const v = (1500 + q() * 900) * k;
+			p.x = cs.width / 2 + (q() - 0.5) * 160 * k;
+			p.y = cs.height + 40 * k;
+			st.vx[i] = Math.cos(a) * v;
+			st.vy[i] = Math.sin(a) * v;
+		} else {
+			p.x = q() * cs.width;
+			p.y = -60 * k;
+			st.vx[i] = (q() - 0.5) * 120 * k;
+			st.vy[i] = (200 + q() * 300) * k;
+		}
+		st.ph[i] = q() * 6;
+		st.vph[i] = 7 + q() * 9;
+		p.rotation = q() * 6;
+		st.vr[i] = (q() - 0.5) * 6;
+		st.s[i] = (0.7 + q() * 0.6) * k;
+		st.on[i] = 1;
+		p.alpha = 1;
+	};
+
+	let attached = false;
+	const step = (tk: PIXI.Ticker) => {
+		const dt = Math.min(tk.deltaMS / 1000, 0.05);
 		const g = 2400 * k;
-		for (const c of coins) {
-			const n = { ...c, vy: c.vy + g * dt, x: c.x + c.vx * dt, y: c.y + c.vy * dt, ph: c.ph + c.vph * dt, rot: c.rot + c.vr * dt };
-			if (n.y < cs.height + 120 * k) next.push(n);
+		let alive = 0;
+		for (let i = 0; i < ps.length; i++) {
+			if (!st.on[i]) continue;
+			const p = ps[i];
+			st.vy[i] += g * dt;
+			p.x += st.vx[i] * dt;
+			p.y += st.vy[i] * dt;
+			st.ph[i] += st.vph[i] * dt;
+			p.rotation += st.vr[i] * dt;
+			const flip = Math.cos(st.ph[i]);
+			p.scaleX = ((58 * st.s[i]) / (tex?.width || 58)) * Math.max(0.15, Math.abs(flip));
+			p.scaleY = (46 * st.s[i]) / (tex?.height || 46);
+			p.tint = flip > 0 ? 0xffffff : 0xd9a441;
+			if (p.y > cs.height + 120 * k) {
+				st.on[i] = 0;
+				p.alpha = 0;
+			} else alive++;
 		}
-		if (props.emit && next.length < MAX) {
-			acc[0] += fr * dt;
-			acc[1] += rr * dt;
-			while (acc[0] >= 1) {
-				acc[0] -= 1;
-				const a = -Math.PI / 2 + (Math.random() - 0.5) * 1.1;
-				const v = (1500 + Math.random() * 900) * k;
-				next.push({ x: cs.width / 2 + (Math.random() - 0.5) * 160 * k, y: cs.height + 40 * k, vx: Math.cos(a) * v, vy: Math.sin(a) * v, ph: Math.random() * 6, vph: 7 + Math.random() * 9, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 6, s: 0.7 + Math.random() * 0.6 });
-			}
-			while (acc[1] >= 1) {
-				acc[1] -= 1;
-				next.push({ x: Math.random() * cs.width, y: -60 * k, vx: (Math.random() - 0.5) * 120 * k, vy: (200 + Math.random() * 300) * k, ph: Math.random() * 6, vph: 6 + Math.random() * 8, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 4, s: 0.6 + Math.random() * 0.5 });
-			}
+		if (props.emit) {
+			acc[0] += rate[0] * dt;
+			acc[1] += rate[1] * dt;
+			while (acc[0] >= 1) (acc[0] -= 1), spawn(true);
+			while (acc[1] >= 1) (acc[1] -= 1), spawn(false);
 		}
-		coins = next;
-		raf = props.emit || next.length ? requestAnimationFrame(step) : 0;
-		if (!raf) last = 0;
+		if (!props.emit && !alive) detach();
+	};
+	const attach = () => {
+		if (!attached) (attached = true), ticker.add(step);
+	};
+	const detach = () => {
+		if (attached) (attached = false), ticker.remove(step), (acc = [0, 0]);
 	};
 	$effect(() => {
-		if (props.emit && !raf) raf = requestAnimationFrame(step);
+		if (props.emit) attach();
 	});
-	onDestroy(() => cancelAnimationFrame(raf));
+	// an instant spray on each tier stage impact
+	let lastBurst = 0;
+	$effect(() => {
+		const b = props.burst ?? 0;
+		if (b > lastBurst) {
+			lastBurst = b;
+			for (let j = 0; j < (mobile ? 12 : 24); j++) spawn(true);
+			attach();
+		}
+	});
+	onDestroy(detach);
 </script>
-
-<Container zIndex={40}>
-	{#each coins as c, i (i)}
-		<Sprite
-			key="FX-COIN"
-			anchor={0.5}
-			x={c.x}
-			y={c.y}
-			rotation={c.rot}
-			width={58 * k * c.s * Math.max(0.15, Math.abs(Math.cos(c.ph)))}
-			height={46 * k * c.s}
-			tint={Math.cos(c.ph) > 0 ? 0xffffff : 0xd9a441}
-		/>
-	{/each}
-</Container>
