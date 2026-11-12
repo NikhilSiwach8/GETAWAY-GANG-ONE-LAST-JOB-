@@ -1,11 +1,17 @@
 <script lang="ts">
-	/** Scene background: BG-MAIN (base) / BG-HEIST / BG-ESCAPE, scaled to cover the canvas. */
+	/**
+	 * Scene background: the still art per scene (BG-MAIN / BG-HEIST / BG-ESCAPE / BG-HIDDEN), scaled to cover the
+	 * canvas, with the live environment (Environment.svelte: lights, beams, reflections, particles, events) on top.
+	 * The pre-rendered BG-*-LOOP videos are kept only as an optional fallback (BG_VIDEO_LOOPS).
+	 */
 	import { Rectangle, Sprite } from 'pixi-svelte';
 	import { FadeContainer } from 'components-pixi';
 	import { getContext } from '../game/context';
 	import { GG_LAYOUT, hasArt } from '../game/ggAssets';
 	import ClipSprite from './ClipSprite.svelte';
 	import { hasClip } from '../game/clips.svelte';
+	import Environment from './Environment.svelte';
+	import { BG_VIDEO_LOOPS } from '../game/env/config';
 
 	// every scene has an animated loop (BG-MAIN/HEIST/ESCAPE/HIDDEN-LOOP) over its still art, which only shows while loading
 	// HIDDEN BONUS: its own BG-HIDDEN once delivered; until then the Escape scene with a gold grade
@@ -33,7 +39,7 @@
 {#each Object.entries(IDS) as [key, id] (key)}
 	<FadeContainer show={scene === key} duration={600} zIndex={-2}>
 		<Sprite key={id} anchor={0.5} {...cover(id)} />
-		{#if scene === key && LOOPS[key] && hasClip(LOOPS[key])}
+		{#if BG_VIDEO_LOOPS && scene === key && LOOPS[key] && hasClip(LOOPS[key])}
 			<ClipSprite id={LOOPS[key]} channel="bg" loop anchor={0.5} {...coverHD} />
 		{/if}
 		{#if key === 'hidden' && !ownHidden}
@@ -41,4 +47,5 @@
 		{/if}
 	</FadeContainer>
 {/each}
+<Environment scene={scene as 'basegame'} arts={IDS} />
 {/if}

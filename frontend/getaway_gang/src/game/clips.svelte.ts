@@ -8,6 +8,7 @@
 import * as PIXI from 'pixi.js';
 import { stateBet } from 'state-shared';
 import { CLIP_URLS, OPAQUE_CLIPS } from './clipUrls';
+import { BG_VIDEO_LOOPS } from './env/config';
 
 const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent;
 const isSafari = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(ua) || /iPad|iPhone|iPod/.test(ua);
@@ -283,9 +284,7 @@ export const prefetchClips = () => {
 	const symbols = ['H1', 'H2', 'H3', 'H4', 'L1', 'L2', 'L3', 'L4', 'WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'];
 	const first = [
 		'FX-TRANSITION',
-		'BG-MAIN-LOOP',
-		'BG-HEIST-LOOP',
-		'BG-HIDDEN-LOOP',
+		...(BG_VIDEO_LOOPS ? ['BG-MAIN-LOOP', 'BG-HEIST-LOOP', 'BG-HIDDEN-LOOP'] : []),
 		'FX-ANTICIPATION',
 		...symbols.map((s) => `SYM-${s}-ANIM-WIN`),
 		...['WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'].map((s) => `SYM-${s}-ANIM-LAND`),
