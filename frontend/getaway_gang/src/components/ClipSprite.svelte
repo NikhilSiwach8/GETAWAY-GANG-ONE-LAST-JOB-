@@ -6,7 +6,7 @@
 	 */
 	import { onDestroy, onMount, type Snippet } from 'svelte';
 	import { BaseSprite, Container } from 'pixi-svelte';
-	import { getClip, playVideo, retain, unretain, whenReady } from '../game/clips.svelte';
+	import { describeVideo, getClip, playVideo, retain, unretain, whenReady } from '../game/clips.svelte';
 
 	type Props = {
 		id: string;
@@ -45,12 +45,19 @@
 
 	onMount(async () => {
 		if (!clip) return props.onended?.(false);
-		if (!(await whenReady(clip.video))) return props.onended?.(false);
+		if (!(await whenReady(clip.video))) {
+			console.warn(`[clips] ${props.id}: not ready in time, showing the fallback (${describeVideo(clip.video)})`);
+			return props.onended?.(false);
+		}
 		ready = true;
 		props.onready?.();
 		fadeIn();
 		if (props.autoplay === false) return;
-		playVideo(clip, props.loop).then((ok) => !props.loop && props.onended?.(ok));
+		playVideo(clip, props.loop).then((ok) => {
+			// (a clip stopped on purpose also resolves false: only real errors are logged)
+			if (!ok && clip.video.error) console.warn(`[clips] ${props.id}: playback failed (${describeVideo(clip.video)})`);
+			if (!props.loop) props.onended?.(ok);
+		});
 	});
 	onDestroy(() => {
 		cancelAnimationFrame(raf);

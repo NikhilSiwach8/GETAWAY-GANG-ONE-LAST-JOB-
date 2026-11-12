@@ -33,6 +33,8 @@ type Blobbed = { url: string; size: number; used: number };
 const blobs = new Map<string, Blobbed>();
 const downloads = new Map<string, Promise<string | null>>();
 let blobBytes = 0;
+/** set when the host page refuses blob: media (strict policy): from then on clips stream from their files */
+let blobMediaBlocked = false;
 const inUse = (id: string) => [...cache.keys()].some((k) => k.startsWith(`${id}|`));
 /** Free least-recently-used clips (not on any player) until `need` more bytes fit in the budget. */
 const makeRoom = (need: number) => {
@@ -66,11 +68,21 @@ const download = (id: string): Promise<string | null> => {
 					blobBytes += b.size;
 					return url;
 				})
-				.catch(() => null),
+				.catch((e) => {
+					// diagnostics: one console line per failed clip (HTTP status or network error)
+					console.warn(`[clips] ${id}: download failed (${typeof e === 'number' ? `HTTP ${e}` : String(e)}) ${CLIP_URLS[id]}`);
+					downloads.delete(id); // allow a later retry
+					return null;
+				}),
 		);
 	}
 	return downloads.get(id)!;
 };
+
+const MEDIA_ERR = ['', 'aborted', 'network', 'decode', 'source not supported'];
+/** Human-readable state of a <video> for the [clips] console diagnostics. */
+export const describeVideo = (v: HTMLVideoElement) =>
+	`error=${v.error ? `${v.error.code} ${MEDIA_ERR[v.error.code] ?? ''} ${v.error.message ?? ''}`.trim() : 'none'} readyState=${v.readyState} networkState=${v.networkState} src=${(v.currentSrc || v.src).startsWith('blob:') ? 'memory (blob)' : v.currentSrc || v.src}`;
 /**
  * Make sure a clip is in memory before a screen that relies on it opens (bonus intro/outro), so the
  * animation plays instead of a still. Resolves true when downloaded, false after `timeoutMs`.
@@ -117,12 +129,28 @@ export const getClip = (id: string, channel = 'main'): Clip | undefined => {
 		video.playsInline = true;
 		video.preload = 'auto';
 		video.crossOrigin = 'anonymous';
-		const local = blobs.get(id);
-		if (local) {
+		const local = blobMediaBlocked ? undefined : blobs.get(id);
+		if (blobMediaBlocked) {
+			video.dataset.direct = '1';
+			video.src = CLIP_URLS[id];
+		} else if (local) {
 			local.used = performance.now();
 			video.src = local.url;
 		}
-		else download(id).then((url) => (video.src = url ?? CLIP_URLS[id]));
+		else download(id).then((url) => (video.src = blobMediaBlocked ? CLIP_URLS[id] : (url ?? CLIP_URLS[id])));
+		// if playing from memory fails (e.g. a host page policy that blocks blob: media), stream the file
+		// directly instead; every failure is logged once with its reason
+		video.addEventListener('error', () => {
+			// (a blocked blob: source leaves currentSrc empty, so check the assigned src)
+			if (!video.dataset.direct && video.src.startsWith('blob:')) {
+				console.warn(`[clips] ${id}: playing from memory failed (${describeVideo(video)}), streaming ${CLIP_URLS[id]}`);
+				blobMediaBlocked = true; // every later clip streams directly (no failed attempt per clip)
+				video.dataset.direct = '1';
+				video.dataset.retrying = '1';
+				video.src = CLIP_URLS[id];
+				video.load();
+			} else console.warn(`[clips] ${id}: cannot play (${describeVideo(video)})`);
+		});
 		// the background loops are slow parallax: half the texture uploads of the effect clips
 		const updateFPS = channel === 'bg' ? 15 : 30;
 		const source = new PIXI.VideoSource({ resource: video, autoPlay: false, autoLoad: true, updateFPS });
@@ -154,7 +182,11 @@ export const whenReady = (v: HTMLVideoElement, timeoutMs = 8000): Promise<boolea
 			resolve(ok);
 		};
 		const onReady = () => finish(v.videoWidth > 0);
-		const onFail = () => finish(false);
+		// an error that triggered the direct-stream retry (getClip) is not a failure yet: keep waiting
+		const onFail = () => {
+			if (v.dataset.retrying === '1') return void delete v.dataset.retrying;
+			finish(false);
+		};
 		const timer = setTimeout(() => finish(false), timeoutMs);
 		v.addEventListener('loadeddata', onReady);
 		v.addEventListener('error', onFail);
@@ -304,7 +336,7 @@ export const prefetchClips = () => {
 	const queue = [...first, ...rest].filter((id) => hasClip(id));
 	let i = 0;
 	// background prefetch fills at most 80% of the memory budget, most frequent clips first
-	const next = (): unknown => i < queue.length && blobBytes < BLOB_BUDGET * 0.8 && download(queue[i++]).then(next);
+	const next = (): unknown => !blobMediaBlocked && i < queue.length && blobBytes < BLOB_BUDGET * 0.8 && download(queue[i++]).then(next);
 	for (let k = 0; k < 3; k++) next();
 };
 

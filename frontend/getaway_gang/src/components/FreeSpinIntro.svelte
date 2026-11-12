@@ -97,7 +97,10 @@
 				zIndex={1}
 				onready={() => (clipShown = true)}
 				onended={(ok) => {
-					if (!ok) clipFailed = true;
+					if (!ok) {
+						console.warn(`[clips] bonus entry ${entry.intro}: fell back to the still card`);
+						clipFailed = true;
+					}
 					else if (hasClip(entry.loop)) phase = 'loop';
 				}}
 			/>
