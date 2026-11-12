@@ -14,6 +14,7 @@ import { playClip, playCellFx, mascotDo, ensureClip } from './clips.svelte';
 import { restoreAnte } from './ante.svelte';
 import { presentAmount, presentWins, settle } from './wins/winDirector.svelte';
 import { entryBonus, entryClips, isPortrait } from './bonusEntry';
+import { totalClips } from './bonusTotal';
 import type { BookEvent, BookEventOfType, BookEventContext } from './typesBookEvent';
 import type { Position } from './types';
 
@@ -194,8 +195,9 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 	},
 	freeSpinEnd: async (bookEvent: BookEventOfType<'freeSpinEnd'>) => {
 		const winLevelData = winLevelMap[bookEvent.winLevel as WinLevel];
-		const outroId = { escape: 'SCR-ESCAPE-OUTRO', heist: 'SCR-HEIST-OUTRO', hidden: 'SCR-HIDDEN-OUTRO' }[stateGame.hud.bonus ?? 'heist'];
-		const outroReady = ensureClip(outroId, 6000);
+		// the Total Win card is an animated clip (prefetched after load): make sure it and its loop are in memory
+		const total = totalClips(stateGame.hud.bonus ?? 'heist', isPortrait());
+		const outroReady = Promise.all([ensureClip(total.intro, 8000), ensureClip(total.loop, 8000)]);
 
 		await eventEmitter.broadcastAsync({ type: 'uiHide' });
 		await outroReady;

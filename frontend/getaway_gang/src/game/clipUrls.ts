@@ -40,14 +40,23 @@ export const CLIP_URLS: Record<string, string> = {
 	'FX-RETRIGGER': new URL('../../assets/clips/FX-RETRIGGER.webm', import.meta.url).href,
 	'FX-TRANSITION': new URL('../../assets/clips/FX-TRANSITION.webm', import.meta.url).href,
 	'FX-VAULT-GUARANTEE': new URL('../../assets/clips/FX-VAULT-GUARANTEE.webm', import.meta.url).href,
-	'SCR-ESCAPE-OUTRO': new URL('../../assets/clips/SCR-ESCAPE-OUTRO.webm', import.meta.url).href,
-	'SCR-HEIST-OUTRO': new URL('../../assets/clips/SCR-HEIST-OUTRO.webm', import.meta.url).href,
-	'SCR-HIDDEN-OUTRO': new URL('../../assets/clips/SCR-HIDDEN-OUTRO.webm', import.meta.url).href,
 	'SYM-FX-CLONE-IN': new URL('../../assets/clips/SYM-FX-CLONE-IN.webm', import.meta.url).href,
 	'SYM-FX-CREW-EXIT': new URL('../../assets/clips/SYM-FX-CREW-EXIT.webm', import.meta.url).href,
 	'SYM-FX-UPGRADE-IN': new URL('../../assets/clips/SYM-FX-UPGRADE-IN.webm', import.meta.url).href,
 	'SYM-FX-VAULT-REVEAL': new URL('../../assets/clips/SYM-FX-VAULT-REVEAL.webm', import.meta.url).href,
 	'SYM-FX-WILD-STAMP': new URL('../../assets/clips/SYM-FX-WILD-STAMP.webm', import.meta.url).href,
+	'TOTAL-ESCAPE': new URL('../../assets/clips/TOTAL-ESCAPE.webm', import.meta.url).href,
+	'TOTAL-ESCAPE-LOOP': new URL('../../assets/clips/TOTAL-ESCAPE-LOOP.webm', import.meta.url).href,
+	'TOTAL-ESCAPE-LOOP-PORTRAIT': new URL('../../assets/clips/TOTAL-ESCAPE-LOOP-PORTRAIT.webm', import.meta.url).href,
+	'TOTAL-ESCAPE-PORTRAIT': new URL('../../assets/clips/TOTAL-ESCAPE-PORTRAIT.webm', import.meta.url).href,
+	'TOTAL-HEIST': new URL('../../assets/clips/TOTAL-HEIST.webm', import.meta.url).href,
+	'TOTAL-HEIST-LOOP': new URL('../../assets/clips/TOTAL-HEIST-LOOP.webm', import.meta.url).href,
+	'TOTAL-HEIST-LOOP-PORTRAIT': new URL('../../assets/clips/TOTAL-HEIST-LOOP-PORTRAIT.webm', import.meta.url).href,
+	'TOTAL-HEIST-PORTRAIT': new URL('../../assets/clips/TOTAL-HEIST-PORTRAIT.webm', import.meta.url).href,
+	'TOTAL-HIDDEN': new URL('../../assets/clips/TOTAL-HIDDEN.webm', import.meta.url).href,
+	'TOTAL-HIDDEN-LOOP': new URL('../../assets/clips/TOTAL-HIDDEN-LOOP.webm', import.meta.url).href,
+	'TOTAL-HIDDEN-LOOP-PORTRAIT': new URL('../../assets/clips/TOTAL-HIDDEN-LOOP-PORTRAIT.webm', import.meta.url).href,
+	'TOTAL-HIDDEN-PORTRAIT': new URL('../../assets/clips/TOTAL-HIDDEN-PORTRAIT.webm', import.meta.url).href,
 };
 /** Clips without an alpha channel: these also play where transparent WebM is unsupported (Safari). */
-export const OPAQUE_CLIPS = new Set<string>(['BG-ESCAPE-LOOP', 'BG-HEIST-LOOP', 'BG-HIDDEN-LOOP', 'BG-MAIN-LOOP', 'CIN-FINAL-ESCAPE', 'CIN-MAX-WIN', 'CIN-PERFECTLY-BAD-PLAN', 'ENTRY-ESCAPE', 'ENTRY-ESCAPE-LOOP', 'ENTRY-ESCAPE-LOOP-PORTRAIT', 'ENTRY-ESCAPE-PORTRAIT', 'ENTRY-HEIST', 'ENTRY-HEIST-LOOP', 'ENTRY-HEIST-LOOP-PORTRAIT', 'ENTRY-HEIST-PORTRAIT', 'ENTRY-HIDDEN', 'ENTRY-HIDDEN-LOOP', 'ENTRY-HIDDEN-LOOP-PORTRAIT', 'ENTRY-HIDDEN-PORTRAIT', 'FX-MYSTERY-ESCAPE', 'FX-MYSTERY-HIDDEN', 'FX-MYSTERY-NONE', 'SCR-ESCAPE-OUTRO', 'SCR-HEIST-OUTRO', 'SCR-HIDDEN-OUTRO']);
+export const OPAQUE_CLIPS = new Set<string>(['BG-ESCAPE-LOOP', 'BG-HEIST-LOOP', 'BG-HIDDEN-LOOP', 'BG-MAIN-LOOP', 'CIN-FINAL-ESCAPE', 'CIN-MAX-WIN', 'CIN-PERFECTLY-BAD-PLAN', 'ENTRY-ESCAPE', 'ENTRY-ESCAPE-LOOP', 'ENTRY-ESCAPE-LOOP-PORTRAIT', 'ENTRY-ESCAPE-PORTRAIT', 'ENTRY-HEIST', 'ENTRY-HEIST-LOOP', 'ENTRY-HEIST-LOOP-PORTRAIT', 'ENTRY-HEIST-PORTRAIT', 'ENTRY-HIDDEN', 'ENTRY-HIDDEN-LOOP', 'ENTRY-HIDDEN-LOOP-PORTRAIT', 'ENTRY-HIDDEN-PORTRAIT', 'FX-MYSTERY-ESCAPE', 'FX-MYSTERY-HIDDEN', 'FX-MYSTERY-NONE', 'TOTAL-ESCAPE', 'TOTAL-ESCAPE-LOOP', 'TOTAL-ESCAPE-LOOP-PORTRAIT', 'TOTAL-ESCAPE-PORTRAIT', 'TOTAL-HEIST', 'TOTAL-HEIST-LOOP', 'TOTAL-HEIST-LOOP-PORTRAIT', 'TOTAL-HEIST-PORTRAIT', 'TOTAL-HIDDEN', 'TOTAL-HIDDEN-LOOP', 'TOTAL-HIDDEN-LOOP-PORTRAIT', 'TOTAL-HIDDEN-PORTRAIT']);

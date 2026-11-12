@@ -3,6 +3,8 @@ import React from 'react';
 import {Composition, Folder} from 'remotion';
 import {BonusIntroLoop} from './clips/BonusIntro';
 import {EntryCard, INTRO_FRAMES, LOOP_FRAMES} from './clips/Entry';
+import {TotalCard} from './clips/Total';
+import {TOTAL_INTRO_FRAMES, TOTAL_LOOP_FRAMES} from './clips/totalLayout';
 import {MysteryReveal, VaultGuarantee} from './clips/Mystery';
 import {ChaosRespin} from './clips/Outros';
 import {EscapeIntroStory, HeistIntroStory, HiddenIntroStory, INTRO_STORY, OUTRO_STORY, TotalWinStory} from './clips/Stories';
@@ -57,6 +59,20 @@ export const RemotionRoot: React.FC = () => {
 				<Composition id="ENTRY-HIDDEN-LOOP" component={EntryCard} durationInFrames={LOOP_FRAMES} {...HD} defaultProps={{bonus: 'hidden' as const, mode: 'loop' as const}} />
 				<Composition id="ENTRY-HIDDEN-PORTRAIT" component={EntryCard} durationInFrames={INTRO_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'hidden' as const, mode: 'intro' as const}} />
 				<Composition id="ENTRY-HIDDEN-LOOP-PORTRAIT" component={EntryCard} durationInFrames={LOOP_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'hidden' as const, mode: 'loop' as const}} />
+			</Folder>
+			<Folder name="Bonus-total-win">
+				<Composition id="TOTAL-HEIST" component={TotalCard} durationInFrames={TOTAL_INTRO_FRAMES} {...HD} defaultProps={{bonus: 'heist' as const, mode: 'intro' as const}} />
+				<Composition id="TOTAL-HEIST-LOOP" component={TotalCard} durationInFrames={TOTAL_LOOP_FRAMES} {...HD} defaultProps={{bonus: 'heist' as const, mode: 'loop' as const}} />
+				<Composition id="TOTAL-HEIST-PORTRAIT" component={TotalCard} durationInFrames={TOTAL_INTRO_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'heist' as const, mode: 'intro' as const}} />
+				<Composition id="TOTAL-HEIST-LOOP-PORTRAIT" component={TotalCard} durationInFrames={TOTAL_LOOP_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'heist' as const, mode: 'loop' as const}} />
+				<Composition id="TOTAL-ESCAPE" component={TotalCard} durationInFrames={TOTAL_INTRO_FRAMES} {...HD} defaultProps={{bonus: 'escape' as const, mode: 'intro' as const}} />
+				<Composition id="TOTAL-ESCAPE-LOOP" component={TotalCard} durationInFrames={TOTAL_LOOP_FRAMES} {...HD} defaultProps={{bonus: 'escape' as const, mode: 'loop' as const}} />
+				<Composition id="TOTAL-ESCAPE-PORTRAIT" component={TotalCard} durationInFrames={TOTAL_INTRO_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'escape' as const, mode: 'intro' as const}} />
+				<Composition id="TOTAL-ESCAPE-LOOP-PORTRAIT" component={TotalCard} durationInFrames={TOTAL_LOOP_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'escape' as const, mode: 'loop' as const}} />
+				<Composition id="TOTAL-HIDDEN" component={TotalCard} durationInFrames={TOTAL_INTRO_FRAMES} {...HD} defaultProps={{bonus: 'hidden' as const, mode: 'intro' as const}} />
+				<Composition id="TOTAL-HIDDEN-LOOP" component={TotalCard} durationInFrames={TOTAL_LOOP_FRAMES} {...HD} defaultProps={{bonus: 'hidden' as const, mode: 'loop' as const}} />
+				<Composition id="TOTAL-HIDDEN-PORTRAIT" component={TotalCard} durationInFrames={TOTAL_INTRO_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'hidden' as const, mode: 'intro' as const}} />
+				<Composition id="TOTAL-HIDDEN-LOOP-PORTRAIT" component={TotalCard} durationInFrames={TOTAL_LOOP_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'hidden' as const, mode: 'loop' as const}} />
 			</Folder>
 			<Folder name="Feature-effects">
 				<Composition id="FX-CREW-CHAOS" component={CrewChaos} durationInFrames={36} {...HD} />

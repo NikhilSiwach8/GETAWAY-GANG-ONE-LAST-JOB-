@@ -13,6 +13,8 @@ TS = os.path.join(ROOT, "frontend", "getaway_gang", "src", "game", "clipUrls.ts"
 SKIP = {"UI-BUY-BONUS-ANIM", "WIN-BIG", "WIN-SUPER", "WIN-MEGA", "WIN-EPIC"}  # big wins are live (BigWinScene)
 # bonus entry: the layered ENTRY-<BONUS>[-LOOP][-PORTRAIT] clips replace the 7 s story intros and their loops
 SKIP |= {f"SCR-{b}-INTRO{s}" for b in ("HEIST", "ESCAPE", "HIDDEN") for s in ("", "-LOOP")}
+# bonus end: the layered TOTAL-<BONUS>[-LOOP][-PORTRAIT] cards replace the 8 s story outros
+SKIP |= {f"SCR-{b}-OUTRO" for b in ("HEIST", "ESCAPE", "HIDDEN")}
 def is_char_clip(i):
     """ANIM-<CREW>-<ACTION> character videos: the crew are animated live now (LivePose); -ABILITY-FX stays."""
     return i.startswith("ANIM-") and not i.endswith("-FX")

@@ -9,11 +9,12 @@
 
 <script lang="ts">
 	/**
-	 * Bonus end screen: SCR-HEIST-OUTRO / SCR-ESCAPE-OUTRO / SCR-HIDDEN-OUTRO (full-screen clip, holds its last
-	 * frame) with the total win counting up in the gold FONT-WIN numerals on the clip's plaque. The Heist screen
-	 * also lights the loot milestones reached; the Escape screen shows each crew member's final level in the
-	 * hex badges. Everything is laid out in the clips' 1920×1080 space inside one cover-fitted container.
-	 * Without clip support the cleaned still of the same screen is shown, so the positions still match.
+	 * Bonus end screen: the TOTAL-<BONUS> clip builds the Total Win card (crew cheer, title slam, the gold plaque
+	 * lands), then TOTAL-<BONUS>-LOOP runs until the player taps; 9:16 versions on portrait screens. From the
+	 * plaque landing (TOTAL_HANDOVER_MS) the total counts up in the gold numerals inside the plaque, and the info
+	 * panel shows the Heist loot milestones reached or each crew member's final Escape level. Everything is placed
+	 * in the clip's own pixels (game/bonusTotal.ts, shared with the clips) inside one cover-fitted container.
+	 * Without clips the bonus background with the same layout is drawn instead.
 	 */
 	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
 	import { FadeContainer, WinCountUpProvider, ResponsiveBitmapText } from 'components-pixi';
@@ -26,8 +27,8 @@
 	import CoinShower from './CoinShower.svelte';
 	import ClipSprite from './ClipSprite.svelte';
 	import { hasClip } from '../game/clips.svelte';
-	import { hasArt } from '../game/ggAssets';
 	import { LOOT_REWARDS } from '../game/tempArt';
+	import { TOTAL_HANDOVER_MS, totalClips } from '../game/bonusTotal';
 	import config from '../game/config';
 
 	const context = getContext();
@@ -38,49 +39,34 @@
 	let oncomplete = $state(() => {});
 	let onCountUpComplete = $state(() => {});
 	let bonus = $state<'heist' | 'escape' | 'hidden'>('heist');
+	let portrait = $state(false);
 
-	// win-amount plaque per screen, in clip pixels (measured on the delivered art, see art/prep_outros.py)
-	const AMOUNT = {
-		heist: { x: 962, y: 462, w: 700, size: 128 },
-		escape: { x: 1475, y: 582, w: 640, size: 118 },
-		hidden: { x: 960, y: 760, w: 900, size: 150 },
-	} as const;
-	// Heist loot panel (x 585..1352, y 700..898): four milestone chips
 	const LOOT = config.features.lootThresholds as readonly number[];
-	const lootChipX = (i: number) => 585 + 767 * ((i + 0.5) / LOOT.length);
-	// Escape: crew hex badge centres and star strips (x0, x1, y centre)
-	const CREW = [
-		{ k: 'T', hex: [156, 152], stars: [212, 392, 163] },
-		{ k: 'B', hex: [88, 440], stars: [143, 322, 449] },
-		{ k: 'F', hex: [906, 400], stars: [958, 1142, 409] },
-		{ k: 'R', hex: [306, 733], stars: [362, 552, 740] },
-	] as const;
+	const CREW = ['R', 'B', 'T', 'F'] as const;
+	const CREW_SYM = { R: 'SYM-ROXY', B: 'SYM-BYTE', T: 'SYM-TANK', F: 'SYM-FUSE' } as const;
 	const MAX_LEVEL = 3;
 
 	const sizes = $derived(context.stateLayoutDerived.canvasSizes());
+	const clips = $derived(totalClips(bonus, portrait));
+	const L = $derived(clips.layout);
 	const cover = $derived.by(() => {
-		const s = Math.max(sizes.width / 1920, sizes.height / 1080);
-		return { s, width: 1920 * s, height: 1080 * s, x: sizes.width / 2, y: sizes.height / 2 };
+		const s = Math.max(sizes.width / L.width, sizes.height / L.height);
+		return { s, width: L.width * s, height: L.height * s, x: sizes.width / 2, y: sizes.height / 2 };
 	});
-	const clipId = $derived({ escape: 'SCR-ESCAPE-OUTRO', heist: 'SCR-HEIST-OUTRO', hidden: 'SCR-HIDDEN-OUTRO' }[bonus]);
-	const stillId = $derived({ escape: 'SCR-ESCAPE-OUTRO-CLEAN', heist: 'SCR-HEIST-OUTRO-CLEAN', hidden: 'SCR-HIDDEN-OUTRO' }[bonus]);
+
+	let phase = $state<'intro' | 'loop'>('intro');
 	let clipFailed = $state(false);
 	let clipShown = $state(false);
-	const useClip = $derived(hasClip(clipId) && !clipFailed);
-	const hasStill = $derived(hasArt(stillId));
-	// the amount and count-up wait for the clip's first frame (or start at once without a clip)
-	// the end-screen clip opens with a short story (getaway, counting the loot) and reaches the total-win
-	// layout at STORY_HANDOVER_MS (video/src/clips/Stories.tsx OUTRO_STORY.final = 125 frames @30 fps);
-	// the amount, loot and crew overlays appear and the count-up starts only from then
-	const STORY_HANDOVER_MS = (125 / 30) * 1000;
+	let loopShown = $state(false);
+	const useClip = $derived(hasClip(clips.intro) && !clipFailed);
+	// the amount, loot and crew overlays appear (and the count-up starts) once the plaque has landed
 	let handedOver = $state(false);
 	$effect(() => {
 		if (!clipShown) return;
-		const id = setTimeout(() => (handedOver = true), STORY_HANDOVER_MS + 250);
+		const id = setTimeout(() => (handedOver = true), TOTAL_HANDOVER_MS);
 		return () => clearTimeout(id);
 	});
 	const ready = $derived(!useClip || (clipShown && handedOver));
-	const amt = $derived(AMOUNT[bonus]);
 	// snapshot of the progression to show (resetHud runs only after this screen closes)
 	const lootPoints = $derived(context.stateGame.hud.lootPoints);
 	const levels = $derived(context.stateGame.hud.levels);
@@ -90,7 +76,10 @@
 	context.eventEmitter.subscribeOnMount({
 		freeSpinOutroShow: () => {
 			bonus = context.stateGame.hud.bonus ?? 'heist';
+			portrait = sizes.height > sizes.width;
+			phase = 'intro';
 			clipShown = false;
+			loopShown = false;
 			handedOver = false;
 			clipFailed = false;
 			show = true;
@@ -110,65 +99,71 @@
 		<WinCountUpProvider {amount} {duration} oncomplete={() => onCountUpComplete()}>
 			{#snippet children({ countUpAmount, startCountUp, finishCountUp, countUpCompleted })}
 				{#if ready}
-					<!-- the clip's banner and vault panel land ~1.3 s in; count once the panel is there -->
-					<OnMount onmount={() => setTimeout(() => startCountUp(), useClip ? 1300 : 300)} />
+					<OnMount onmount={() => setTimeout(() => startCountUp(), useClip ? 150 : 300)} />
 				{/if}
 
 				<Rectangle {...sizes} backgroundColor={0x05070f} />
-				{#snippet still()}
-					{#if hasStill}
-						<Sprite key={stillId} anchor={0.5} x={cover.x} y={cover.y} width={cover.width} height={cover.height} />
-					{:else}
-						<Sprite key={bonus === 'heist' ? 'BG-HEIST' : 'BG-ESCAPE'} anchor={0.5} x={cover.x} y={cover.y} width={cover.width} height={cover.height} alpha={0.55} />
-					{/if}
-				{/snippet}
 				{#if useClip}
-					<ClipSprite
-						id={clipId}
-						channel="outro"
-						anchor={0.5}
-						x={cover.x}
-						y={cover.y}
-						width={cover.width}
-						height={cover.height}
-						fadeMs={250}
-						zIndex={1}
-						onready={() => (clipShown = true)}
-						onended={(ok) => !ok && !clipShown && (clipFailed = true)}
-					/>
-				{:else if hasStill}
-					{@render still()}
+					<!-- the intro holds its last frame underneath until the loop has its first one (no black gap) -->
+					{#if phase === 'intro' || !loopShown}
+						<ClipSprite
+							id={clips.intro}
+							channel="outro"
+							anchor={0.5}
+							x={cover.x}
+							y={cover.y}
+							width={cover.width}
+							height={cover.height}
+							fadeMs={200}
+							zIndex={1}
+							onready={() => (clipShown = true)}
+							onended={(ok) => {
+								if (!ok && !clipShown) {
+									console.warn(`[clips] total win ${clips.intro}: fell back to the drawn card`);
+									clipFailed = true;
+								} else if (ok && hasClip(clips.loop)) phase = 'loop';
+							}}
+						/>
+					{/if}
+					{#if phase === 'loop'}
+						<ClipSprite
+							id={clips.loop}
+							channel="outro-loop"
+							loop
+							anchor={0.5}
+							x={cover.x}
+							y={cover.y}
+							width={cover.width}
+							height={cover.height}
+							fadeMs={0}
+							zIndex={2}
+							onready={() => (loopShown = true)}
+						/>
+					{/if}
 				{:else}
-					<Sprite key={bonus === 'heist' ? 'BG-HEIST' : 'BG-ESCAPE'} anchor={0.5} x={cover.x} y={cover.y} width={cover.width} height={cover.height} alpha={0.55} />
-					<Text
-						anchor={0.5}
-						x={cover.x}
-						y={cover.y + (amt.y - 200 - 540) * cover.s}
-						text={{ escape: 'PERFECT ESCAPE!', heist: 'HEIST COMPLETE!', hidden: 'HIDDEN BONUS!' }[bonus]}
-						style={{ ...LABEL, fontSize: 110 * cover.s, stroke: { color: 0x2a1200, width: 10 } }}
-					/>
-				{/if}
-				{#if bonus === 'hidden' && !useClip && hasStill}
-					<Text anchor={0.5} x={cover.x} y={cover.y + (612 - 540) * cover.s} text="TOTAL WIN" style={{ ...LABEL, fontSize: 64 * cover.s, stroke: { color: 0x2a1200, width: 8 } }} />
+					<!-- no clips: the bonus background with the same layout, drawn live -->
+					<Sprite key={bonus === 'heist' ? 'BG-HEIST' : bonus === 'escape' ? 'BG-ESCAPE' : 'BG-HIDDEN'} anchor={0.5} x={cover.x} y={cover.y} width={Math.max(sizes.width, (sizes.height * 16) / 9)} height={Math.max(sizes.height, (sizes.width * 9) / 16)} alpha={0.5} />
+					<Container x={cover.x - (L.width / 2) * cover.s} y={cover.y - (L.height / 2) * cover.s} scale={cover.s}>
+						<Text anchor={0.5} x={L.title.x} y={L.title.y} text="TOTAL WIN" style={{ ...LABEL, fontSize: L.title.size, stroke: { color: 0x2a1200, width: 14 } }} />
+						<Rectangle anchor={0.5} x={L.plaque.x} y={L.plaque.y} width={L.plaque.w} height={L.plaque.h} borderRadius={L.plaque.h / 2} backgroundColor={0x0a1030} borderColor={0xf7c947} borderWidth={10} />
+						<Text anchor={0.5} x={L.ribbon.x} y={L.ribbon.y} text={{ escape: 'PERFECT ESCAPE!', heist: 'HEIST COMPLETE!', hidden: 'HIDDEN BONUS!' }[bonus]} style={{ ...LABEL, fontSize: 62 }} />
+					</Container>
 				{/if}
 
-				<!-- everything below is placed in the clip's own 1920×1080 pixels -->
-				<Container x={cover.x - 960 * cover.s} y={cover.y - 540 * cover.s} scale={cover.s} zIndex={5} visible={ready}>
-					<Container x={amt.x} y={amt.y}>
-						<ResponsiveBitmapText
-							anchor={0.5}
-							maxWidth={amt.w}
-							text={bookEventAmountToCurrencyString(countUpAmount)}
-							style={{ fontFamily: 'ggGold', fontSize: amt.size }}
-						/>
+				<!-- everything below is placed in the clip's own pixels -->
+				<Container x={cover.x - (L.width / 2) * cover.s} y={cover.y - (L.height / 2) * cover.s} scale={cover.s} zIndex={5} visible={ready}>
+					<Container x={L.plaque.x} y={L.plaque.y + 8}>
+						<ResponsiveBitmapText anchor={0.5} maxWidth={L.plaque.w * 0.86} text={bookEventAmountToCurrencyString(countUpAmount)} style={{ fontFamily: 'ggGold', fontSize: L.plaque.h * 0.72 }} />
 					</Container>
 
 					{#if bonus === 'heist'}
-						<Text anchor={0.5} x={968} y={728} text="LOOT MILESTONES · {lootPoints} PTS" style={{ ...LABEL, fontSize: 34 }} />
+						{@const top = L.info.y - L.info.h / 2}
+						<Text anchor={0.5} x={L.info.x} y={top + 32} text="LOOT MILESTONES · {lootPoints} PTS" style={{ ...LABEL, fontSize: 34 }} />
 						{#each LOOT as t, i (t)}
 							{@const lit = lootPoints >= t}
-							<!-- milestone plate (UI-MULT art): points in the navy window, reward on the red plate -->
-							<Container x={lootChipX(i)} y={818} alpha={lit ? 1 : 0.8}>
+							{@const cx = L.info.x - L.info.w / 2 + L.info.w * ((i + 0.5) / LOOT.length)}
+							<!-- milestone plate (UI-MILESTONE art): points in the navy window, reward on the red plate -->
+							<Container x={cx} y={L.info.y + 30} alpha={lit ? 1 : 0.8}>
 								<Sprite key="UI-MILESTONE" anchor={0.5} width={176} height={176 * (475 / 600)} tint={lit ? 0xffffff : 0x6d6a80} />
 								<Text anchor={0.5} y={-14} text="{t} PTS" style={{ ...LABEL, fontSize: 30, fill: lit ? 0xffe27a : 0xa9a6c0, stroke: { color: 0x0b0618, width: 5 } }} />
 								<Text
@@ -183,22 +178,27 @@
 							</Container>
 						{/each}
 					{:else if bonus === 'escape'}
-						{#each CREW as c (c.k)}
-							{@const lv = Math.min(MAX_LEVEL, levels[c.k] ?? 1)}
-							<Text anchor={0.5} x={c.hex[0]} y={c.hex[1] - 14} text="LV" style={{ ...LABEL, fontSize: 24, stroke: { color: 0x2a1200, width: 4 } }} />
-							<Text anchor={0.5} x={c.hex[0]} y={c.hex[1] + 14} text={String(lv)} style={{ ...LABEL, fontSize: 44, fill: 0xffffff }} />
-							{#each Array.from({ length: MAX_LEVEL }, (_, i) => i) as i (i)}
-								{@const sx = c.stars[0] + ((c.stars[1] - c.stars[0]) * (i + 0.5)) / MAX_LEVEL}
-								<Sprite key="UI-STAR-ON" anchor={0.5} x={sx} y={c.stars[2]} width={44} height={44} tint={i < lv ? 0xffffff : 0x2c2648} alpha={i < lv ? 1 : 0.9} />
-							{/each}
+						<!-- each crew member's final level: medallion, LV n, stars -->
+						{#each CREW as k, i (k)}
+							{@const lv = Math.min(MAX_LEVEL, levels[k] ?? 1)}
+							{@const cx = L.info.x - L.info.w / 2 + L.info.w * ((i + 0.5) / CREW.length)}
+							<Container x={cx} y={L.info.y}>
+								<Sprite key={CREW_SYM[k]} anchor={0.5} y={-40} width={120} height={120} />
+								<Text anchor={0.5} y={40} text="LV {lv}" style={{ ...LABEL, fontSize: 36, fill: 0xffffff }} />
+								{#each Array.from({ length: MAX_LEVEL }, (_, j) => j) as j (j)}
+									<Sprite key="UI-STAR-ON" anchor={0.5} x={(j - 1) * 46} y={86} width={40} height={40} tint={j < lv ? 0xffffff : 0x2c2648} alpha={j < lv ? 1 : 0.9} />
+								{/each}
+							</Container>
 						{/each}
 					{/if}
 				</Container>
 
-				<CoinShower emit={!countUpCompleted} levelAlias={winLevelData?.alias ?? 'big'} />
+				<CoinShower emit={ready && !countUpCompleted} levelAlias={winLevelData?.alias ?? 'big'} />
 
-				<!-- the Heist/Escape art has the prompt painted in; keep the key/tap only -->
-				<PressToContinue hideArt={bonus !== 'hidden' && (useClip || hasStill)} onpress={() => (countUpCompleted ? oncomplete() : finishCountUp())} />
+				<!-- the clip has no prompt baked in: the game's TAP / PRESS prompt appears once the card is built -->
+				<Container zIndex={10}>
+					<PressToContinue hideArt={!ready} onpress={() => (countUpCompleted ? oncomplete() : finishCountUp())} />
+				</Container>
 			{/snippet}
 		</WinCountUpProvider>
 	{/if}
