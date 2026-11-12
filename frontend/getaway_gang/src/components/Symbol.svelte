@@ -1,12 +1,14 @@
 <script lang="ts">
 	/**
-	 * TEMPORARY ART symbol renderer (see game/tempArt.ts and docs/ASSET_PROMPTS.md).
-	 * Final build: replace with Sprite (static) + Spine (land/win/transform) keyed by `art.assetId`.
+	 * Symbol entry point used by the reels and stories: keeps the game-facing API (state + oncomplete timing)
+	 * and draws the art through the shared renderer (SymbolView + game/symbols). The labelled placeholder
+	 * below only appears if a symbol's art is missing from the build.
 	 */
 	import { onDestroy } from 'svelte';
 	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
 	import { hasArt } from '../game/ggAssets';
-	import SymbolArt from './SymbolArt.svelte';
+	import SymbolView from './SymbolView.svelte';
+	import { getSymbolLook } from '../game/symbols/catalog';
 	import { stateBet } from 'state-shared';
 
 	import { getSymbolInfo } from '../game/utils';
@@ -20,11 +22,18 @@
 		rawSymbol: RawSymbol;
 		oncomplete?: () => void;
 		loop?: boolean;
+		/** a win is shown elsewhere on the board */
+		dimmed?: boolean;
+		/** highlight colour when a feature points at this cell (0 = own accent) */
+		highlight?: number;
+		/** idle glint start time aimed at this cell */
+		glintAt?: number;
 	};
 
 	const props: Props = $props();
 	const info = $derived(getSymbolInfo({ rawSymbol: props.rawSymbol, state: props.state }));
 	const art = $derived(info.art);
+	const look = $derived(getSymbolLook(props.rawSymbol.name));
 	const size = SYMBOL_SIZE * 0.92;
 	const isWin = $derived(props.state === 'win');
 
@@ -44,15 +53,9 @@
 	onDestroy(() => clearTimeout(timer));
 </script>
 
-{#if art && hasArt(art.assetId)}
-	<!-- production art, animated live (SymbolArt): squash on landing, pop/shine/sparkle on wins -->
+{#if art && look && hasArt(art.assetId)}
 	<Container x={props.x} y={props.y}>
-		<SymbolArt
-			assetId={art.assetId}
-			mode={isWin ? 'win' : props.state === 'land' ? 'land' : 'static'}
-			special={['W', 'S', 'R', 'B', 'T', 'F'].includes(props.rawSymbol.name)}
-			durationMs={stateBet.isTurbo ? 500 : 1000}
-		/>
+		<SymbolView {look} state={props.state} dimmed={props.dimmed} highlight={props.highlight} glintAt={props.glintAt} />
 	</Container>
 {:else if art}
 	<Container x={props.x} y={props.y} scale={isWin ? 1.08 : 1}>

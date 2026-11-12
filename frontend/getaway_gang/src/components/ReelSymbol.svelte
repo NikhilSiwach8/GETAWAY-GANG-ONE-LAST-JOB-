@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { Container } from 'pixi-svelte';
-	import { Tween } from 'svelte/motion';
-	import { cubicOut } from 'svelte/easing';
 	import { boardFx } from '../game/stateGame.svelte';
 	import Symbol from './Symbol.svelte';
 	import SymbolWrap from './SymbolWrap.svelte';
 	import { getSymbolX } from '../game/utils';
+	import { SYMBOL_SIZE } from '../game/constants';
+	import { cellKey, symbolFx } from '../game/symbols/symbolFx.svelte';
 	import type { ReelSymbol } from '../game/stateGame.svelte';
 
 	type Props = {
@@ -37,16 +37,12 @@
 		const id = setTimeout(() => (blur = Math.max(0, blur - 0.35)), 32);
 		return () => clearTimeout(id);
 	});
-	// non-winning symbols fade darker while a win is shown, and back afterwards
-	const dimTarget = $derived(boardFx.dim && props.reelSymbol.symbolState !== 'win' ? 1 : 0);
-	const dim = new Tween(0, { duration: 220, easing: cubicOut });
-	$effect(() => {
-		dim.set(dimTarget);
-	});
-	const tint = $derived.by(() => {
-		const v = Math.round(255 - 125 * dim.current);
-		return (v << 16) | (v << 8) | Math.min(255, v + 18);
-	});
+	// board cell this symbol currently occupies (rows 1..4 as in book positions; matches CellHighlights)
+	const cell = $derived(cellKey(props.reelIndex, Math.round(props.reelSymbol.symbolY.current / SYMBOL_SIZE + 0.5)));
+	// visual state inputs for the shared renderer (dimming, highlight, idle glint are drawn by SymbolView)
+	const dimmed = $derived(boardFx.dim && props.reelSymbol.symbolState !== 'win');
+	const highlight = $derived(symbolFx.highlighted[cell]);
+	const glintAt = $derived(symbolFx.glint.cell === cell && props.reelSymbol.symbolState === 'static' ? symbolFx.glint.at : 0);
 	let scale = $state(1);
 	let alpha = $state(1);
 	let raf = 0;
@@ -76,10 +72,13 @@
 	y={props.reelSymbol.symbolY.current}
 	animating={props.reelSymbol.symbolState === 'land' || props.reelSymbol.symbolState === 'win'}
 >
-	<Container scale={{ x: scale * (1 - blur * 0.06), y: scale * (1 + blur * 0.22) }} alpha={alpha * (1 - blur * 0.18)} {tint}>
+	<Container scale={{ x: scale * (1 - blur * 0.06), y: scale * (1 + blur * 0.22) }} alpha={alpha * (1 - blur * 0.18)}>
 	<Symbol
 		state={props.reelSymbol.symbolState}
 		rawSymbol={props.reelSymbol.rawSymbol}
+		{dimmed}
+		{highlight}
+		{glintAt}
 		oncomplete={() => {
 			if (props.reelSymbol.symbolState === 'win') props.reelSymbol.oncomplete();
 			if (props.reelSymbol.symbolState === 'land') props.reelSymbol.symbolState = 'static';

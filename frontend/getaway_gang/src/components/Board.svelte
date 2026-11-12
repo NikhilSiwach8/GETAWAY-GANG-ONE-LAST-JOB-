@@ -20,6 +20,12 @@
 	import BoardContainer from './BoardContainer.svelte';
 	import BoardMask from './BoardMask.svelte';
 	import BoardBase from './BoardBase.svelte';
+	import { onDestroy, onMount } from 'svelte';
+	import { stateBet } from 'state-shared';
+	import { BOARD_DIMENSIONS } from '../game/constants';
+	import { highlightCells, startIdleGlints, stopIdleGlints, symbolFx } from '../game/symbols/symbolFx.svelte';
+	import { SYMBOL_LOOKS } from '../game/symbols/catalog';
+	import { getContextApp } from 'pixi-svelte';
 
 	const context = getContext();
 
@@ -29,6 +35,8 @@
 		stopButtonClick: () => context.stateGameDerived.enhancedBoard.stop(),
 		boardSettle: ({ board }) => context.stateGameDerived.enhancedBoard.settle(board),
 		boardShow: () => (show = true),
+		// highlighted symbol state follows the same cell highlights the features already broadcast
+		cellHighlight: ({ positions, color, ms }) => highlightCells(positions, color, (ms ?? 700) * (stateBet.isTurbo ? 0.4 : 1)),
 		boardHide: () => (show = false),
 		boardWithAnimateSymbols: async ({ symbolPositions }) => {
 			const getPromises = () =>
@@ -46,6 +54,21 @@
 	});
 
 	context.stateGameDerived.enhancedBoard.readyToSpinEffect();
+	onMount(() => startIdleGlints(BOARD_DIMENSIONS.x, BOARD_DIMENSIONS.y));
+	// dev builds only: lets frontend/tests/symbol_check.cjs drive symbol states and check asset references
+	if (import.meta.env.DEV) {
+		const app = getContextApp();
+		(window as unknown as { __sym: unknown }).__sym = {
+			stateGame: context.stateGame,
+			boardFx,
+			symbolFx,
+			highlightCells,
+			stopIdleGlints,
+			looks: SYMBOL_LOOKS,
+			hasTexture: (key: string) => !!app.stateApp.loadedAssets?.[key],
+		};
+	}
+	onDestroy(stopIdleGlints);
 </script>
 
 {#if show}
