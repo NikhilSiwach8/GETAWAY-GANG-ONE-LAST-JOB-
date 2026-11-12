@@ -2,6 +2,7 @@ import './lib/font';
 import React from 'react';
 import {Composition, Folder} from 'remotion';
 import {BonusIntroLoop} from './clips/BonusIntro';
+import {EntryCard, INTRO_FRAMES, LOOP_FRAMES} from './clips/Entry';
 import {MysteryReveal, VaultGuarantee} from './clips/Mystery';
 import {ChaosRespin} from './clips/Outros';
 import {EscapeIntroStory, HeistIntroStory, HiddenIntroStory, INTRO_STORY, OUTRO_STORY, TotalWinStory} from './clips/Stories';
@@ -19,6 +20,7 @@ import {SYMBOLS, type CrewKey} from './lib/assets';
 // Composition ids are the asset ids from docs/ASSET_PROMPTS.txt (Remotion ids cannot contain "_", so "-" is kept).
 const FPS = 30;
 const HD = {fps: FPS, width: 1920, height: 1080} as const;
+const PORTRAIT = {fps: FPS, width: 1080, height: 1920} as const;
 const CELL = {fps: FPS, width: 512, height: 512} as const;
 const CHAR = {fps: FPS, width: 1024, height: 1024} as const;
 
@@ -42,6 +44,20 @@ const CREW_IDS: {key: CrewKey; id: string}[] = [
 export const RemotionRoot: React.FC = () => {
 	return (
 		<>
+			<Folder name="Bonus-entry">
+				<Composition id="ENTRY-HEIST" component={EntryCard} durationInFrames={INTRO_FRAMES} {...HD} defaultProps={{bonus: 'heist' as const, mode: 'intro' as const}} />
+				<Composition id="ENTRY-HEIST-LOOP" component={EntryCard} durationInFrames={LOOP_FRAMES} {...HD} defaultProps={{bonus: 'heist' as const, mode: 'loop' as const}} />
+				<Composition id="ENTRY-HEIST-PORTRAIT" component={EntryCard} durationInFrames={INTRO_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'heist' as const, mode: 'intro' as const}} />
+				<Composition id="ENTRY-HEIST-LOOP-PORTRAIT" component={EntryCard} durationInFrames={LOOP_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'heist' as const, mode: 'loop' as const}} />
+				<Composition id="ENTRY-ESCAPE" component={EntryCard} durationInFrames={INTRO_FRAMES} {...HD} defaultProps={{bonus: 'escape' as const, mode: 'intro' as const}} />
+				<Composition id="ENTRY-ESCAPE-LOOP" component={EntryCard} durationInFrames={LOOP_FRAMES} {...HD} defaultProps={{bonus: 'escape' as const, mode: 'loop' as const}} />
+				<Composition id="ENTRY-ESCAPE-PORTRAIT" component={EntryCard} durationInFrames={INTRO_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'escape' as const, mode: 'intro' as const}} />
+				<Composition id="ENTRY-ESCAPE-LOOP-PORTRAIT" component={EntryCard} durationInFrames={LOOP_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'escape' as const, mode: 'loop' as const}} />
+				<Composition id="ENTRY-HIDDEN" component={EntryCard} durationInFrames={INTRO_FRAMES} {...HD} defaultProps={{bonus: 'hidden' as const, mode: 'intro' as const}} />
+				<Composition id="ENTRY-HIDDEN-LOOP" component={EntryCard} durationInFrames={LOOP_FRAMES} {...HD} defaultProps={{bonus: 'hidden' as const, mode: 'loop' as const}} />
+				<Composition id="ENTRY-HIDDEN-PORTRAIT" component={EntryCard} durationInFrames={INTRO_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'hidden' as const, mode: 'intro' as const}} />
+				<Composition id="ENTRY-HIDDEN-LOOP-PORTRAIT" component={EntryCard} durationInFrames={LOOP_FRAMES} {...PORTRAIT} defaultProps={{bonus: 'hidden' as const, mode: 'loop' as const}} />
+			</Folder>
 			<Folder name="Feature-effects">
 				<Composition id="FX-CREW-CHAOS" component={CrewChaos} durationInFrames={36} {...HD} />
 				<Composition id="ANIM-ROXY-ABILITY-FX" component={AbilityFx} durationInFrames={Math.round(ABILITY_SECONDS * FPS)} {...HD} defaultProps={{crew: 'R' as const}} />
