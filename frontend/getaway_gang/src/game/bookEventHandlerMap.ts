@@ -13,6 +13,7 @@ import config from './config';
 import { playClip, playCellFx, mascotDo, ensureClip } from './clips.svelte';
 import { restoreAnte } from './ante.svelte';
 import { presentAmount, presentWins, settle } from './wins/winDirector.svelte';
+import { entryBonus, entryClips, isPortrait } from './bonusEntry';
 import type { BookEvent, BookEventOfType, BookEventContext } from './typesBookEvent';
 import type { Position } from './types';
 
@@ -149,9 +150,10 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 	freeSpinTrigger: async (bookEvent: BookEventOfType<'freeSpinTrigger'>) => {
 		lastFsTotal = bookEvent.totalFs;
 		mascotDo('BONUS-INTRO');
-		// the intro is an animated clip: fetch it (and its loop) now, so it is ready when the screen opens
-		const introId = stateGame.hud.mystery === 'hidden' ? 'SCR-HIDDEN-INTRO' : bookEvent.totalFs >= 12 ? 'SCR-ESCAPE-INTRO' : 'SCR-HEIST-INTRO';
-		const introReady = Promise.all([ensureClip(introId, 6000), ensureClip(`${introId}-LOOP`, 6000)]);
+		// the entry card is an animated clip (prefetched after load): make sure it and its loop are in memory
+		// while the scatters celebrate, so the screen opens on the clip, not the still
+		const entry = entryClips(entryBonus(bookEvent.totalFs, stateGame.hud.mystery), isPortrait());
+		const introReady = Promise.all([ensureClip(entry.intro, 8000), ensureClip(entry.loop, 8000)]);
 		// animate scatters
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_scatter_win_v2' });
 		await animateSymbols({ positions: bookEvent.positions });
@@ -255,7 +257,7 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 			const l = config.features.hiddenStartLevel;
 			stateGame.hud.levels = { R: l, B: l, T: l, F: l }; // the Hidden Bonus starts every crew member at Level 2
 		}
-		// The bonus intro screen (SCR-HEIST-INTRO / SCR-ESCAPE-INTRO) already played on freeSpinTrigger.
+		// The bonus entry card (ENTRY-<BONUS> clip) already played on freeSpinTrigger.
 	},
 	crewLanded: async (bookEvent: BookEventOfType<'crewLanded'>) => {
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_multiplier_landing' });

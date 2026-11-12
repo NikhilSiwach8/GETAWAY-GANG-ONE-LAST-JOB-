@@ -9,6 +9,7 @@ import * as PIXI from 'pixi.js';
 import { stateBet } from 'state-shared';
 import { CLIP_URLS, OPAQUE_CLIPS } from './clipUrls';
 import { BG_VIDEO_LOOPS } from './env/config';
+import { allEntryClips, isPortrait } from './bonusEntry';
 
 const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent;
 const isSafari = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(ua) || /iPad|iPhone|iPod/.test(ua);
@@ -286,6 +287,8 @@ export const prefetchClips = () => {
 		'FX-TRANSITION',
 		...(BG_VIDEO_LOOPS ? ['BG-MAIN-LOOP', 'BG-HEIST-LOOP', 'BG-HIDDEN-LOOP'] : []),
 		'FX-ANTICIPATION',
+		// bonus entry cards for this screen's orientation (about 9 MB per bonus): ready before any bonus triggers
+		...allEntryClips(isPortrait()),
 		...symbols.map((s) => `SYM-${s}-ANIM-WIN`),
 		...['WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'].map((s) => `SYM-${s}-ANIM-LAND`),
 		'FX-CREW-CHAOS', 'ANIM-ROXY-ABILITY-FX', 'ANIM-BYTE-ABILITY-FX', 'ANIM-TANK-ABILITY-FX', 'ANIM-FUSE-ABILITY-FX',
@@ -293,10 +296,9 @@ export const prefetchClips = () => {
 		...['ROXY', 'BYTE', 'TANK', 'FUSE'].flatMap((c) => ['IDLE', 'ABILITY', 'COMPLETE', 'WIN', 'LOSE'].map((a) => `ANIM-${c}-${a}`)),
 		'FX-RESPIN', 'FX-METER-STAGE', 'FX-COMBO-RB', 'FX-COMBO-BT', 'FX-COMBO-TF', 'FX-COMBO-FR', 'FX-COMBO-RT',
 		'WIN-BIG', 'WIN-SUPER', 'WIN-MEGA', 'WIN-EPIC',
-		'SCR-HEIST-INTRO', 'SCR-HEIST-INTRO-LOOP', 'SCR-ESCAPE-INTRO', 'SCR-ESCAPE-INTRO-LOOP',
 		'SCR-HEIST-OUTRO', 'SCR-ESCAPE-OUTRO',
 		'FX-MYSTERY-HIDDEN', 'FX-MYSTERY-ESCAPE', 'FX-MYSTERY-NONE', 'FX-VAULT-GUARANTEE',
-		'SCR-HIDDEN-INTRO', 'SCR-HIDDEN-INTRO-LOOP', 'SCR-HIDDEN-OUTRO',
+		'SCR-HIDDEN-OUTRO',
 	];
 	const rest = Object.keys(CLIP_URLS).filter((id) => !first.includes(id));
 	const queue = [...first, ...rest].filter((id) => hasClip(id));

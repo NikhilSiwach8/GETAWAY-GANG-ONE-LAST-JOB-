@@ -7,9 +7,11 @@
 
 <script lang="ts">
 	/**
-	 * Bonus intro: the animated SCR-HEIST-INTRO / SCR-ESCAPE-INTRO clip plays once, then its seamless
-	 * *-INTRO-LOOP runs until the player presses. The still art is only used on browsers without clip
-	 * support or if the clip fails to play; the clip is downloaded before this screen opens.
+	 * Bonus entry card: the animated ENTRY-<BONUS> clip (crew land, title slams, free spins count up) plays
+	 * once, then its seamless ENTRY-<BONUS>-LOOP runs until the player taps. Portrait screens get the 9:16
+	 * versions. The game's own prompt (TAP / PRESS, PressToContinue) is drawn on top. The SCR-<BONUS>-INTRO
+	 * still is only used where clips cannot play or a clip fails; the clips are prefetched after load and
+	 * ensured on freeSpinTrigger (see game/bonusEntry.ts).
 	 */
 	import ClipSprite from './ClipSprite.svelte';
 	import { hasClip } from '../game/clips.svelte';
@@ -18,8 +20,8 @@
 	import { Container, Text } from 'pixi-svelte';
 	import { Rectangle, Sprite } from 'pixi-svelte';
 	import { FadeContainer } from 'components-pixi';
-	import { OnHotkey } from 'components-shared';
-	import { OnPressFullScreen } from 'components-layout';
+	import PressToContinue from './PressToContinue.svelte';
+	import { entryBonus, entryClips } from '../game/bonusEntry';
 	import { waitForResolve } from 'utils-shared/wait';
 	import { getContext } from '../game/context';
 
@@ -38,20 +40,27 @@
 	// plate covering the Escape title/badges (they would state the wrong number of spins)
 	const hidden = $derived(context.stateGame.hud.mystery === 'hidden');
 	const ownHidden = hasArt('SCR-HIDDEN-INTRO');
-	const key = $derived(hidden && ownHidden ? 'SCR-HIDDEN-INTRO' : totalFs >= 12 ? 'SCR-ESCAPE-INTRO' : 'SCR-HEIST-INTRO');
+	// orientation is fixed when the screen opens, so the clip never swaps half-way
+	let portrait = $state(false);
+	const entry = $derived(entryClips(entryBonus(totalFs, hidden ? 'hidden' : null), portrait));
+	const key = $derived(hidden && !ownHidden ? 'SCR-ESCAPE-INTRO' : entry.still);
 	const f = config.features;
 	let phase = $state<'intro' | 'loop'>('intro');
 	// the still is only a fallback: shown when clips are unsupported or the clip could not play
 	let clipFailed = $state(false);
 	let clipShown = $state(false);
 	let loopShown = $state(false);
-	const useClip = $derived(hasClip(key) && !clipFailed);
-	const centre = $derived({ x: cover.x + cover.width / 2, y: cover.y + cover.height / 2 });
-	// clips are 16:9 like the still: fit them to the same cover rectangle
-	const clipSize = $derived({ width: cover.width, height: cover.height });
+	const useClip = $derived(hasClip(entry.intro) && !clipFailed);
+	const centre = $derived({ x: sizes.width / 2, y: sizes.height / 2 });
+	// cover-fit the clip in its own aspect (16:9 or 9:16)
+	const clipSize = $derived.by(() => {
+		const s = Math.max(sizes.width / entry.width, sizes.height / entry.height);
+		return { width: entry.width * s, height: entry.height * s };
+	});
 
 	context.eventEmitter.subscribeOnMount({
 		freeSpinIntroShow: () => {
+			portrait = sizes.height > sizes.width;
 			phase = 'intro';
 			clipFailed = false;
 			clipShown = false;
@@ -78,7 +87,7 @@
 		<!-- the intro holds its last frame underneath until the loop has its first one (no black gap) -->
 		{#if phase === 'intro' || !loopShown}
 			<ClipSprite
-				id={key}
+				id={entry.intro}
 				channel="bonus-intro"
 				anchor={0.5}
 				x={centre.x}
@@ -89,13 +98,13 @@
 				onready={() => (clipShown = true)}
 				onended={(ok) => {
 					if (!ok) clipFailed = true;
-					else if (hasClip(`${key}-LOOP`)) phase = 'loop';
+					else if (hasClip(entry.loop)) phase = 'loop';
 				}}
 			/>
 		{/if}
 		{#if phase === 'loop'}
 			<ClipSprite
-				id={`${key}-LOOP`}
+				id={entry.loop}
 				channel="bonus-intro-loop"
 				loop
 				anchor={0.5}
@@ -108,7 +117,7 @@
 			/>
 		{/if}
 	{/if}
-	{#if hidden && !ownHidden}
+	{#if hidden && !ownHidden && !useClip}
 		{@const px = cover.x + cover.width * 0.74}
 		{@const py = cover.y + cover.height * 0.42}
 		{@const pw = cover.width * 0.47}
@@ -124,8 +133,11 @@
 			<Text anchor={0.5} y={ph * 0.39} text="TAP / PRESS ANYWHERE TO START" style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: pw * 0.036, fill: 0xffffff }} alpha={0.85} />
 		</Container>
 	{/if}
+	{#if waiting}
+		<!-- TAP on touch / PRESS with a mouse; the still has its prompt painted in, so only the input there -->
+		<Container zIndex={10}>
+			<!-- tapping works at once; the prompt graphic appears when the card has built up (loop phase) -->
+			<PressToContinue onpress={() => oncomplete()} hideArt={!useClip || phase !== 'loop'} />
+		</Container>
+	{/if}
 </FadeContainer>
-{#if waiting}
-	<OnHotkey hotkey="Space" onpress={() => oncomplete()} />
-	<OnPressFullScreen onpress={() => oncomplete()} />
-{/if}
