@@ -14,6 +14,9 @@
 	 * ensured on freeSpinTrigger (see game/bonusEntry.ts).
 	 */
 	import ClipSprite from './ClipSprite.svelte';
+	import { BaseSprite } from 'pixi-svelte';
+	import type * as PIXI from 'pixi.js';
+	import { loadPoster } from '../game/posters';
 	import { hasClip } from '../game/clips.svelte';
 	import { hasArt } from '../game/ggAssets';
 	import config from '../game/config';
@@ -51,6 +54,19 @@
 	let clipShown = $state(false);
 	let loopShown = $state(false);
 	const useClip = $derived(hasClip(entry.intro) && !clipFailed);
+	// poster: the finished card as a still, under the clip until it has a frame (never a black screen)
+	let poster = $state<PIXI.Texture | null>(null);
+	let posterMode = $state(false);
+	$effect(() => {
+		if (!show || clipShown || loopShown) return;
+		const id = setTimeout(() => {
+			if (!clipShown && !loopShown && poster) {
+				console.warn(`[clips] bonus entry ${entry.intro}: not playing yet, showing the card on its poster`);
+				posterMode = true;
+			}
+		}, 2500);
+		return () => clearTimeout(id);
+	});
 	const centre = $derived({ x: sizes.width / 2, y: sizes.height / 2 });
 	// cover-fit the clip in its own aspect (16:9 or 9:16)
 	const clipSize = $derived.by(() => {
@@ -61,6 +77,8 @@
 	context.eventEmitter.subscribeOnMount({
 		freeSpinIntroShow: () => {
 			portrait = sizes.height > sizes.width;
+			poster = null;
+			posterMode = false;
 			phase = 'intro';
 			clipFailed = false;
 			clipShown = false;
@@ -70,6 +88,7 @@
 		freeSpinIntroHide: () => (show = false),
 		freeSpinIntroUpdate: async (e) => {
 			totalFs = e.totalFreeSpins;
+			loadPoster(entryClips(entryBonus(totalFs, hidden ? 'hidden' : null), portrait).intro).then((t) => (poster = t));
 			waiting = true;
 			await waitForResolve((resolve) => (oncomplete = resolve));
 			waiting = false;
@@ -82,6 +101,9 @@
 	<!-- the still only where clips cannot play at all, or when both the build-up and the loop failed -->
 	{#if !useClip}
 		<Sprite {key} {...cover} />
+	{/if}
+	{#if show && useClip && poster && !clipShown && !loopShown}
+		<BaseSprite texture={poster} anchor={0.5} x={centre.x} y={centre.y} {...clipSize} zIndex={0.5} />
 	{/if}
 	{#if show && useClip}
 		<!-- the intro holds its last frame underneath until the loop has its first one (no black gap) -->
@@ -125,8 +147,12 @@
 				onready={() => (loopShown = true)}
 				onended={(ok) => {
 					if (!ok && !clipShown) {
-						console.warn(`[clips] bonus entry ${entry.loop}: fell back to the still card`);
-						clipFailed = true;
+						// the card stays on its poster; the old still only if there is no poster either
+						if (poster) posterMode = true;
+						else {
+							console.warn(`[clips] bonus entry ${entry.loop}: fell back to the still card`);
+							clipFailed = true;
+						}
 					}
 				}}
 			/>
@@ -152,7 +178,7 @@
 		<!-- TAP on touch / PRESS with a mouse; the still has its prompt painted in, so only the input there -->
 		<Container zIndex={10}>
 			<!-- tapping works at once; the prompt graphic appears when the card has built up (loop phase) -->
-			<PressToContinue onpress={() => oncomplete()} hideArt={!useClip || phase !== 'loop'} />
+			<PressToContinue onpress={() => oncomplete()} hideArt={!useClip || (phase !== 'loop' && !posterMode)} />
 		</Container>
 	{/if}
 </FadeContainer>

@@ -26,6 +26,9 @@
 	import PressToContinue from './PressToContinue.svelte';
 	import CoinShower from './CoinShower.svelte';
 	import ClipSprite from './ClipSprite.svelte';
+	import { BaseSprite } from 'pixi-svelte';
+	import type * as PIXI from 'pixi.js';
+	import { loadPoster } from '../game/posters';
 	import { hasClip } from '../game/clips.svelte';
 	import { LOOT_REWARDS } from '../game/tempArt';
 	import { TOTAL_HANDOVER_MS, totalClips } from '../game/bonusTotal';
@@ -66,7 +69,22 @@
 		const id = setTimeout(() => (handedOver = true), TOTAL_HANDOVER_MS);
 		return () => clearTimeout(id);
 	});
-	const ready = $derived(!useClip || (clipShown && handedOver));
+	// poster: the finished card as a still, under the clip until it has a frame (never a black screen); if the
+	// clip has not started after POSTER_MS the card is shown on the poster (amount, count-up, prompt)
+	const POSTER_MS = 2500;
+	let poster = $state<PIXI.Texture | null>(null);
+	let posterMode = $state(false);
+	$effect(() => {
+		if (!show || clipShown) return;
+		const id = setTimeout(() => {
+			if (!clipShown && poster) {
+				console.warn(`[clips] total win ${clips.intro}: not playing yet, showing the card on its poster`);
+				posterMode = true;
+			}
+		}, POSTER_MS);
+		return () => clearTimeout(id);
+	});
+	const ready = $derived(!useClip || posterMode || (clipShown && handedOver));
 	// snapshot of the progression to show (resetHud runs only after this screen closes)
 	const lootPoints = $derived(context.stateGame.hud.lootPoints);
 	const levels = $derived(context.stateGame.hud.levels);
@@ -78,6 +96,9 @@
 			bonus = context.stateGame.hud.bonus ?? 'heist';
 			portrait = sizes.height > sizes.width;
 			phase = 'intro';
+			posterMode = false;
+			poster = null;
+			loadPoster(totalClips(bonus, portrait).intro).then((t) => (poster = t));
 			clipShown = false;
 			loopShown = false;
 			handedOver = false;
@@ -103,6 +124,9 @@
 				{/if}
 
 				<Rectangle {...sizes} backgroundColor={0x05070f} />
+				{#if useClip && poster && !clipShown}
+					<BaseSprite texture={poster} anchor={0.5} x={cover.x} y={cover.y} width={cover.width} height={cover.height} zIndex={0.5} />
+				{/if}
 				{#if useClip}
 					<!-- the intro holds its last frame underneath until the loop has its first one (no black gap) -->
 					{#if phase === 'intro' || !loopShown}
@@ -120,8 +144,11 @@
 							onready={() => (clipShown = true)}
 							onended={(ok) => {
 								if (!ok && !clipShown && !hasClip(clips.loop)) {
-									console.warn(`[clips] total win ${clips.intro}: fell back to the drawn card`);
-									clipFailed = true;
+									if (poster) posterMode = true;
+									else {
+										console.warn(`[clips] total win ${clips.intro}: fell back to the drawn card`);
+										clipFailed = true;
+									}
 								} else if (hasClip(clips.loop)) phase = 'loop'; // played, a late hiccup, or could not start: the loop
 							}}
 						/>
@@ -145,8 +172,11 @@
 							}}
 							onended={(ok) => {
 								if (!ok && !clipShown) {
-									console.warn(`[clips] total win ${clips.loop}: fell back to the drawn card`);
-									clipFailed = true;
+									if (poster) posterMode = true;
+									else {
+										console.warn(`[clips] total win ${clips.loop}: fell back to the drawn card`);
+										clipFailed = true;
+									}
 								}
 							}}
 						/>

@@ -43,3 +43,17 @@ lines += ["};", "/** Clips without an alpha channel: these also play where trans
           "export const OPAQUE_CLIPS = new Set<string>([" + ", ".join(f"'{i}'" for i in opaque) + "]);", ""]
 open(TS, "w", encoding="UTF-8").write("\n".join(lines))
 print(f"{len(ids)} clips ({len(opaque)} opaque) -> {DST}")
+
+# posters: the final frame of each bonus card clip, shown until the clip plays (src/game/posters.ts)
+PD = os.path.join(DST, "posters")
+os.makedirs(PD, exist_ok=True)
+for i in ids:
+    if not (i.startswith("ENTRY-") or i.startswith("TOTAL-")) or "-LOOP" in i:
+        continue
+    png = os.path.join(PD, i + ".png")
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-sseof", "-0.05", "-i", os.path.join(SRC, i + ".webm"), "-frames:v", "1", "-update", "1", png], check=True)
+    from PIL import Image
+    Image.open(png).convert("RGB").save(os.path.join(PD, i + "-POSTER.webp"), quality=88, method=6)
+    os.remove(png)
+print("posters ->", PD)
+
