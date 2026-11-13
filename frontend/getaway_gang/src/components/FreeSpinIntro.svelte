@@ -79,7 +79,7 @@
 
 <FadeContainer {show} zIndex={30}>
 	<Rectangle {...sizes} backgroundColor={0x000000} />
-	<!-- the intro clip is a story that opens on its own scene: the still is only the no-clip fallback -->
+	<!-- the still only where clips cannot play at all, or when both the build-up and the loop failed -->
 	{#if !useClip}
 		<Sprite {key} {...cover} />
 	{/if}
@@ -108,12 +108,7 @@
 						phase = 'loop';
 					}
 				}}
-			>
-				<!-- the still under the clip until its first frame, so the screen is never black while it loads -->
-				{#snippet fallback()}
-					<Sprite {key} {...cover} />
-				{/snippet}
-			</ClipSprite>
+			/>
 		{/if}
 		{#if phase === 'loop'}
 			<ClipSprite

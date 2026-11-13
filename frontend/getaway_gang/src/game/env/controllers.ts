@@ -118,8 +118,9 @@ export class Beams implements EnvController {
 					tint: spec.tint,
 				});
 				sp.position.set(spec.x, spec.y);
-				sp.width = spec.width;
-				sp.height = spec.length;
+				// 80 % size: the cones are large additive sprites, and their fill cost grows with area
+				sp.width = spec.width * 0.8;
+				sp.height = spec.length * 0.8;
 				parent.addChild(sp);
 				return sp;
 			});
@@ -438,7 +439,8 @@ export class Particles implements EnvController {
 			blendMode: 'add',
 		});
 		this.pc.boundsArea = new PIXI.Rectangle(spec.area.x, spec.area.y, spec.area.w, spec.area.h);
-		const n = Math.max(4, Math.round(spec.count * density));
+		// 60 % of the authored count keeps the feel at a fraction of the fill cost
+		const n = Math.max(4, Math.round(spec.count * density * 0.6));
 		this.vx = new Float32Array(n);
 		this.vy = new Float32Array(n);
 		this.life = new Float32Array(n);

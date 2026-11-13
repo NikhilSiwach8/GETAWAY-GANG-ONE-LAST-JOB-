@@ -15,9 +15,7 @@ import {
 	Particles,
 	Pulse,
 	Rotor,
-	Sheen,
 	type LightSpec,
-	type SheenSpec,
 } from './controllers';
 
 export type SceneId = 'basegame' | 'heist' | 'escape' | 'hidden';
@@ -39,7 +37,6 @@ const light = (u: number, v: number, w: number, tint: number, alpha: number, o: 
 	alpha,
 	...o,
 });
-const sheen = (r: ReturnType<typeof rect>, alpha: number, o: Partial<SheenSpec> = {}): SheenSpec => ({ ...r, alpha, ...o });
 const UP = 0;
 const DOWN = Math.PI;
 
@@ -93,11 +90,6 @@ export const buildScene = (id: SceneId, root: PIXI.Container, tex: SceneTextures
 		// night street in front of the bank: rain, searchlights, lamps, the helicopter's spotlight
 		const lights = add(
 			new AmbientLights(root, glow, [
-				light(0.5, 0.55, 3200, 0x3a5cff, 0.06, {
-					h: 1700,
-					period: 12,
-					depth: 0.5,
-				}), // cool night wash
 				light(0.159, 0.465, 300, 0xffc46b, 0.55, {
 					period: 3.4,
 					depth: 0.25,
@@ -196,31 +188,7 @@ export const buildScene = (id: SceneId, root: PIXI.Container, tex: SceneTextures
 				perSecond: 1.2,
 			}),
 		);
-		add(new Sheen(root, art, sheen(rect(0.13, 0.53, 0.21, 0.7), 0.5, { every: [5, 9] })));
-		add(new Sheen(root, art, sheen(rect(0.79, 0.53, 0.87, 0.7), 0.5, { every: [5, 9] })));
-		add(
-			new Sheen(
-				root,
-				art,
-				sheen(rect(0.44, 0.0, 0.56, 0.17), 0.35, {
-					every: [7, 12],
-					angle: 0.6,
-				}),
-			),
-		);
-		add(new Sheen(root, art, sheen(rect(0.85, 0.72, 1, 0.9), 0.4, { every: [6, 10] })));
-		add(
-			new Sheen(
-				root,
-				art,
-				sheen(rect(0, 0.85, 1, 1), 0.22, {
-					mode: 'drift',
-					angle: 0,
-					band: 0.22,
-					duration: 16,
-				}),
-			),
-		); // wet street
+ // wet street
 		add(
 			new Particles(
 				root,
@@ -373,21 +341,7 @@ export const buildScene = (id: SceneId, root: PIXI.Container, tex: SceneTextures
 				perSecond: 1.6,
 			}),
 		);
-		add(new Sheen(root, art, sheen(rect(0, 0.68, 0.28, 0.97), 0.45, { every: [4, 7] })));
-		add(new Sheen(root, art, sheen(rect(0.83, 0.55, 1, 0.82), 0.45, { every: [5, 8] })));
-		add(new Sheen(root, art, sheen(rect(0.4, 0, 0.6, 0.17), 0.4, { every: [6, 10], angle: 0.8 })));
-		add(
-			new Sheen(
-				root,
-				art,
-				sheen(rect(0.15, 0.72, 0.85, 1), 0.18, {
-					mode: 'drift',
-					angle: 0,
-					band: 0.25,
-					duration: 18,
-				}),
-			),
-		); // polished floor
+ // polished floor
 		add(
 			new Particles(
 				root,
@@ -531,19 +485,7 @@ export const buildScene = (id: SceneId, root: PIXI.Container, tex: SceneTextures
 				perSecond: 0.6,
 			}),
 		);
-		add(
-			new Sheen(
-				root,
-				art,
-				sheen(rect(0.3, 0.78, 1, 1), 0.3, {
-					mode: 'drift',
-					angle: 0,
-					band: 0.22,
-					duration: 9,
-				}),
-			),
-		); // wet road
-		add(new Sheen(root, art, sheen(rect(0, 0.43, 0.35, 0.8), 0.3, { every: [5, 9] })));
+ // wet road
 		add(
 			new Particles(
 				root,
@@ -673,21 +615,6 @@ export const buildScene = (id: SceneId, root: PIXI.Container, tex: SceneTextures
 				size: 110,
 				perSecond: 1.4,
 			}),
-		);
-		add(new Sheen(root, art, sheen(rect(0.81, 0.49, 1, 0.73), 0.4, { every: [4, 7] })));
-		add(new Sheen(root, art, sheen(rect(0, 0.8, 0.15, 1), 0.4, { every: [5, 8] })));
-		add(new Sheen(root, art, sheen(rect(0.86, 0.83, 0.99, 1), 0.4, { every: [5, 8] })));
-		add(
-			new Sheen(
-				root,
-				art,
-				sheen(rect(0.1, 0.76, 1, 1), 0.22, {
-					mode: 'drift',
-					angle: 0,
-					band: 0.22,
-					duration: 12,
-				}),
-			),
 		);
 		add(
 			new Particles(

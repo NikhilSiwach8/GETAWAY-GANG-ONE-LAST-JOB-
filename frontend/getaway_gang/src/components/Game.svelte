@@ -4,7 +4,7 @@
 	import { EnablePixiExtension } from 'components-pixi';
 	import { EnableHotkey } from 'components-shared';
 	import { MainContainer } from 'components-layout';
-	import { App, Sprite } from 'pixi-svelte';
+	import { App, Sprite, getContextApp } from 'pixi-svelte';
 
 	import { UiGameName } from 'components-ui-pixi';
 	import GameUI from './GameUI.svelte';
@@ -43,6 +43,17 @@
 
 	// dev builds only: replay real book events through the game's own handlers (frontend/tests/win_record.cjs)
 	if (import.meta.env.DEV) (window as unknown as { __playEvents: unknown }).__playEvents = (events: never[]) => playBookEvents(events);
+
+	// render resolution: at most 2x (1.75x on phones). A 3x phone screen would otherwise draw 9x the pixels of
+	// the layout every frame for a barely visible gain; this is the biggest single cost on high-density screens
+	const app = getContextApp();
+	$effect(() => {
+		const r = app.stateApp.pixiApplication?.renderer;
+		if (!r) return;
+		const mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || matchMedia('(pointer: coarse)').matches;
+		const cap = mobile ? 1.75 : 2;
+		if (r.resolution > cap) r.resolution = cap;
+	});
 
 	onMount(() => {
 		context.stateLayout.showLoadingScreen = true;

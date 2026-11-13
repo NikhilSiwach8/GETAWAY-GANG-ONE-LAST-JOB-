@@ -231,11 +231,8 @@
 		</Container>
 	{/if}
 	{#if visual === 'highlighted'}
-		<!-- highlighted symbols lift into the light: a soft accent wash over the art itself -->
-		<Container>
-			<Sprite key={props.look.assetId} anchor={0.5} width={S} height={S} isMask />
-			<Sprite key="UI-SOFT-GLOW" anchor={0.5} y={-S * 0.25} width={S * 1.3} height={S * 1.1} tint={accent} alpha={0.28 * light * pulse} blendMode="add" />
-		</Container>
+		<!-- highlighted symbols lift into the light: a soft accent glow over the art (no mask: cheap to draw) -->
+		<Sprite key="UI-SOFT-GLOW" anchor={0.5} y={-S * 0.2} width={S * 1.1} height={S * 0.9} tint={accent} alpha={0.22 * light * pulse} blendMode="add" />
 	{/if}
 </Container>
 

@@ -60,6 +60,18 @@
 		}
 	});
 
+	// the bonus entry and Total Win cards cover the whole scene: stop drawing and animating it underneath
+	const cover = (on: boolean) => {
+		director.setPaused('bonus-card', on);
+		root.visible = !on;
+	};
+	context.eventEmitter.subscribeOnMount({
+		freeSpinIntroShow: () => cover(true),
+		freeSpinIntroHide: () => cover(false),
+		freeSpinOutroShow: () => cover(true),
+		freeSpinOutroHide: () => cover(false),
+	});
+
 	// nothing to animate under an opaque full-screen clip
 	$effect(() => {
 		const c = clipLayer.current;
