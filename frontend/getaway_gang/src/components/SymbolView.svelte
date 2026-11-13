@@ -18,6 +18,7 @@
 	import type { SymbolLook } from '../game/symbols/catalog';
 	import { CHANNELS, RESET_TAU, resolveVisualState } from '../game/symbols/symbolStates';
 	import { glintTexture } from '../game/env/textures';
+	import SymbolSignature from './SymbolSignature.svelte';
 	import { SYMBOL_WIN, TURBO_TIME, WIN_TIMING } from '../game/wins/sequences';
 	import { sample } from '../game/wins/easing';
 
@@ -200,10 +201,10 @@
 		key="UI-SOFT-GLOW"
 		anchor={0.5}
 		y={fit.dy * S}
-		width={S * 1.65}
-		height={S * 1.65}
+		width={S * 1.45}
+		height={S * 1.45}
 		tint={accent}
-		alpha={Math.min(1, light * pulse * 0.9 + (win ? 0.8 * win.halo : 0) + land.flash * 0.85)}
+		alpha={Math.min(1, light * pulse * 0.8 + (win ? 0.5 * win.halo : 0) + land.flash * 0.7)}
 		blendMode="add"
 	/>
 {/if}
@@ -215,20 +216,9 @@
 	rotation={win?.rot ?? 0}
 >
 	<Sprite key={props.look.assetId} anchor={0.5} width={S} height={S} {tint} />
-	{#if win && win.sweep > 0 && win.sweep < 1}
-		<Container>
-			<Sprite key={props.look.assetId} anchor={0.5} width={S} height={S} isMask />
-			<Sprite
-				key="UI-SHINE"
-				anchor={0.5}
-				x={-S * 0.9 + win.sweep * S * 1.8}
-				width={S * 0.42}
-				height={S * 1.6}
-				rotation={0.38}
-				alpha={0.85}
-				blendMode="add"
-			/>
-		</Container>
+	{#if win}
+		<!-- the symbol's own signature effect (replaces the shared masked shine) -->
+		<SymbolSignature name={props.look.name} t={tWin} {S} {accent} />
 	{/if}
 	{#if visual === 'highlighted'}
 		<!-- highlighted symbols lift into the light: a soft accent glow over the art (no mask: cheap to draw) -->

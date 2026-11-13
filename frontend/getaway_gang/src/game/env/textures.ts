@@ -109,3 +109,35 @@ export const discTexture = () =>
 		g.arc(w / 2, w / 2, w / 2, 0, Math.PI * 2);
 		g.fill();
 	});
+
+/** Soft fog band (tiles horizontally): layered blurred blobs, brighter in the middle rows. */
+export const fogTexture = () =>
+	make('fog', 512, 128, (g, w, h) => {
+		let seed = 7;
+		const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+		for (let i = 0; i < 70; i++) {
+			const x = rnd() * w;
+			const y = h * (0.3 + rnd() * 0.4);
+			const r = 18 + rnd() * 46;
+			// draw each blob three times (x - w, x, x + w) so the texture tiles seamlessly
+			for (const ox of [-w, 0, w]) {
+				const grad = g.createRadialGradient(x + ox, y, 0, x + ox, y, r);
+				grad.addColorStop(0, 'rgba(255,255,255,0.10)');
+				grad.addColorStop(1, 'rgba(255,255,255,0)');
+				g.fillStyle = grad;
+				g.fillRect(x + ox - r, y - r, r * 2, r * 2);
+			}
+		}
+	});
+
+/** Vignette: clear centre, dark corners (drawn over the scene, under the board). */
+export const vignetteTexture = () =>
+	make('vignette', 256, 256, (g, w) => {
+		const r = g.createRadialGradient(w / 2, w / 2, w * 0.28, w / 2, w / 2, w * 0.72);
+		// the colour grade is folded in: a light navy cast everywhere, darkening to the corners (one sprite)
+		r.addColorStop(0, 'rgba(26,34,80,0.12)');
+		r.addColorStop(0.6, 'rgba(14,18,44,0.35)');
+		r.addColorStop(1, 'rgba(4,6,16,0.8)');
+		g.fillStyle = r;
+		g.fillRect(0, 0, w, w);
+	});
