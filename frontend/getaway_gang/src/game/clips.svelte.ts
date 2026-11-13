@@ -141,7 +141,12 @@ export const getClip = (id: string, channel = 'main'): Clip | undefined => {
 			local.used = performance.now();
 			video.src = local.url;
 		}
-		else download(id).then((url) => (video.src = blobMediaBlocked ? CLIP_URLS[id] : (url ?? CLIP_URLS[id])));
+		else
+			download(id).then((url) => {
+				// no memory copy (download failed, or blob: media blocked): stream the file, and mark it as streaming
+				if (!url || blobMediaBlocked) video.dataset.direct = '1';
+				video.src = blobMediaBlocked ? CLIP_URLS[id] : (url ?? CLIP_URLS[id]);
+			});
 		// if playing from memory fails (e.g. a host page policy that blocks blob: media), stream the file
 		// directly instead; every failure is logged once with its reason
 		video.addEventListener('error', () => {
@@ -163,6 +168,16 @@ export const getClip = (id: string, channel = 'main'): Clip | undefined => {
 	}
 	clip.lastUsed = performance.now();
 	return clip;
+};
+
+/** Switch a clip that will not start from memory to streaming its file (returns false if already streaming). */
+export const streamDirect = (clip: Clip, id: string) => {
+	const v = clip.video;
+	if (v.dataset.direct || !CLIP_URLS[id]) return false;
+	v.dataset.direct = '1';
+	v.src = CLIP_URLS[id];
+	v.load();
+	return true;
 };
 
 /** Mark a clip as on screen (its texture is never released while retained). */

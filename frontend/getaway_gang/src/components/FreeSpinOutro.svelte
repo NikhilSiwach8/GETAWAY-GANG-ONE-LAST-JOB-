@@ -119,10 +119,10 @@
 							readyMs={20000}
 							onready={() => (clipShown = true)}
 							onended={(ok) => {
-								if (!ok && !clipShown) {
+								if (!ok && !clipShown && !hasClip(clips.loop)) {
 									console.warn(`[clips] total win ${clips.intro}: fell back to the drawn card`);
 									clipFailed = true;
-								} else if (hasClip(clips.loop)) phase = 'loop'; // shown: a late hiccup just moves on
+								} else if (hasClip(clips.loop)) phase = 'loop'; // played, a late hiccup, or could not start: the loop
 							}}
 						/>
 					{/if}
@@ -138,7 +138,17 @@
 							height={cover.height}
 							fadeMs={0}
 							zIndex={2}
-							onready={() => (loopShown = true)}
+							readyMs={20000}
+							onready={() => {
+								loopShown = true;
+								clipShown = true; // the loop counts as the card being on screen (intro could not start)
+							}}
+							onended={(ok) => {
+								if (!ok && !clipShown) {
+									console.warn(`[clips] total win ${clips.loop}: fell back to the drawn card`);
+									clipFailed = true;
+								}
+							}}
 						/>
 					{/if}
 				{:else}

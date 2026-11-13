@@ -20,7 +20,6 @@
 	import Background from './Background.svelte';
 	import LoadingScreen from './LoadingScreen.svelte';
 	import BoardFrame from './BoardFrame.svelte';
-	import EnvironmentFrame from './EnvironmentFrame.svelte';
 	import Board from './Board.svelte';
 	import Anticipations from './Anticipations.svelte';
 	import Win from './Win.svelte';
@@ -73,7 +72,6 @@
 
 		<MainContainer>
 			<BoardFrame />
-			<EnvironmentFrame />
 		</MainContainer>
 
 		<MainContainer>

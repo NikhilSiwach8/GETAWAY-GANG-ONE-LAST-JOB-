@@ -99,12 +99,21 @@
 				onready={() => (clipShown = true)}
 				onended={(ok) => {
 					// once the clip is on screen it is never swapped for the still (a late hiccup just moves on)
-					if (!ok && !clipShown) {
+					if (!ok && !clipShown && !hasClip(entry.loop)) {
 						console.warn(`[clips] bonus entry ${entry.intro}: fell back to the still card`);
 						clipFailed = true;
-					} else if (hasClip(entry.loop)) phase = 'loop';
+					} else if (hasClip(entry.loop)) {
+						// played, or could not start: go to the animated loop (the still only if the loop fails too)
+						if (!ok && !clipShown) console.warn(`[clips] bonus entry ${entry.intro}: could not start, showing its loop`);
+						phase = 'loop';
+					}
 				}}
-			/>
+			>
+				<!-- the still under the clip until its first frame, so the screen is never black while it loads -->
+				{#snippet fallback()}
+					<Sprite {key} {...cover} />
+				{/snippet}
+			</ClipSprite>
 		{/if}
 		{#if phase === 'loop'}
 			<ClipSprite
@@ -117,7 +126,14 @@
 				{...clipSize}
 				fadeMs={0}
 				zIndex={2}
+				readyMs={20000}
 				onready={() => (loopShown = true)}
+				onended={(ok) => {
+					if (!ok && !clipShown) {
+						console.warn(`[clips] bonus entry ${entry.loop}: fell back to the still card`);
+						clipFailed = true;
+					}
+				}}
 			/>
 		{/if}
 	{/if}

@@ -6,7 +6,7 @@
 	 */
 	import { onDestroy, onMount, type Snippet } from 'svelte';
 	import { BaseSprite, Container } from 'pixi-svelte';
-	import { describeVideo, getClip, playVideo, retain, unretain, whenReady } from '../game/clips.svelte';
+	import { describeVideo, getClip, playVideo, retain, streamDirect, unretain, whenReady } from '../game/clips.svelte';
 
 	type Props = {
 		id: string;
@@ -46,20 +46,24 @@
 	};
 
 	onMount(async () => {
+		if (import.meta.env.DEV) console.info(`[clips] ${props.id}: mount (${describeVideo(clip?.video ?? document.createElement('video'))})`);
 		if (!clip) return props.onended?.(false);
 		const wait = props.readyMs ?? 8000;
 		let ok = await whenReady(clip.video, wait / 2);
 		if (!ok && !clip.video.error) {
-			// stalled: reload the source once and give it the rest of the time
-			console.warn(`[clips] ${props.id}: slow to start, reloading (${describeVideo(clip.video)})`);
-			clip.video.load();
+			// stalled: stream the file directly (or reload it if it already streams) and give it the rest of the time
+			console.warn(`[clips] ${props.id}: slow to start, ${clip.video.dataset.direct ? 'reloading' : 'streaming the file'} (${describeVideo(clip.video)})`);
+			if (!streamDirect(clip, props.id)) clip.video.load();
 			ok = await whenReady(clip.video, wait / 2);
-		} else if (!ok) ok = await whenReady(clip.video, wait / 2); // an error may be the direct-stream retry
+		} else if (!ok && !(clip.video.error && clip.video.dataset.direct && clip.video.dataset.retrying !== '1')) {
+			ok = await whenReady(clip.video, wait / 2); // an error may be the direct-stream retry: give it time
+		}
 		if (!ok) {
 			console.warn(`[clips] ${props.id}: not ready in time, showing the fallback (${describeVideo(clip.video)})`);
 			return props.onended?.(false);
 		}
 		ready = true;
+		if (import.meta.env.DEV) console.info(`[clips] ${props.id}: ready`);
 		props.onready?.();
 		fadeIn();
 		if (props.autoplay === false) return;
