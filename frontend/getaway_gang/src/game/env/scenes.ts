@@ -730,16 +730,11 @@ export const buildScene = (id: SceneId, root: PIXI.Container, tex: SceneTextures
 	return out;
 };
 
-/** Reel-frame machinery: the vault wheel on top of UI-REEL-FRAME turns in 60 deg steps (6 spokes, so it
- * always comes to rest exactly on the painted art). Coordinates are UI-REEL-FRAME pixels (2600 x 1733). */
+/** Reel-frame machinery: the vault wheel on top of UI-REEL-FRAME. Its spokes turn in 60 deg steps (6 spokes, so
+ * it always comes to rest exactly on the art); the ring and hub stay still so their painted highlights do not
+ * orbit. Coordinates are UI-REEL-FRAME pixels around the wheel centre; the container is drawn at an even scale
+ * (EnvironmentFrame.svelte), so the wheel is round even though the frame itself is scaled unevenly. */
+export const FRAME_WHEEL = { cx: 1298, cy: 137, outer: 136 };
 export const buildFrameMachinery = (root: PIXI.Container, frameTex: PIXI.Texture): EnvController[] => [
-	new Rotor(root, frameTex, {
-		cx: 1298,
-		cy: 133.5,
-		r: 112,
-		step: Math.PI / 3,
-		every: [7, 13],
-		duration: 1.15,
-		steps: [1, 1, -1, 2],
-	}),
+	new Rotor(root, frameTex, { cx: FRAME_WHEEL.cx, cy: FRAME_WHEEL.cy, x: 0, y: 0, r: 99, outer: FRAME_WHEEL.outer, hub: 42, step: Math.PI / 3, every: [7, 13], duration: 1.4, steps: [1, 1, -1, 2] }),
 ];

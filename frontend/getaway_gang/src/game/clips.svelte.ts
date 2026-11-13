@@ -37,10 +37,13 @@ let blobBytes = 0;
 /** set when the host page refuses blob: media (strict policy): from then on clips stream from their files */
 let blobMediaBlocked = false;
 const inUse = (id: string) => [...cache.keys()].some((k) => k.startsWith(`${id}|`));
+/** clips that are never released from memory once downloaded (the bonus entry and Total Win cards) */
+const pinned = new Set<string>();
+export const pinClips = (ids: string[]) => ids.forEach((id) => pinned.add(id));
 /** Free least-recently-used clips (not on any player) until `need` more bytes fit in the budget. */
 const makeRoom = (need: number) => {
 	if (blobBytes + need <= BLOB_BUDGET) return true;
-	const idle = [...blobs.entries()].filter(([id]) => !inUse(id)).sort((x, y) => x[1].used - y[1].used);
+	const idle = [...blobs.entries()].filter(([id]) => !inUse(id) && !pinned.has(id)).sort((x, y) => x[1].used - y[1].used);
 	for (const [id, b] of idle) {
 		URL.revokeObjectURL(b.url);
 		blobs.delete(id);
@@ -316,14 +319,15 @@ export const playClip = async (id: string, readyMs = 1500): Promise<boolean> => 
 export const prefetchClips = () => {
 	if (!vp9) return;
 	const symbols = ['H1', 'H2', 'H3', 'H4', 'L1', 'L2', 'L3', 'L4', 'WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'];
+	const bonusCards = [...allEntryClips(isPortrait()), ...allTotalClips(isPortrait())];
+	pinClips(bonusCards);
 	const first = [
 		'FX-TRANSITION',
 		...(BG_VIDEO_LOOPS ? ['BG-MAIN-LOOP', 'BG-HEIST-LOOP', 'BG-HIDDEN-LOOP'] : []),
 		'FX-ANTICIPATION',
-		// bonus entry cards for this screen's orientation (about 9 MB per bonus): ready before any bonus triggers
-		...allEntryClips(isPortrait()),
-		// Total Win cards (about 7 MB per bonus)
-		...allTotalClips(isPortrait()),
+		// bonus entry and Total Win cards for this screen's orientation (about 45 MB together): downloaded first
+		// and pinned, so they are always in memory when a bonus starts or ends
+		...bonusCards,
 		...symbols.map((s) => `SYM-${s}-ANIM-WIN`),
 		...['WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'].map((s) => `SYM-${s}-ANIM-LAND`),
 		'FX-CREW-CHAOS', 'ANIM-ROXY-ABILITY-FX', 'ANIM-BYTE-ABILITY-FX', 'ANIM-TANK-ABILITY-FX', 'ANIM-FUSE-ABILITY-FX',

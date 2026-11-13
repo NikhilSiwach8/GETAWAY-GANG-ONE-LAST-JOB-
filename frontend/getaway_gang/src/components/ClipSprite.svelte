@@ -24,6 +24,8 @@
 		fallback?: Snippet;
 		onended?: (ok: boolean) => void;
 		onready?: () => void;
+		/** how long to wait for the first frame before giving up (default 8 s); one reload is tried half-way */
+		readyMs?: number;
 	};
 	const props: Props = $props();
 	const clip = getClip(props.id, props.channel ?? props.id);
@@ -45,7 +47,15 @@
 
 	onMount(async () => {
 		if (!clip) return props.onended?.(false);
-		if (!(await whenReady(clip.video))) {
+		const wait = props.readyMs ?? 8000;
+		let ok = await whenReady(clip.video, wait / 2);
+		if (!ok && !clip.video.error) {
+			// stalled: reload the source once and give it the rest of the time
+			console.warn(`[clips] ${props.id}: slow to start, reloading (${describeVideo(clip.video)})`);
+			clip.video.load();
+			ok = await whenReady(clip.video, wait / 2);
+		} else if (!ok) ok = await whenReady(clip.video, wait / 2); // an error may be the direct-stream retry
+		if (!ok) {
 			console.warn(`[clips] ${props.id}: not ready in time, showing the fallback (${describeVideo(clip.video)})`);
 			return props.onended?.(false);
 		}

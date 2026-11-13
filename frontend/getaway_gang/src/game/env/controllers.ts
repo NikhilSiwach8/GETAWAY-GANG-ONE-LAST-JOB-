@@ -155,10 +155,15 @@ export class Beams implements EnvController {
 
 // ------------------------------------------------------------------------------------------------ rotor
 export type RotorSpec = {
-	/** centre and radius of the round part in the source texture (source pixels) */
+	/** centre of the wheel in the source texture (source pixels) */
 	cx: number;
 	cy: number;
+	/** radius of the turning part (spokes), kept inside the ring so the ring and its highlight never turn */
 	r: number;
+	/** radius of the whole wheel: redrawn round and static under the spokes (covers a stretched painted wheel) */
+	outer?: number;
+	/** radius of the centre hub: redrawn static on top, so its highlight stays where the light is */
+	hub?: number;
 	/** position in the parent (defaults to cx, cy) */
 	x?: number;
 	y?: number;
@@ -171,9 +176,17 @@ export type RotorSpec = {
 	steps?: number[];
 };
 
+/**
+ * A round part of an existing texture turned in eased steps (a vault wheel). Draw it in a container with an
+ * even scale: under an uneven scale a turning part shears. Layers (all sub-textures of the same art):
+ *   base   the whole wheel, static (optional, `outer`)
+ *   spokes the part between hub and ring, turning
+ *   hub    the centre, static on top (optional, `hub`)
+ * so the painted highlights on the ring and hub stay put while the spokes turn.
+ */
 export class Rotor implements EnvController {
 	private s: PIXI.Sprite;
-	private mask: PIXI.Sprite;
+	private textures: PIXI.Texture[] = [];
 	private wait: number;
 	private from = 0;
 	private to = 0;
@@ -184,25 +197,32 @@ export class Rotor implements EnvController {
 		source: PIXI.Texture,
 		private spec: RotorSpec,
 	) {
-		// a sub-texture of the existing art: same GPU texture, no copy
-		const frame = new PIXI.Rectangle(spec.cx - spec.r, spec.cy - spec.r, spec.r * 2, spec.r * 2);
-		const tex = new PIXI.Texture({ source: source.source, frame });
 		const x = spec.x ?? spec.cx;
 		const y = spec.y ?? spec.cy;
-		this.s = new PIXI.Sprite({ texture: tex, anchor: 0.5 });
-		this.s.position.set(x, y);
-		this.mask = new PIXI.Sprite({ texture: discTexture(), anchor: 0.5 });
-		this.mask.position.set(x, y);
-		this.mask.width = this.mask.height = spec.r * 2;
-		this.s.mask = this.mask;
-		parent.addChild(this.mask, this.s);
+		// a disc of the art (same GPU texture, no copy), masked round with a soft edge
+		const disc = (r: number) => {
+			const tex = new PIXI.Texture({ source: source.source, frame: new PIXI.Rectangle(spec.cx - r, spec.cy - r, r * 2, r * 2) });
+			this.textures.push(tex);
+			const sp = new PIXI.Sprite({ texture: tex, anchor: 0.5 });
+			sp.position.set(x, y);
+			const m = new PIXI.Sprite({ texture: discTexture(), anchor: 0.5 });
+			m.position.set(x, y);
+			m.width = m.height = r * 2;
+			sp.mask = m;
+			parent.addChild(m, sp);
+			return sp;
+		};
+		if (spec.outer) disc(spec.outer);
+		this.s = disc(spec.r);
+		if (spec.hub) disc(spec.hub);
 		this.wait = rnd(spec.every[0] * 0.4, spec.every[1] * 0.6);
 	}
 
-	update({ dt, quality }: EnvFrame) {
+	update({ dt }: EnvFrame) {
 		if (this.k < 1) {
 			this.k = Math.min(1, this.k + dt / this.spec.duration);
-			this.s.rotation = this.from + (this.to - this.from) * backOut(this.k, 1.1 * quality.motion);
+			// a heavy valve: eases in, eases out, no wobble
+			this.s.rotation = this.from + (this.to - this.from) * easeInOut(this.k);
 			return;
 		}
 		this.wait -= dt;
@@ -215,7 +235,7 @@ export class Rotor implements EnvController {
 	}
 
 	destroy() {
-		this.s.texture.destroy(false); // only the frame object; the shared source stays
+		for (const t of this.textures) t.destroy(false); // only the frame objects; the shared source stays
 	}
 }
 

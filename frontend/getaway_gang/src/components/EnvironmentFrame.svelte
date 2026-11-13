@@ -11,7 +11,7 @@
 	import { frameRect } from '../game/frameLayout';
 	import { acquireEnvDirector } from '../game/env/director';
 	import { SceneGroup } from '../game/env/sceneGroup';
-	import { buildFrameMachinery } from '../game/env/scenes';
+	import { buildFrameMachinery, FRAME_WHEEL } from '../game/env/scenes';
 
 	const context = getContext();
 	const app = getContextApp();
@@ -31,11 +31,14 @@
 
 	const layout = $derived(context.stateGameDerived.boardLayout());
 	const frame = $derived(frameRect(layout));
+	// the frame is scaled unevenly (taller than its art); the wheel is drawn at one even scale around its centre
+	// (a turning part under an uneven scale would shear), at the larger of the two so it covers the painted wheel
 	$effect(() => {
 		if (!group) return;
-		const s = frame.width / FRAME.width;
-		group.container.scale.set(s, frame.height / FRAME.height);
-		group.container.position.set(layout.x - frame.width / 2, layout.y - frame.height / 2);
+		const sx = frame.width / FRAME.width;
+		const sy = frame.height / FRAME.height;
+		group.container.scale.set(Math.max(sx, sy));
+		group.container.position.set(layout.x - frame.width / 2 + FRAME_WHEEL.cx * sx, layout.y - frame.height / 2 + FRAME_WHEEL.cy * sy);
 	});
 
 	onDestroy(() => {

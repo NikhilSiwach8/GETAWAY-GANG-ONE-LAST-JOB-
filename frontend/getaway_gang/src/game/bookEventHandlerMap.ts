@@ -154,7 +154,7 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 		// the entry card is an animated clip (prefetched after load): make sure it and its loop are in memory
 		// while the scatters celebrate, so the screen opens on the clip, not the still
 		const entry = entryClips(entryBonus(bookEvent.totalFs, stateGame.hud.mystery), isPortrait());
-		const introReady = Promise.all([ensureClip(entry.intro, 8000), ensureClip(entry.loop, 8000)]);
+		const introReady = Promise.all([ensureClip(entry.intro, 20000), ensureClip(entry.loop, 20000)]);
 		// animate scatters
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_scatter_win_v2' });
 		await animateSymbols({ positions: bookEvent.positions });
@@ -197,7 +197,7 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 		const winLevelData = winLevelMap[bookEvent.winLevel as WinLevel];
 		// the Total Win card is an animated clip (prefetched after load): make sure it and its loop are in memory
 		const total = totalClips(stateGame.hud.bonus ?? 'heist', isPortrait());
-		const outroReady = Promise.all([ensureClip(total.intro, 8000), ensureClip(total.loop, 8000)]);
+		const outroReady = Promise.all([ensureClip(total.intro, 20000), ensureClip(total.loop, 20000)]);
 
 		await eventEmitter.broadcastAsync({ type: 'uiHide' });
 		await outroReady;

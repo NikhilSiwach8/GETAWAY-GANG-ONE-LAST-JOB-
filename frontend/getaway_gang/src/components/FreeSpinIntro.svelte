@@ -95,13 +95,14 @@
 				{...clipSize}
 				fadeMs={0}
 				zIndex={1}
+				readyMs={20000}
 				onready={() => (clipShown = true)}
 				onended={(ok) => {
-					if (!ok) {
+					// once the clip is on screen it is never swapped for the still (a late hiccup just moves on)
+					if (!ok && !clipShown) {
 						console.warn(`[clips] bonus entry ${entry.intro}: fell back to the still card`);
 						clipFailed = true;
-					}
-					else if (hasClip(entry.loop)) phase = 'loop';
+					} else if (hasClip(entry.loop)) phase = 'loop';
 				}}
 			/>
 		{/if}

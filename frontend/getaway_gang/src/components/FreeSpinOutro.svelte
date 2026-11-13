@@ -116,12 +116,13 @@
 							height={cover.height}
 							fadeMs={200}
 							zIndex={1}
+							readyMs={20000}
 							onready={() => (clipShown = true)}
 							onended={(ok) => {
 								if (!ok && !clipShown) {
 									console.warn(`[clips] total win ${clips.intro}: fell back to the drawn card`);
 									clipFailed = true;
-								} else if (ok && hasClip(clips.loop)) phase = 'loop';
+								} else if (hasClip(clips.loop)) phase = 'loop'; // shown: a late hiccup just moves on
 							}}
 						/>
 					{/if}
