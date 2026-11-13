@@ -275,10 +275,51 @@ def style_parts():
             t = np.linspace(0, 1, xr - xl)[:, None]
             a[y, xl:xr, :3] = (cl * (1 - t) + cr * t).astype(np.uint8)
         out["UI-ANTE-PANEL"] = Image.fromarray(a, "RGBA")
+    # autoplay button without the empty counter window: the settings ring (same family as turbo / settings)
+    # with its gear disc replaced by the autoplay arrows disc, soft-edged
+    ap = autoplay_ring()
+    if ap is not None:
+        out["UI-AUTOPLAY-RING"] = ap
     # gold coin cut from BG-HIDDEN (art/prep_fx.py) for the live coin showers
     coin = os.path.join(ROOT, "video", "public", "gg", "FX-COIN.webp")
     if os.path.exists(coin):
         out["FX-COIN"] = Image.open(coin).convert("RGBA")
+    return out
+
+
+def autoplay_ring():
+    """Autoplay button in the settings / turbo ring family, without the counter window of UI-AUTOPLAY-0:
+    1. the settings button's gear is removed by extending its own navy face inward along each angle (the
+       face keeps its lighting), 2. the arrows disc of UI-AUTOPLAY-0 (radius 130, above its counter window)
+    is placed in the middle with a soft edge. Centres measured on the 512 px art: settings face (247, 243),
+    gear tips at r ~142, face plain navy at r ~158; autoplay arrows (237, 224), arrow tips at r ~128."""
+    ps, pa = os.path.join(OUT, "UI-SETTINGS-0.webp"), os.path.join(OUT, "UI-AUTOPLAY-0.webp")
+    if not (os.path.exists(ps) and os.path.exists(pa)):
+        return None
+    ring = np.asarray(Image.open(ps).convert("RGBA")).astype(float)
+    src = Image.open(pa).convert("RGBA")
+    (sx, sy), (ax, ay) = (247, 243), (237, 224)
+    # 1. radial fill of the face from r = 158 inward
+    H, W = ring.shape[:2]
+    yy, xx = np.mgrid[0:H, 0:W]
+    dx, dy = xx - sx, yy - sy
+    r = np.hypot(dx, dy)
+    face = r < 152
+    ang = np.arctan2(dy, dx)
+    # sample along each angle at r = 158, and blend towards the centre's average navy for a smooth face
+    sxp = np.clip(np.round(sx + 158 * np.cos(ang)).astype(int), 0, W - 1)
+    syp = np.clip(np.round(sy + 158 * np.sin(ang)).astype(int), 0, H - 1)
+    edge = ring[syp, sxp, :3]
+    ring[face, :3] = edge[face]
+    # 2. the arrows disc
+    R, F = 130, 6
+    disc = src.crop((ax - R - F, ay - R - F, ax + R + F, ay + R + F))
+    gy, gx = np.mgrid[0 : disc.height, 0 : disc.width]
+    m = np.clip((R + F - np.hypot(gx - (R + F), gy - (R + F))) / F, 0, 1)
+    a = np.asarray(disc).astype(float)
+    a[..., 3] *= m
+    out = Image.fromarray(ring.astype(np.uint8), "RGBA")
+    out.alpha_composite(Image.fromarray(a.astype(np.uint8), "RGBA"), (sx - R - F, sy - R - F))
     return out
 
 

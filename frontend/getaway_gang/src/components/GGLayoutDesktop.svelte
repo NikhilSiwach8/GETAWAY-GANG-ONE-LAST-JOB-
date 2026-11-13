@@ -20,9 +20,11 @@
 	const props: LayoutUiProps = $props();
 	const context = getContext();
 	const std = $derived(context.stateLayoutDerived.mainLayoutStandard());
-	// positions on the 1920-wide rail (x, standard px) and sizes; touch screens get bigger SPIN/BET targets
-	const DESK = { anteW: 290, menu: 80, buy: 252, buyS: 0.78, bal: 560, plateW: 290, side: 168, sideD: 118, spinD: 196, win: 1340, betW: 400, smallD: 104 };
-	const TOUCH = { anteW: 300, menu: 90, buy: 300, buyS: 0.72, bal: 600, plateW: 260, side: 160, sideD: 120, spinD: 212, win: 1320, betW: 440, smallD: 116 };
+	// one baseline across the rail, laid out on the 1920-wide design (x centres, standard px) so nothing overlaps:
+	// settings · Buy Bonus · ANTE | BALANCE | autoplay · SPIN · turbo | WIN | BET (−/+ on its ends).
+	// BALANCE / WIN / BET share the panel art's aspect, so equal widths give equal heights.
+	const DESK = { menu: 52, buy: 182, buyS: 0.7, ante: 362, anteW: 176, bal: 602, plateW: 280, side: 152, sideD: 104, spinD: 196, win: 1318, betW: 300, smallD: 88 };
+	const TOUCH = DESK; // touch screens get the same layout scaled up (f, below)
 	const P = $derived(context.stateLayoutDerived.layoutType() === 'desktop' ? DESK : TOUCH);
 
 	const RAIL_H = 134;
@@ -35,7 +37,7 @@
 	const cx = $derived(std.width * 0.5);
 	// SDK buttons are UI_BASE_SIZE wide (SPIN 1.12×): scale a button to a diameter
 	const s = (d: number, base = UI_BASE_SIZE) => d / base;
-	const betX = $derived(std.width - 25 - P.betW * 0.5);
+	const betX = $derived(std.width - 50 - P.betW * 0.5);
 </script>
 
 <Container x={20}>
@@ -54,15 +56,14 @@
 	<GGConsole x={cx} y={railY} width={railW} />
 
 	<!-- left: settings menu + Buy Bonus -->
-	<Container x={P.menu} y={railY - 6} scale={s(P.smallD)}>
+	<Container x={P.menu} y={railY} scale={s(P.smallD)}>
 		{@render props.buttonMenu({ anchor: 0.5 })}
 	</Container>
-	<Container x={P.buy} y={railY - 8} scale={P.buyS}>
+	<Container x={P.buy} y={railY} scale={P.buyS}>
 		{@render props.buttonBuyBonus({ anchor: 0.5 })}
 	</Container>
-
-	<!-- ante toggle: a capsule standing on the rail's top edge, centred over Buy Bonus -->
-	<Container x={P.buy} y={railY - RAIL_H / 2 - (P.anteW * 341) / 1024 / 2 + 10}>
+	<!-- ante toggle: a pill on the rail next to Buy Bonus -->
+	<Container x={P.ante} y={railY}>
 		<ButtonAnte width={P.anteW} />
 	</Container>
 
@@ -72,13 +73,13 @@
 	</Container>
 
 	<!-- spin cluster: the big SPIN sits raised on the rail's centre plate -->
-	<Container x={cx - P.side} y={railY - 14} scale={s(P.sideD)}>
+	<Container x={cx - P.side} y={railY} scale={s(P.sideD)}>
 		{@render props.buttonAutoSpin({ anchor: 0.5 })}
 	</Container>
 	<Container x={cx} y={railY - 52} scale={s(P.spinD, UI_BASE_SIZE * 1.12)}>
 		{@render props.buttonBet({ anchor: 0.5 })}
 	</Container>
-	<Container x={cx + P.side} y={railY - 14} scale={s(P.sideD)}>
+	<Container x={cx + P.side} y={railY} scale={s(P.sideD)}>
 		{@render props.buttonTurbo({ anchor: 0.5 })}
 	</Container>
 

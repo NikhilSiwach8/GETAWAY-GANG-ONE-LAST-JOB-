@@ -22,7 +22,7 @@
 
 	const ART: Partial<Record<ButtonIcon, (active?: boolean) => string>> = {
 		turbo: (a) => (a ? 'UI-TURBO-1' : 'UI-TURBO-0'),
-		autoSpin: () => 'UI-AUTOPLAY-0',
+		autoSpin: () => 'UI-AUTOPLAY-RING', // ring without the empty counter window (art/process_assets.py)
 		soundOn: () => 'UI-SOUND-0',
 		soundOff: () => 'UI-SOUND-1',
 		menu: () => 'UI-SETTINGS-0',
@@ -51,6 +51,10 @@
 				text={i18nDerived[icon]()}
 				style={{ fontFamily: 'proxima-nova', fontWeight: '700', fontSize: UI_BASE_FONT_SIZE * 0.9, fill: variant === 'dark' ? 0xffffff : 0x000000 }}
 			/>
+		{/if}
+		{#if icon === 'autoSpin' && active}
+			<!-- autoplay running: a dark disc behind the remaining-spins count so it reads over the arrows -->
+			<Sprite key="UI-SOFT-GLOW" {...center} anchor={0.5} width={buttonProps.sizes.width * 0.9} height={buttonProps.sizes.height * 0.9} tint={0x050a1c} alpha={0.85} />
 		{/if}
 		{@render childrenFromParent?.()}
 	{/snippet}

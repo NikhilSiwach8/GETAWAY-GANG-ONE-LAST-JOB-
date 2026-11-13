@@ -52,7 +52,7 @@
 	// clear of the phone's home indicator / rounded corners
 	const railY = $derived(std.height - RAIL_H * 0.5 - 46);
 	const railW = $derived(Math.max(1080, context.stateLayoutDerived.canvasSizes().width / std.scale + 40));
-	const BET_W = 600;
+	const BET_W = 500;
 	const s = (d: number, base = UI_BASE_SIZE) => d / base;
 
 	let drawerButtonFadeComplete = $state(() => {});
@@ -96,20 +96,21 @@
 <MainContainer standard alignVertical="bottom">
 	<!-- drawer: folds away during the bonus like the SDK layout -->
 	<Container y={drawerTween.current}>
-		<Container x={cx - 420} y={railY - 410} scale={s(120)}>
+		<!-- top row, symmetric around SPIN: settings · autoplay · SPIN · turbo · paytable -->
+		<Container x={cx - 412} y={railY - 410} scale={s(118)}>
 			{@render props.buttonMenu({ anchor: 0.5 })}
 		</Container>
-		<Container x={cx - 222} y={railY - 410} scale={s(146)}>
+		<Container x={cx - 218} y={railY - 410} scale={s(146)}>
 			{@render props.buttonAutoSpin({ anchor: 0.5 })}
 		</Container>
 		<Container x={cx} y={railY - 425} scale={s(256, UI_BASE_SIZE * 1.12)}>
 			{@render props.buttonBet({ anchor: 0.5 })}
 		</Container>
-		<Container x={cx + 222} y={railY - 410} scale={s(146)}>
+		<Container x={cx + 218} y={railY - 410} scale={s(146)}>
 			{@render props.buttonTurbo({ anchor: 0.5 })}
 		</Container>
-		<Container x={cx + 410} y={railY - 410} scale={1.05}>
-			{@render props.buttonBuyBonus({ anchor: 0.5 })}
+		<Container x={cx + 412} y={railY - 410} scale={s(118)}>
+			{@render props.buttonPayTable({ anchor: 0.5 })}
 		</Container>
 		<Container x={cx - 262} y={railY - 190}>
 			{@render props.amountBalance({ stacked: true, width: 470 } as never)}
@@ -141,10 +142,15 @@
 		</Container>
 	{/if}
 
-	<!-- ante capsule on the rail, left of the BET plate (the drawer button sits on the right) -->
-	<Container x={cx - 428} y={railY - 4}>
-		<ButtonAnte width={210} />
-	</Container>
+	<!-- bottom row outside the bonus: ANTE · BET · Buy Bonus (in the bonus: free-spin counter + drawer button) -->
+	{#if !stateUi.freeSpinCounterShow}
+		<Container x={cx - 392} y={railY}>
+			<ButtonAnte width={208} />
+		</Container>
+		<Container x={cx + 394} y={railY} scale={0.86}>
+			{@render props.buttonBuyBonus({ anchor: 0.5 })}
+		</Container>
+	{/if}
 
 	<!-- drawer button -->
 	<FadeContainer
