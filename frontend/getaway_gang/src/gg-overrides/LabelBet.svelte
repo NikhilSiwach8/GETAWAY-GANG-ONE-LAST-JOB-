@@ -12,6 +12,7 @@
 	type Props = {
 		stacked?: boolean;
 		width?: number;
+		plain?: boolean;
 	};
 
 	const props: Props = $props();
@@ -33,5 +34,5 @@
 	onpointerup={onpress}
 	hitArea={new Rectangle(-(props.width ?? 400) * 0.23, -(props.width ?? 400) * 0.1, (props.width ?? 400) * 0.46, (props.width ?? 400) * 0.25)}
 >
-	<GGLabel kind="BET" {value} width={props.width} />
+	<GGLabel kind="BET" {value} width={props.width} plain={props.plain} />
 </Container>

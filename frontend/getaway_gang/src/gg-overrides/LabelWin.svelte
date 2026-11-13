@@ -11,6 +11,7 @@
 	type Props = {
 		stacked?: boolean;
 		width?: number;
+		plain?: boolean;
 	};
 
 	const props: Props = $props();
@@ -22,4 +23,4 @@
 	});
 </script>
 
-<GGLabel kind="WIN" {value} width={props.width} />
+<GGLabel kind="WIN" {value} width={props.width} plain={props.plain} />

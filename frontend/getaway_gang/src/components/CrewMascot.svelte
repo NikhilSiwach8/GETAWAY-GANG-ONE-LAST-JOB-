@@ -32,7 +32,7 @@
 		<LivePose
 			id={mascot.crew}
 			x={left / 2 + 10}
-			y={layout.y + 40 + height / 2}
+			y={layout.y - 30 + height / 2}
 			{height}
 			{action}
 			nonce={mascot.nonce}
