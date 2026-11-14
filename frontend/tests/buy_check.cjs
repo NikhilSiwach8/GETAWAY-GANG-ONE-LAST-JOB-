@@ -27,6 +27,8 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	page.on('requestfinished', (r) => /\/clips\/ENTRY-/.test(r.url()) && clipDone.push(`${r.url().split('/').pop()} @${tBuy ? ((Date.now() - tBuy) / 1000).toFixed(1) + 's after buy' : 'before buy'}`));
 	if (process.env.LOG) page.on('console', (m) => /clip|webm|video/i.test(m.text()) && console.log('console', m.text().slice(0, 200)));
 	page.on('pageerror', (e) => errors.push(e.message));
+	// any request outside the game's own origin and the local RGS (Stake does not allow external requests)
+	page.on('request', (r) => { const h = new URL(r.url()).host; if (!/^localhost(:\d+)?$/.test(h) && !r.url().startsWith('data:') && !r.url().startsWith('blob:')) errors.push(`EXTERNAL ${r.url()}`); });
 	page.on('response', (r) => r.status() >= 400 && errors.push(`HTTP ${r.status()} ${r.url().split('?')[0]}`));
 	// CSP=1: serve the page with a policy that blocks blob: media (as a strict host page might)
 	if (process.env.CSP)
@@ -45,8 +47,9 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	await page.waitForTimeout(Number(process.env.WAIT ?? 9) * 1000);
 	await lgs(`/lgs/sessions/${s.sessionID}/force`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ force: { bookId: Number(bookId) } }) });
 	await page.screenshot({ path: path.join(outDir, '00_before_buy.png') });
-	await page.mouse.click(187, 740); // Buy Bonus on the console
+	await page.mouse.click(185, 578); // Buy Bonus (left corner cluster)
 	await page.waitForTimeout(1500);
+	await page.screenshot({ path: path.join(outDir, '00_buy_menu.png') });
 	await page.locator('.pop-up-wrap button.buy').nth(Number(cardIndex)).click();
 	await page.waitForTimeout(1200);
 	await page.screenshot({ path: path.join(outDir, '00_confirm.png') });

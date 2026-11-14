@@ -109,6 +109,7 @@ const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
 const MAX_PLAYERS = isMobile ? 6 : 12;
 const release = (key: string, clip: Clip) => {
 	clip.video.pause();
+	clip.video.dataset.released = '1'; // clearing the source fires 'error': not a playback failure
 	clip.video.removeAttribute('src');
 	clip.video.load();
 	clip.texture.destroy(true);
@@ -149,6 +150,7 @@ export const getClip = (id: string, channel = 'main'): Clip | undefined => {
 		// if playing from memory fails (e.g. a host page policy that blocks blob: media), stream the file
 		// directly instead; every failure is logged once with its reason
 		video.addEventListener('error', () => {
+			if (video.dataset.released) return;
 			// (a blocked blob: source leaves currentSrc empty, so check the assigned src)
 			if (!video.dataset.direct && video.src.startsWith('blob:')) {
 				console.warn(`[clips] ${id}: playing from memory failed (${describeVideo(video)}), streaming ${CLIP_URLS[id]}`);

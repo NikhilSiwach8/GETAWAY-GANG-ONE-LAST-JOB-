@@ -7,6 +7,7 @@
 <script lang="ts">
 	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
 	import { Button } from 'components-pixi';
+	import { Rectangle as HitRect } from 'pixi.js';
 	import { Tween } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import { getContext } from 'components-ui-pixi/src/context';
@@ -37,7 +38,8 @@
 	const textX = $derived((lampX + lampD / 2 + W / 2 - H * 0.12) / 2);
 </script>
 
-<Button anchor={0.5} sizes={{ width: W, height: H }} {disabled} {onpress}>
+<!-- explicit hit area = the pill: without it the (invisible) glow sprite widens the tap target over Buy Bonus -->
+<Button anchor={0.5} sizes={{ width: W, height: H }} hitArea={new HitRect(0, 0, W, H)} {disabled} {onpress}>
 	{#snippet children({ center, hovered, pressed })}
 		<Container {...center} scale={pressed ? 0.95 : hovered ? 1.04 : 1} alpha={disabled ? 0.55 : 1}>
 			<!-- gold glow while on -->
