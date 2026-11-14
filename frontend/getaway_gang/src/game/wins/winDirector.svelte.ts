@@ -18,6 +18,7 @@
  * Only one presentation runs at a time: every other book event first awaits `settle()` (see
  * bookEventHandlerMap), and a new presentation finishes any previous one before it starts.
  */
+import { presentTurbo } from '../turbo';
 import { stateBet } from 'state-shared';
 import { bookEventAmountToCurrencyString } from 'utils-shared/amount';
 import { Timeline, play } from './timeline';
@@ -67,7 +68,7 @@ type Hooks = {
 };
 export const winHooks: Hooks = {};
 
-const speed = (): Speed => (stateBet.isTurbo ? 'turbo' : 'normal');
+const speed = (): Speed => (presentTurbo() ? 'turbo' : 'normal');
 
 let busy: Promise<void> | null = null;
 let cycle: Promise<void> | null = null;

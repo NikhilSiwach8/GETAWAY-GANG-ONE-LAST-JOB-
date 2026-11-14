@@ -8,6 +8,7 @@
 </script>
 
 <script lang="ts">
+	import { presentTurbo } from '../game/turbo';
 	/**
 	 * Bonus end screen: the TOTAL-<BONUS> clip builds the Total Win card (crew cheer, title slam, the gold plaque
 	 * lands), then TOTAL-<BONUS>-LOOP runs until the player taps; 9:16 versions on portrait screens. From the
@@ -103,7 +104,7 @@
 	$effect(() => {
 		if (!ready || !winLevelData || counting || countDone) return;
 		counting = true;
-		const secs = (COUNT_S[winLevelData.alias] ?? 2) * (stateBet.isTurbo ? 0.5 : 1);
+		const secs = (COUNT_S[winLevelData.alias] ?? 2) * (presentTurbo() ? 0.5 : 1);
 		const tl = new Timeline('total-count').tween(0.15, secs, 0, amount, 'cubicOut', (v) => (countValue = v));
 		countTl = tl;
 		context.eventEmitter.broadcast({ type: 'soundLoop', name: 'sfx_count_loop' });

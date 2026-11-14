@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { presentTurbo } from '../game/turbo';
 	/**
 	 * Symbol entry point used by the reels and stories: keeps the game-facing API (state + oncomplete timing)
 	 * and draws the art through the shared renderer (SymbolView + game/symbols). The labelled placeholder
@@ -44,9 +45,9 @@
 		clearTimeout(timer);
 		if (state === 'win') {
 			// SymbolView completes on its own clock; this is only a safety net if rendering stalls
-			timer = setTimeout(() => props.oncomplete?.(), (stateBet.isTurbo ? 600 : 1150) * 3);
+			timer = setTimeout(() => props.oncomplete?.(), (presentTurbo() ? 600 : 1150) * 3);
 		} else if (state === 'land') {
-			timer = setTimeout(() => props.oncomplete?.(), stateBet.isTurbo ? 180 : 340);
+			timer = setTimeout(() => props.oncomplete?.(), presentTurbo() ? 180 : 340);
 		} else {
 			props.oncomplete?.();
 		}

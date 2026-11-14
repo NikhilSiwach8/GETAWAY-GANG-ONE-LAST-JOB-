@@ -5,12 +5,14 @@
  * not its alpha channel (Safari) get the opaque clips only (bonus intros/outros, Mystery reveals,
  * backgrounds, cinematics); for the transparent effect clips callers fall back to their title cards.
  */
+import { presentTurbo } from './turbo';
 import * as PIXI from 'pixi.js';
 import { stateBet } from 'state-shared';
 import { CLIP_URLS, OPAQUE_CLIPS } from './clipUrls';
 import { allEntryClips, isPortrait } from './bonusEntry';
 import { allTotalClips } from './bonusTotal';
 import { cue } from './audioCues';
+import { CELL_FX_SHEETS, CELL_FX_FPS } from './cellFxSheets';
 
 const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent;
 const isSafari = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(ua) || /iPad|iPhone|iPod/.test(ua);
@@ -230,7 +232,7 @@ export const playVideo = async (clip: Clip, loop = false): Promise<boolean> => {
 	return new Promise((resolve) => {
 		const v = clip.video;
 		v.loop = loop;
-		const rate = stateBet.isTurbo ? 2 : 1;
+		const rate = presentTurbo() ? 1.5 : 1; // turbo plays clips faster, but not so fast they stutter
 		v.playbackRate = rate;
 		try {
 			v.currentTime = 0;
@@ -357,6 +359,7 @@ export const warmBonusClips = () => {
  * Download clips in the background after the game loads, most frequent first, a few at a time.
  */
 export const prefetchClips = () => {
+	void loadCellSheets(); // tiny, and they work everywhere (also where video clips cannot play)
 	if (!vp9) return;
 	const symbols = ['H1', 'H2', 'H3', 'H4', 'L1', 'L2', 'L3', 'L4', 'WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'];
 	const bonusCards = [...allEntryClips(isPortrait()), ...allTotalClips(isPortrait())];
@@ -372,7 +375,6 @@ export const prefetchClips = () => {
 		...crewFx,
 		...symbols.map((s) => `SYM-${s}-ANIM-WIN`),
 		...['WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'].map((s) => `SYM-${s}-ANIM-LAND`),
-		...['CLONE-IN', 'UPGRADE-IN', 'VAULT-REVEAL', 'WILD-STAMP', 'CREW-EXIT'].map((k) => `SYM-FX-${k}`),
 		...['ROXY', 'BYTE', 'TANK', 'FUSE'].flatMap((c) => ['IDLE', 'ABILITY', 'COMPLETE', 'WIN', 'LOSE'].map((a) => `ANIM-${c}-${a}`)),
 		'FX-RESPIN', 'FX-METER-STAGE', 'FX-COMBO-RB', 'FX-COMBO-BT', 'FX-COMBO-TF', 'FX-COMBO-FR', 'FX-COMBO-RT',
 		'WIN-BIG', 'WIN-SUPER', 'WIN-MEGA', 'WIN-EPIC',
@@ -396,25 +398,38 @@ export const mascotDo = (action: MascotAction, crew?: typeof mascot.crew) => {
 };
 
 // ------------------------------------------------------------------ cell-sized transformation effects
-export type CellFx = { id: string; key: number; cells: { reel: number; row: number }[] };
+// ---------------------------------------------------------------- cell effects (sprite sheets)
+// SYM-FX-* effects over board cells are sprite-sheet animations (art/make_cellfx_sheets.py), not video: they
+// start on the frame they are asked for and need no decoder, so a crew hit lands exactly with the change.
+export type CellFx = { id: string; key: number; cells: { reel: number; row: number }[]; start: number; rate: number };
 export const cellFx = $state({ list: [] as CellFx[] });
 let cellKey = 0;
-/** Play SYM-FX-* over board cells (positions include the padding row). Resolves when it ends. */
+const cellFrames = new Map<string, PIXI.Texture[]>();
+const loadCellSheets = () =>
+	Promise.all(
+		Object.entries(CELL_FX_SHEETS).map(async ([id, m]) => {
+			const base = await PIXI.Assets.load<PIXI.Texture>(m.url);
+			const frames = Array.from(
+				{ length: m.frames },
+				(_, i) => new PIXI.Texture({ source: base.source, frame: new PIXI.Rectangle((i % m.cols) * m.size, Math.floor(i / m.cols) * m.size, m.size, m.size) }),
+			);
+			cellFrames.set(id, frames);
+		}),
+	).catch((e) => console.warn('[clips] cell effect sheets failed to load', e));
+export const cellFxFrames = (id: string) => cellFrames.get(id);
 export const playCellFx = (id: string, cells: { reel: number; row: number }[]): Promise<boolean> => {
-	if (!hasClip(id) || !cells.length) return Promise.resolve(false);
-	if (!isDownloaded(id)) {
-		download(id);
-		return Promise.resolve(false);
-	}
-	const clip = getClip(id, 'cell');
-	if (!clip) return Promise.resolve(false);
-	const entry = { id, key: cellKey++, cells };
+	const frames = cellFrames.get(id);
+	if (!frames || !cells.length) return Promise.resolve(false);
+	const rate = presentTurbo() ? 1.5 : 1;
+	const entry: CellFx = { id, key: cellKey++, cells, start: performance.now(), rate };
 	cellFx.list = [...cellFx.list, entry];
 	cue(id);
-	return playVideo(clip).then((ok) => {
-		cellFx.list = cellFx.list.filter((e) => e.key !== entry.key);
-		return ok;
-	});
+	return new Promise((resolve) =>
+		setTimeout(() => {
+			cellFx.list = cellFx.list.filter((e) => e.key !== entry.key);
+			resolve(true);
+		}, (frames.length / CELL_FX_FPS / rate) * 1000),
+	);
 };
 
 /** Sprite scale that draws a video texture at w×h, from the video's real pixel size (see ClipSprite). */

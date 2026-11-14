@@ -14,6 +14,7 @@
 </script>
 
 <script lang="ts">
+	import { presentTurbo } from '../game/turbo';
 	/**
 	 * Feature card on the delivered blueprint scroll (UI-INFO-HEADER art): title in the scroll's window with
 	 * the crew colour as its outline, the reward line under it, crew characters popping in beside it, level
@@ -37,7 +38,7 @@
 	context.eventEmitter.subscribeOnMount({
 		featureBanner: async (e) => {
 			banner = e;
-			dur = ((e.ms ?? 1100) * (stateBet.isTurbo ? 0.5 : 1)) / 1000;
+			dur = ((e.ms ?? 1100) * (presentTurbo() ? 0.5 : 1)) / 1000;
 			const t0 = performance.now();
 			cancelAnimationFrame(raf);
 			const step = (now: number) => {

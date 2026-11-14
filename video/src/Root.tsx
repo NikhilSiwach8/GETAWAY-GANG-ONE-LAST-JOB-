@@ -124,9 +124,9 @@ export const RemotionRoot: React.FC = () => {
 				<Composition id="SCR-HIDDEN-INTRO" component={HiddenIntroStory} durationInFrames={INTRO_STORY.total} {...HD} />
 				<Composition id="SCR-HIDDEN-INTRO-LOOP" component={BonusIntroLoop} durationInFrames={90} {...HD} defaultProps={{bonus: 'hidden' as const}} />
 				<Composition id="SCR-HIDDEN-OUTRO" component={TotalWinStory} durationInFrames={OUTRO_STORY.total} {...HD} defaultProps={{bonus: 'hidden' as const}} />
-				<Composition id="FX-MYSTERY-HIDDEN" component={MysteryReveal} durationInFrames={150} {...HD} defaultProps={{result: 'hidden' as const}} />
-				<Composition id="FX-MYSTERY-ESCAPE" component={MysteryReveal} durationInFrames={126} {...HD} defaultProps={{result: 'escape' as const}} />
-				<Composition id="FX-MYSTERY-NONE" component={MysteryReveal} durationInFrames={114} {...HD} defaultProps={{result: 'none' as const}} />
+				<Composition id="FX-MYSTERY-HIDDEN" component={MysteryReveal} durationInFrames={165} {...HD} defaultProps={{result: 'hidden' as const}} />
+				<Composition id="FX-MYSTERY-ESCAPE" component={MysteryReveal} durationInFrames={150} {...HD} defaultProps={{result: 'escape' as const}} />
+				<Composition id="FX-MYSTERY-NONE" component={MysteryReveal} durationInFrames={130} {...HD} defaultProps={{result: 'none' as const}} />
 				<Composition id="FX-VAULT-GUARANTEE" component={VaultGuarantee} durationInFrames={66} {...HD} />
 				<Composition id="SCR-HEIST-OUTRO" component={TotalWinStory} durationInFrames={OUTRO_STORY.total} {...HD} defaultProps={{bonus: 'heist' as const}} />
 				<Composition id="SCR-ESCAPE-OUTRO" component={TotalWinStory} durationInFrames={OUTRO_STORY.total} {...HD} defaultProps={{bonus: 'escape' as const}} />

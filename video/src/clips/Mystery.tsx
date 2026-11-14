@@ -49,6 +49,19 @@ const Part: React.FC<{id: string; at: {x: number; y: number; r: number}; rotate:
 	);
 };
 
+// the opening's geometry inside the reveal art (1254 px source): ring centre and the gold interior's radius;
+// left of PAINTED_DOOR_X the art shows the open door, which stays hidden while the real door is swinging
+const RING = {x: 635 / SRC, y: 620 / SRC, inner: 537 / SRC};
+const PAINTED_DOOR_X = 0.215;
+// timeline (frames at 30 fps)
+// the opening as a polygon: the interior circle with everything left of the painted door's edge cut away
+const INTERIOR_CLIP = `polygon(${Array.from({length: 48}, (_, i) => {
+	const a = (i / 48) * Math.PI * 2;
+	const x = Math.max(PAINTED_DOOR_X, RING.x + RING.inner * Math.cos(a));
+	return `${(x * 100).toFixed(2)}% ${((RING.y + RING.inner * Math.sin(a)) * 100).toFixed(2)}%`;
+}).join(', ')})`;
+const T = {swing: 58, swingEnd: 80, zoom: 62, zoomEnd: 96, celebrate: 90};
+
 export const MysteryReveal: React.FC<{result: Result}> = ({result}) => {
 	const frame = useCurrentFrame();
 	const {durationInFrames: D} = useVideoConfig();
@@ -61,52 +74,66 @@ export const MysteryReveal: React.FC<{result: Result}> = ({result}) => {
 	const wheel = interpolate(frame, [36, 52], [0, 420], {...clamp, easing: Easing.inOut(Easing.cubic)});
 	const wheelSpeed = Math.abs(interpolate(frame + 1, [36, 52], [0, 420], {...clamp, easing: Easing.inOut(Easing.cubic)}) - wheel);
 	const leak = interpolate(frame, [44, 62], [0, 1], clamp);
-	const swing = interpolate(frame, [60, 78], [0, -112], {...clamp, easing: Easing.in(Easing.quad)});
-	const doorAlpha = interpolate(frame, [60, 72, 78], [1, 1, 0], clamp);
-	const reveal = interpolate(frame, [62, 76], [0, 1], clamp);
-	const push = interpolate(frame, [76, D], [1, result === 'none' ? 1.03 : 1.08], clamp);
-	const celebrate = 76;
+	// the door swings open on its hinge, solid all the way, until it lies where the painted open door is
+	const swing = interpolate(frame, [T.swing, T.swingEnd], [0, -78], {...clamp, easing: Easing.inOut(Easing.cubic)});
+	const doorAlpha = interpolate(frame, [T.swingEnd - 6, T.swingEnd + 2], [1, 0], clamp);
+	// the interior shows through the opening as the door moves; the painted door comes in only during the zoom
+	const interior = interpolate(frame, [T.swing, T.swing + 8], [0, 1], clamp);
+	const painted = interpolate(frame, [T.swingEnd - 6, T.swingEnd + 2], [0, 1], clamp);
+	// camera: push into the vault as it opens, then keep drifting in slowly
+	const zoomTo = result === 'none' ? 1.35 : 1.75;
+	const zoom =
+		interpolate(frame, [T.zoom, T.zoomEnd], [1, zoomTo], {...clamp, easing: Easing.inOut(Easing.cubic)}) *
+		interpolate(frame, [T.zoomEnd, D], [1, 1.06], clamp);
+	const celebrate = T.celebrate;
 	const cx = 960;
 	const cy = 465;
+	// the reveal art sits where the closed door is; its interior centre is where the camera aims
+	const revealLeft = cx - SIZE / 2 + SIZE * REVEAL_SHIFT * 0.5;
+	const revealTop = cy - SIZE / 2;
+	const focus = {x: revealLeft + RING.x * SIZE, y: revealTop + RING.y * SIZE};
 	return (
 		<AbsoluteFill style={{background: 'radial-gradient(circle at 50% 48%, #1d2a5c 0%, #0b1230 45%, #04060d 100%)', overflow: 'hidden'}}>
-			{/* light leaking from the seam, growing before the door opens */}
-			<div
-				style={{
-					position: 'absolute',
-					left: cx - SIZE * 0.62,
-					top: cy - SIZE * 0.62,
-					width: SIZE * 1.24,
-					height: SIZE * 1.24,
-					borderRadius: '50%',
-					background: `radial-gradient(circle, rgba(255,214,110,${0.75 * leak}) 35%, rgba(247,169,40,${0.35 * leak}) 55%, rgba(247,169,40,0) 72%)`,
-				}}
-			/>
-			{frame >= celebrate && result !== 'none' && <Rays from={celebrate} color={st.color} opacity={0.55} size={2400} />}
+			<AbsoluteFill style={{transformOrigin: `${focus.x}px ${focus.y}px`, transform: `scale(${zoom})`}}>
+				{/* light leaking from the seam, growing before the door opens */}
+				<div
+					style={{
+						position: 'absolute',
+						left: cx - SIZE * 0.62,
+						top: cy - SIZE * 0.62,
+						width: SIZE * 1.24,
+						height: SIZE * 1.24,
+						borderRadius: '50%',
+						background: `radial-gradient(circle, rgba(255,214,110,${0.75 * leak}) 35%, rgba(247,169,40,${0.35 * leak}) 55%, rgba(247,169,40,0) 72%)`,
+					}}
+				/>
+				{frame >= celebrate && result !== 'none' && <Rays from={celebrate} color={st.color} opacity={0.5} size={2400} />}
 
-			<Shake at={52} strength={14} length={10}>
-				<AbsoluteFill>
-					{/* outcome scene behind the door */}
-					<div style={{position: 'absolute', left: cx - SIZE / 2 + SIZE * REVEAL_SHIFT * (1 - 0.5), top: cy - SIZE / 2, width: SIZE, height: SIZE, opacity: reveal, scale: push}}>
-						<Img src={art(st.image)} style={{width: '100%', height: '100%'}} />
-					</div>
-					{/* the closed door, swinging open on its left hinge */}
-					{doorAlpha > 0 && (
-						<div style={{position: 'absolute', left: cx - SIZE / 2, top: cy - SIZE / 2, width: SIZE, height: SIZE, scale: pop, opacity: popIn * doorAlpha, perspective: 2200}}>
-							<div style={{position: 'absolute', inset: 0, transformOrigin: '12% 50%', transform: `rotateY(${swing}deg)`, filter: `brightness(${1 - Math.min(0.5, -swing / 220)})`}}>
-								<Img src={art('MYSTERY-VAULT-DOOR-SLAB')} style={{position: 'absolute', inset: 0, width: '100%', height: '100%'}} />
-								<Part id="MYSTERY-VAULT-DOOR-DIAL" at={DIAL} rotate={dial} blur={Math.min(6, dialSpeed / 6)} />
-								<Part id="MYSTERY-VAULT-DOOR-WHEEL" at={WHEEL} rotate={wheel} blur={Math.min(8, wheelSpeed / 5)} />
-							</div>
+				<Shake at={52} strength={14} length={10}>
+					<AbsoluteFill>
+						{/* outcome scene: first only the interior seen through the opening, then the whole art */}
+						<div style={{position: 'absolute', left: revealLeft, top: revealTop, width: SIZE, height: SIZE}}>
+							<Img src={art(st.image)} style={{position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: interior, clipPath: INTERIOR_CLIP}} />
+							<Img src={art(st.image)} style={{position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: painted}} />
 						</div>
-					)}
-				</AbsoluteFill>
-			</Shake>
+						{/* the closed door, swinging open on its left hinge */}
+						{doorAlpha > 0 && (
+							<div style={{position: 'absolute', left: cx - SIZE / 2, top: cy - SIZE / 2, width: SIZE, height: SIZE, scale: pop, opacity: popIn * doorAlpha, perspective: 1800}}>
+								<div style={{position: 'absolute', inset: 0, transformOrigin: '6% 50%', transform: `rotateY(${swing}deg)`, filter: `brightness(${1 - Math.min(0.45, -swing / 200)})`}}>
+									<Img src={art('MYSTERY-VAULT-DOOR-SLAB')} style={{position: 'absolute', inset: 0, width: '100%', height: '100%'}} />
+									<Part id="MYSTERY-VAULT-DOOR-DIAL" at={DIAL} rotate={dial} blur={Math.min(6, dialSpeed / 6)} />
+									<Part id="MYSTERY-VAULT-DOOR-WHEEL" at={WHEEL} rotate={wheel} blur={Math.min(8, wheelSpeed / 5)} />
+								</div>
+							</div>
+						)}
+					</AbsoluteFill>
+				</Shake>
+			</AbsoluteFill>
 
-			{/* the outcome */}
+			{/* the outcome (screen space, over the zoomed vault) */}
 			{result === 'hidden' && (
 				<>
-					<Flash at={celebrate} />
+					<Flash at={celebrate} color="#ffd36a" strength={0.35} length={12} />
 					<Shockwave at={celebrate} color={GOLD} />
 					<Burst at={celebrate} count={90} kind="coin" x={cx} y={cy} speed={46} seed="mh-c" life={60} />
 					<Burst at={celebrate + 2} count={40} kind="star" x={cx} y={cy} speed={36} seed="mh-s" colors={[GOLD, '#ffffff']} />
@@ -115,7 +142,7 @@ export const MysteryReveal: React.FC<{result: Result}> = ({result}) => {
 			)}
 			{result === 'escape' && (
 				<>
-					<Flash at={celebrate} color="#cdefff" strength={0.7} />
+					<Flash at={celebrate} color="#9fdcff" strength={0.3} length={12} />
 					<Shockwave at={celebrate} color="#28B9EF" />
 					<Burst at={celebrate} count={80} kind="confetti" x={cx} y={cy} speed={42} seed="me-c" colors={['#28B9EF', '#FF4C36', GOLD, '#ffffff']} />
 				</>

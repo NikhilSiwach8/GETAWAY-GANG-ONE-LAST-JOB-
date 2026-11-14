@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { presentTurbo } from '../game/turbo';
 	/**
 	 * Shared symbol renderer: draws any symbol of the catalogue in any visual state (game/symbols):
 	 * idle, highlighted, winning, dimmed, animated (land) and the eased reset back to idle.
@@ -57,7 +58,7 @@
 	let tPulse = $state(0);
 
 	// fast play compresses the authored timing (game/wins/sequences)
-	const turbo = $derived(stateBet.isTurbo ? 1 / TURBO_TIME : 1);
+	const turbo = $derived(presentTurbo() ? 1 / TURBO_TIME : 1);
 	let completed = false;
 	$effect(() => {
 		tWin = visual === 'winning' ? 0 : -1;

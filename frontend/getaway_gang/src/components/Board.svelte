@@ -12,6 +12,7 @@
 </script>
 
 <script lang="ts">
+	import { presentTurbo } from '../game/turbo';
 	import { waitForResolve } from 'utils-shared/wait';
 	import { boardFx } from '../game/stateGame.svelte';
 	import { BoardContext } from 'components-shared';
@@ -37,7 +38,7 @@
 		boardSettle: ({ board }) => context.stateGameDerived.enhancedBoard.settle(board),
 		boardShow: () => (show = true),
 		// highlighted symbol state follows the same cell highlights the features already broadcast
-		cellHighlight: ({ positions, color, ms }) => highlightCells(positions, color, (ms ?? 700) * (stateBet.isTurbo ? 0.4 : 1)),
+		cellHighlight: ({ positions, color, ms }) => highlightCells(positions, color, (ms ?? 700) * (presentTurbo() ? 0.4 : 1)),
 		boardHide: () => (show = false),
 		boardWithAnimateSymbols: async ({ symbolPositions }) => {
 			const getPromises = () =>

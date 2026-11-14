@@ -1,3 +1,4 @@
+import { markBonusRound } from './turbo';
 import _ from 'lodash';
 import { stateBet } from 'state-shared';
 import { createPlayBookUtils } from 'utils-book';
@@ -17,6 +18,7 @@ export const { playBookEvent, playBookEvents } = createPlayBookUtils({ bookEvent
 export const playBet = async (bet: Bet) => {
 	stateBet.winBookEventAmount = 0;
 	resetHud(); // each paid round is independent (stateless math)
+	markBonusRound(false);
 	await playBookEvents(bet.state);
 	eventEmitter.broadcast({ type: 'stopButtonEnable' });
 };

@@ -17,6 +17,8 @@ SKIP |= {f"SCR-{b}-INTRO{s}" for b in ("HEIST", "ESCAPE", "HIDDEN") for s in (""
 SKIP |= {f"SCR-{b}-OUTRO" for b in ("HEIST", "ESCAPE", "HIDDEN")}
 # the live background replaced the pre-rendered background loops
 SKIP |= {"BG-MAIN-LOOP", "BG-HEIST-LOOP", "BG-ESCAPE-LOOP", "BG-HIDDEN-LOOP"}
+# cell effects ship as sprite sheets (art/make_cellfx_sheets.py), not video
+SKIP |= {"SYM-FX-CLONE-IN", "SYM-FX-UPGRADE-IN", "SYM-FX-VAULT-REVEAL", "SYM-FX-WILD-STAMP", "SYM-FX-CREW-EXIT"}
 def is_char_clip(i):
     """ANIM-<CREW>-<ACTION> character videos: the crew are animated live now (LivePose); -ABILITY-FX stays."""
     return i.startswith("ANIM-") and not i.endswith("-FX")

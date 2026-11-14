@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { presentTurbo } from '../game/turbo';
 	/**
 	 * FX-TRANSITION: the getaway van drives across trailing a smoke wall. `oncovered` fires when the screen
 	 * is fully covered (frame 16 of 36), which is when the caller swaps scenes; `onfinished` once it has
@@ -34,7 +35,7 @@
 	};
 
 	const fallback = () => {
-		const speed = stateBet.isTurbo ? 2 : 1;
+		const speed = presentTurbo() ? 2 : 1;
 		const t0 = performance.now();
 		const step = (now: number) => {
 			const t = ((now - t0) / 1000) * speed;

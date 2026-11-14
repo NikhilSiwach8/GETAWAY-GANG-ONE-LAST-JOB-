@@ -1,3 +1,4 @@
+import { presentTurbo, markBonusRound } from './turbo';
 import _ from 'lodash';
 
 import { recordBookEvent, checkIsMultipleRevealEvents, type BookEventHandlerMap } from 'utils-book';
@@ -106,7 +107,7 @@ const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const transform = async (id: string, cells: Position[], apply: () => void, color: number, ms = 500) => {
 	if (!cells.length) return apply();
 	const fx = cellFxOr(id, cells, color, ms);
-	await wait(stateBet.isTurbo ? 90 : 180);
+	await wait(presentTurbo() ? 90 : 180);
 	apply();
 	await fx;
 };
@@ -187,6 +188,7 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 		stateBet.winBookEventAmount = bookEvent.amount;
 	},
 	freeSpinTrigger: async (bookEvent: BookEventOfType<'freeSpinTrigger'>) => {
+		markBonusRound(true); // from here to the Total Win, turbo only speeds up the reels
 		lastFsTotal = bookEvent.totalFs;
 		mascotDo('BONUS-INTRO');
 		// the entry card is an animated clip (prefetched after load): make sure it and its loop are in memory
@@ -285,6 +287,8 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 		// MYSTERY VAULT: keep the outcome secret until the first board has dropped and the scatters have
 		// landed; the vault reveal then plays right after that reveal (see playPendingMystery)
 		pendingMystery = bookEvent.result;
+		// the vault plays once the first board has landed: start its player now so it opens without a pause
+		warmClip({ hidden: 'FX-MYSTERY-HIDDEN', escape: 'FX-MYSTERY-ESCAPE', none: 'FX-MYSTERY-NONE' }[bookEvent.result], 20000);
 	},
 	vaultGuarantee: async (bookEvent: BookEventOfType<'vaultGuarantee'>) => {
 		// Hidden Bonus floor: top-up so the round pays the guaranteed minimum

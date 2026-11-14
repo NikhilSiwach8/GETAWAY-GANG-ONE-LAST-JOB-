@@ -14,6 +14,18 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	// UA=safari: Safari user agent (no transparent WebM: only the opaque clips play)
 	const userAgent = process.env.UA === 'safari' ? 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Safari/605.1.15' : undefined;
 	const page = await browser.newPage({ viewport: { width: 1422, height: 800 }, ignoreHTTPSErrors: true, userAgent });
+	// PROFILE=1: record every frame time (and what was presenting) and CPU-profile the bonus; no screenshots
+	if (process.env.PROFILE)
+		await page.addInitScript(() => {
+			window.__frames = [];
+			let last = performance.now();
+			const loop = (t) => {
+				window.__frames.push([t, t - last]);
+				last = t;
+				requestAnimationFrame(loop);
+			};
+			requestAnimationFrame(loop);
+		});
 	// AUDIO=1: record every sound the game starts (Web Audio buffer offset -> sprite name, mapped at the end)
 	if (process.env.AUDIO)
 		await page.addInitScript(() => {
@@ -57,6 +69,11 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	await page.waitForTimeout(Number(process.env.WAIT ?? 9) * 1000);
 	await lgs(`/lgs/sessions/${s.sessionID}/force`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ force: { bookId: Number(bookId) } }) });
 	await page.screenshot({ path: path.join(outDir, '00_before_buy.png') });
+	if (process.env.TURBO) {
+		await page.mouse.click(1345, 671); // turbo (lightning, right corner cluster)
+		await page.waitForTimeout(600);
+		await page.screenshot({ path: path.join(outDir, '00_turbo.png') });
+	}
 	await page.mouse.click(185, 578); // Buy Bonus (left corner cluster)
 	await page.waitForTimeout(1500);
 	await page.screenshot({ path: path.join(outDir, '00_buy_menu.png') });
@@ -65,14 +82,46 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	await page.screenshot({ path: path.join(outDir, '00_confirm.png') });
 	await page.locator('.pop-up-wrap [data-test="confirm-button"]').click();
 	tBuy = Date.now();
+	let cdp, profStartPerf;
+	if (process.env.PROFILE) {
+		cdp = await page.context().newCDPSession(page);
+		await cdp.send('Profiler.enable');
+		await cdp.send('Profiler.setSamplingInterval', { interval: 1000 });
+		await cdp.send('Profiler.start');
+		profStartPerf = await page.evaluate(() => performance.now());
+		await page.evaluate(() => (window.__frames = []));
+	}
 	const t0 = Date.now();
 	let i = 0;
 	while (Date.now() - t0 < Number(secs) * 1000) {
 		await page.waitForTimeout(Number(process.env.STEP || 1500));
-		await page.screenshot({ path: path.join(outDir, `s${String(i++).padStart(3, '0')}.png`) });
+		if (process.env.PROFILE) i++;
+		else await page.screenshot({ path: path.join(outDir, `s${String(i++).padStart(3, '0')}.png`) });
 		const st = await lgs(`/lgs/sessions/${s.sessionID}`);
 		if (st.lastBet && !st.activeBet && Date.now() - t0 > 8000) break;
 		if (i % 2 === 0 && Date.now() - t0 > Number(process.env.QUIET || 0) * 1000) await page.keyboard.press('Space');
+	}
+	if (process.env.PROFILE) {
+		const { profile } = await cdp.send('Profiler.stop');
+		const frames = await page.evaluate(() => window.__frames);
+		const d = frames.map((f) => f[1]).sort((a, b) => a - b);
+		const q = (p) => d[Math.floor(p * (d.length - 1))].toFixed(1);
+		console.log(`frames ${d.length}  p50 ${q(0.5)}ms  p95 ${q(0.95)}ms  p99 ${q(0.99)}ms  >50ms ${d.filter((x) => x > 50).length}  >100ms ${d.filter((x) => x > 100).length}  >200ms ${d.filter((x) => x > 200).length}`);
+		// sample times (perf clock): profile timestamps are microseconds; align profile start with performance.now()
+		const nodes = new Map(profile.nodes.map((n) => [n.id, n]));
+		let t = 0;
+		const samples = profile.samples.map((id, k) => ((t += profile.timeDeltas[k]), { id, at: profStartPerf + t / 1000 }));
+		const name = (n) => `${n.callFrame.functionName || '(anon)'} ${n.callFrame.url.split('/').pop().split('?')[0]}:${n.callFrame.lineNumber + 1}`;
+		const tally = (list) => {
+			const m = {};
+			for (const sm of list) m[name(nodes.get(sm.id))] = (m[name(nodes.get(sm.id))] ?? 0) + 1;
+			return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 14);
+		};
+		const long = frames.filter((f) => f[1] > 60);
+		const inLong = samples.filter((sm) => long.some(([end, dur]) => sm.at <= end && sm.at >= end - dur));
+		console.log('top self-time overall:', JSON.stringify(tally(samples)));
+		console.log('top self-time during >60ms frames:', JSON.stringify(tally(inLong)));
+		console.log('worst frames (s after buy, ms):', JSON.stringify(long.sort((a, b) => b[1] - a[1]).slice(0, 15).map(([end, dur]) => [((end - profStartPerf) / 1000).toFixed(1), Math.round(dur)])));
 	}
 	const st = await lgs(`/lgs/sessions/${s.sessionID}`);
 	console.log('entry clips downloaded:', JSON.stringify(clipDone));

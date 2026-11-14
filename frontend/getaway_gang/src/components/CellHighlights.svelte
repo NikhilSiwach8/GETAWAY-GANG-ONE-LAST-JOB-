@@ -10,6 +10,7 @@
 </script>
 
 <script lang="ts">
+	import { presentTurbo } from '../game/turbo';
 	/** Glowing frames (UI-CELL-GLOW, tinted in the crew's colour) on the cells a feature touched. */
 	import { Sprite } from 'pixi-svelte';
 	import { stateBet } from 'state-shared';
@@ -27,7 +28,7 @@
 			// Remove by id: $state wraps stored objects in proxies, so identity comparison never matches.
 			const id = nextId++;
 			active = [...active, { id, positions: e.positions, color: e.color }];
-			await new Promise((r) => setTimeout(r, (e.ms ?? 700) * (stateBet.isTurbo ? 0.4 : 1)));
+			await new Promise((r) => setTimeout(r, (e.ms ?? 700) * (presentTurbo() ? 0.4 : 1)));
 			active = active.filter((a) => a.id !== id);
 		},
 	});

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { presentTurbo } from '../game/turbo';
 	import type { Snippet } from 'svelte';
 
 	import { onDestroy } from 'svelte';
@@ -22,7 +23,7 @@
 		const at = boardFx.jolt;
 		if (!at) return;
 		cancelAnimationFrame(raf);
-		const amp = stateBet.isTurbo ? 2 : 4.5;
+		const amp = presentTurbo() ? 2 : 4.5;
 		const step = (now: number) => {
 			const t = now - at;
 			jy = amp * Math.exp(-t / 70) * Math.sin(t / 22);
