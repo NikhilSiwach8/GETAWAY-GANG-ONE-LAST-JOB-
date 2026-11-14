@@ -106,10 +106,13 @@
 		const secs = (COUNT_S[winLevelData.alias] ?? 2) * (stateBet.isTurbo ? 0.5 : 1);
 		const tl = new Timeline('total-count').tween(0.15, secs, 0, amount, 'cubicOut', (v) => (countValue = v));
 		countTl = tl;
+		context.eventEmitter.broadcast({ type: 'soundLoop', name: 'sfx_count_loop' });
 		play(tl).done.then(() => {
 			countValue = amount;
 			counting = false;
 			countDone = true;
+			context.eventEmitter.broadcast({ type: 'soundStop', name: 'sfx_count_loop' });
+			context.eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_count_land' });
 		});
 	});
 	const finishCount = () => countTl?.finish();
@@ -137,7 +140,10 @@
 			countDone = false;
 			show = true;
 		},
-		freeSpinOutroHide: async () => (show = false),
+		freeSpinOutroHide: async () => {
+			show = false;
+			context.eventEmitter.broadcast({ type: 'soundStop', name: 'sfx_count_loop' }); // never leave the tick running
+		},
 		freeSpinOutroCountUp: async (emitterEvent) => {
 			amount = emitterEvent.amount;
 			winLevelData = emitterEvent.winLevelData;

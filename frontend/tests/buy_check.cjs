@@ -14,6 +14,16 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	// UA=safari: Safari user agent (no transparent WebM: only the opaque clips play)
 	const userAgent = process.env.UA === 'safari' ? 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Safari/605.1.15' : undefined;
 	const page = await browser.newPage({ viewport: { width: 1422, height: 800 }, ignoreHTTPSErrors: true, userAgent });
+	// AUDIO=1: record every sound the game starts (Web Audio buffer offset -> sprite name, mapped at the end)
+	if (process.env.AUDIO)
+		await page.addInitScript(() => {
+			window.__aud = [];
+			const start = AudioBufferSourceNode.prototype.start;
+			AudioBufferSourceNode.prototype.start = function (when, offset, duration) {
+				window.__aud.push({ offset: offset ?? 0, loop: this.loop, t: performance.now() });
+				return start.apply(this, arguments);
+			};
+		});
 	if (process.env.NOCLIPS) await page.addInitScript(() => { HTMLMediaElement.prototype.canPlayType = () => ''; });
 	const errors = [];
 	if (process.env.THROTTLE) {
@@ -66,6 +76,18 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	}
 	const st = await lgs(`/lgs/sessions/${s.sessionID}`);
 	console.log('entry clips downloaded:', JSON.stringify(clipDone));
+	if (process.env.AUDIO) {
+		const sprite = require(path.resolve(__dirname, '../getaway_gang/static/assets/audio/sounds.json')).sprite;
+		const byStart = Object.entries(sprite).map(([n, [ms, dur]]) => ({ n, s: ms / 1000, e: (ms + dur) / 1000 }));
+		const plays = await page.evaluate(() => window.__aud);
+		const counts = {};
+		for (const p of plays) {
+			const hit = byStart.find((x) => p.offset >= x.s - 0.02 && p.offset < x.e);
+			const k = hit ? hit.n : `?${p.offset.toFixed(2)}`;
+			counts[k] = (counts[k] ?? 0) + 1;
+		}
+		console.log('sounds played:', JSON.stringify(counts));
+	}
 	console.log(JSON.stringify({ mode: st.lastBet?.mode, cost: st.lastBet?.cost, payoutMultiplier: st.lastBet?.payoutMultiplier, settled: !st.activeBet, seconds: Math.round((Date.now() - t0) / 1000), errors }));
 	await browser.close();
 })();

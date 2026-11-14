@@ -10,6 +10,7 @@ import { stateBet } from 'state-shared';
 import { CLIP_URLS, OPAQUE_CLIPS } from './clipUrls';
 import { allEntryClips, isPortrait } from './bonusEntry';
 import { allTotalClips } from './bonusTotal';
+import { cue } from './audioCues';
 
 const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent;
 const isSafari = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(ua) || /iPad|iPhone|iPod/.test(ua);
@@ -306,6 +307,7 @@ export const playClip = async (id: string, readyMs = 1500): Promise<boolean> => 
 	heldBg.forEach((c) => c.video.pause());
 	const slot: LayerSlot = { key: layerKey++, id, texture: clip.texture, fullFrame: FULL_FRAME.has(id) };
 	clipLayer.current = slot;
+	cue(id); // the feature's sound starts with its picture
 	const skipped = new Promise<boolean>((resolve) => {
 		clipLayer.skip = () => {
 			clip.video.pause();
@@ -384,6 +386,7 @@ export const playCellFx = (id: string, cells: { reel: number; row: number }[]): 
 	if (!clip) return Promise.resolve(false);
 	const entry = { id, key: cellKey++, cells };
 	cellFx.list = [...cellFx.list, entry];
+	cue(id);
 	return playVideo(clip).then((ok) => {
 		cellFx.list = cellFx.list.filter((e) => e.key !== entry.key);
 		return ok;

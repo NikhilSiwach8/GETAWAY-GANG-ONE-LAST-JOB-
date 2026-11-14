@@ -20,6 +20,8 @@ import {
 	SCATTER_LAND_SOUND_MAP,
 } from './constants';
 
+const REEL_STOP_SOUNDS = ['sfx_reel_stop_1', 'sfx_reel_stop_2', 'sfx_reel_stop_3', 'sfx_reel_stop_4', 'sfx_reel_stop_5'] as const;
+
 const onSymbolLand = ({ rawSymbol }: { rawSymbol: RawSymbol }) => {
 	if (rawSymbol.name === 'S') {
 		eventEmitter.broadcast({ type: 'soundScatterCounterIncrease' });
@@ -47,7 +49,7 @@ const board = _.range(BOARD_DIMENSIONS.x).map((reelIndex) => {
 			boardFx.jolt = performance.now(); // the board takes a small hit as each reel stops
 			eventEmitter.broadcast({
 				type: 'soundOnce',
-				name: 'sfx_reel_stop_1',
+				name: REEL_STOP_SOUNDS[reelIndex % REEL_STOP_SOUNDS.length], // each reel its own clunk
 				forcePlay: !stateBet.isTurbo,
 			});
 		},

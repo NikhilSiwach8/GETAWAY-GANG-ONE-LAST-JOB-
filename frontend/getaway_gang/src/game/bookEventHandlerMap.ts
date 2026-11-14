@@ -16,6 +16,7 @@ import { presentAmount, presentWins, settle } from './wins/winDirector.svelte';
 import { entryBonus, entryClips, isPortrait } from './bonusEntry';
 import { totalClips } from './bonusTotal';
 import { loadPoster } from './posters';
+import { cue } from './audioCues';
 import type { BookEvent, BookEventOfType, BookEventContext } from './typesBookEvent';
 import type { Position } from './types';
 
@@ -54,8 +55,10 @@ const animateSymbols = async ({ positions }: { positions: Position[] }) => {
 
 // ---------------------------------------------------------------- GETAWAY GANG presentation helpers
 // Every board change below is copied from the book event; the frontend never decides an outcome.
-const banner = (title: string, color: number, subtitle?: string, assetId?: string, ms?: number, crew?: CrewKey[], level?: number) =>
-	eventEmitter.broadcastAsync({ type: 'featureBanner', title, color, subtitle, assetId, ms, crew, level });
+const banner = (title: string, color: number, subtitle?: string, assetId?: string, ms?: number, crew?: CrewKey[], level?: number) => {
+	cue(assetId); // same sound as the clip it stands in for (skipped if that clip just played it)
+	return eventEmitter.broadcastAsync({ type: 'featureBanner', title, color, subtitle, assetId, ms, crew, level });
+};
 /** Ability card (fallback when the ANIM-*-ABILITY-FX clip cannot play): character, ability name, level. */
 const abilityBanner = (c: CrewKey, level: number, subtitle: string) =>
 	banner(CREW_INFO[c].ability, CREW_INFO[c].color, subtitle, `ANIM-${CREW_ID[c]}-ABILITY`, 1700, [c], level);
@@ -89,7 +92,10 @@ const clipOr = async (id: string, fallback: () => Promise<unknown>) => {
 /** Cell transformation clip; falls back to the coloured outline. */
 const cellFxOr = async (id: string, cells: Position[], color: number, ms = 500) => {
 	if (!cells.length) return;
-	if (!(await playCellFx(id, cells))) await highlight(cells, color, ms);
+	if (!(await playCellFx(id, cells))) {
+		cue(id);
+		await highlight(cells, color, ms);
+	}
 };
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 /**
@@ -266,7 +272,7 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 		// The bonus entry card (ENTRY-<BONUS> clip) already played on freeSpinTrigger.
 	},
 	crewLanded: async (bookEvent: BookEventOfType<'crewLanded'>) => {
-		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_multiplier_landing' });
+		cue('FX-CREW-CHAOS'); // the crew hit sounds at once, before the clip has loaded
 		const names = bookEvent.crew.map((c) => CREW_INFO[c.character].name).join(' + ');
 		crewThisRound = true;
 		mascotDo('ABILITY', CREW_ID[bookEvent.crew[0].character]);
@@ -285,6 +291,7 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 			// outline both lanes, and trade them while the outline is up
 			const glow = highlight(lanes, PALETTE.roxy, 520);
 			await wait(160);
+			eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_lane_swap' });
 			swapReels(swap.from, swap.to);
 			await glow;
 		}
@@ -337,6 +344,7 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 			const swap = bookEvent.swap;
 			const glow = highlight([1, 2, 3, 4].flatMap((row) => [{ reel: swap.from, row }, { reel: swap.to, row }]), color, 520);
 			await wait(160);
+			eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_lane_swap' });
 			swapReels(swap.from, swap.to);
 			await glow;
 		}

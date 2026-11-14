@@ -9,6 +9,7 @@
 	import { stateBet } from 'state-shared';
 	import { getContext } from '../game/context';
 	import { getClip, hasClip, playVideo, retain, unretain, videoScale, whenReady } from '../game/clips.svelte';
+	import { cue } from '../game/audioCues';
 
 	type Props = { oncovered?: () => void; onfinished: () => void };
 	const props: Props = $props();
@@ -46,6 +47,7 @@
 	};
 
 	onMount(async () => {
+		cue('FX-TRANSITION'); // the smoke-wall whoosh (with the clip or its fallback)
 		if (!clip || !(await whenReady(clip.video, 1500))) return fallback();
 		showClip = true;
 		const watch = () => {
