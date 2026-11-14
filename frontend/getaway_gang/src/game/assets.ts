@@ -12,11 +12,6 @@ export default {
 		type: 'font',
 		src: new URL('../../assets/fonts/ggSilver/ggSilver.xml', import.meta.url).href,
 	},
-	// win shower particles: FX-COINS (coin + banknote frames)
-	coins: {
-		type: 'spriteSheet',
-		src: new URL('../../assets/fx/coins.json', import.meta.url).href,
-	},
 	sound: {
 		type: 'audio',
 		src: new URL('../../assets/audio/sounds.json', import.meta.url).href,

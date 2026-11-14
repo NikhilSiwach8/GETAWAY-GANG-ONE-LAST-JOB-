@@ -8,7 +8,6 @@
 import * as PIXI from 'pixi.js';
 import { stateBet } from 'state-shared';
 import { CLIP_URLS, OPAQUE_CLIPS } from './clipUrls';
-import { BG_VIDEO_LOOPS } from './env/config';
 import { allEntryClips, isPortrait } from './bonusEntry';
 import { allTotalClips } from './bonusTotal';
 
@@ -338,7 +337,6 @@ export const prefetchClips = () => {
 	pinClips(bonusCards);
 	const first = [
 		'FX-TRANSITION',
-		...(BG_VIDEO_LOOPS ? ['BG-MAIN-LOOP', 'BG-HEIST-LOOP', 'BG-HIDDEN-LOOP'] : []),
 		'FX-ANTICIPATION',
 		// bonus entry and Total Win cards for this screen's orientation (about 45 MB together): downloaded first
 		// and pinned, so they are always in memory when a bonus starts or ends

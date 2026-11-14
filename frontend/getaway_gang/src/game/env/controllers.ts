@@ -5,16 +5,14 @@
  *
  *   AmbientLights   breathing / flickering glows (lamps, chandeliers, vault light, a slow light wash)
  *   Beams           light cones that sweep (searchlights) or spin (alarm beacons), or strobe (police bars)
- *   Rotor           a round part of an existing texture turned in eased steps (vault wheel, dials)
  *   Glints          brief four-point sparkles on metal and gems
- *   Sheen           a moving band that brightens the art itself (reflections that follow the material)
  *   Particles       dust motes, rain or embers in one ParticleContainer
  *   Flash           a timed full-area light change (lightning, siren wash, vault flare)
  *   EventScheduler  fires occasional one-off environment events at random intervals
  */
 import * as PIXI from 'pixi.js';
 import type { EnvController, EnvFrame } from './director';
-import { bandTexture, beamTexture, discTexture, dotTexture, glintTexture, streakTexture } from './textures';
+import { beamTexture, dotTexture, glintTexture, streakTexture } from './textures';
 
 const TAU = Math.PI * 2;
 const rnd = (a: number, b: number) => a + Math.random() * (b - a);
@@ -155,27 +153,6 @@ export class Beams implements EnvController {
 }
 
 // ------------------------------------------------------------------------------------------------ rotor
-export type RotorSpec = {
-	/** centre of the wheel in the source texture (source pixels) */
-	cx: number;
-	cy: number;
-	/** radius of the turning part (spokes), kept inside the ring so the ring and its highlight never turn */
-	r: number;
-	/** radius of the whole wheel: redrawn round and static under the spokes (covers a stretched painted wheel) */
-	outer?: number;
-	/** radius of the centre hub: redrawn static on top, so its highlight stays where the light is */
-	hub?: number;
-	/** position in the parent (defaults to cx, cy) */
-	x?: number;
-	y?: number;
-	/** one turn step (radians); use the part's symmetry (60 deg for a 6-spoke wheel) so it rests on the art */
-	step: number;
-	/** seconds between turns, and the duration of one turn */
-	every: Range;
-	duration: number;
-	/** steps per turn, picked at random; negative turns back */
-	steps?: number[];
-};
 
 /**
  * A round part of an existing texture turned in eased steps (a vault wheel). Draw it in a container with an
@@ -185,60 +162,6 @@ export type RotorSpec = {
  *   hub    the centre, static on top (optional, `hub`)
  * so the painted highlights on the ring and hub stay put while the spokes turn.
  */
-export class Rotor implements EnvController {
-	private s: PIXI.Sprite;
-	private textures: PIXI.Texture[] = [];
-	private wait: number;
-	private from = 0;
-	private to = 0;
-	private k = 1;
-
-	constructor(
-		parent: PIXI.Container,
-		source: PIXI.Texture,
-		private spec: RotorSpec,
-	) {
-		const x = spec.x ?? spec.cx;
-		const y = spec.y ?? spec.cy;
-		// a disc of the art (same GPU texture, no copy), masked round with a soft edge
-		const disc = (r: number) => {
-			const tex = new PIXI.Texture({ source: source.source, frame: new PIXI.Rectangle(spec.cx - r, spec.cy - r, r * 2, r * 2) });
-			this.textures.push(tex);
-			const sp = new PIXI.Sprite({ texture: tex, anchor: 0.5 });
-			sp.position.set(x, y);
-			const m = new PIXI.Sprite({ texture: discTexture(), anchor: 0.5 });
-			m.position.set(x, y);
-			m.width = m.height = r * 2;
-			sp.mask = m;
-			parent.addChild(m, sp);
-			return sp;
-		};
-		if (spec.outer) disc(spec.outer);
-		this.s = disc(spec.r);
-		if (spec.hub) disc(spec.hub);
-		this.wait = rnd(spec.every[0] * 0.4, spec.every[1] * 0.6);
-	}
-
-	update({ dt }: EnvFrame) {
-		if (this.k < 1) {
-			this.k = Math.min(1, this.k + dt / this.spec.duration);
-			// a heavy valve: eases in, eases out, no wobble
-			this.s.rotation = this.from + (this.to - this.from) * easeInOut(this.k);
-			return;
-		}
-		this.wait -= dt;
-		if (this.wait > 0) return;
-		const steps = this.spec.steps ?? [1, 1, 2, -1];
-		this.from = this.s.rotation;
-		this.to = this.from + this.spec.step * steps[Math.floor(Math.random() * steps.length)];
-		this.k = 0;
-		this.wait = rnd(...this.spec.every);
-	}
-
-	destroy() {
-		for (const t of this.textures) t.destroy(false); // only the frame objects; the shared source stays
-	}
-}
 
 // ------------------------------------------------------------------------------------------------ glints
 export type GlintSpec = {
@@ -310,91 +233,11 @@ export class Glints implements EnvController {
 }
 
 // ------------------------------------------------------------------------------------------------ sheen
-export type SheenSpec = {
-	/** region of the art that reflects (art px) */
-	x: number;
-	y: number;
-	w: number;
-	h: number;
-	/** band direction (radians, 0 = vertical band moving left to right) */
-	angle?: number;
-	/** band width as a fraction of the region diagonal */
-	band?: number;
-	alpha: number;
-	/** 'sweep': one pass every few seconds. 'drift': a slow continuous back-and-forth (wet floors) */
-	mode?: 'sweep' | 'drift';
-	every?: Range;
-	duration?: number;
-	tint?: number;
-};
 
 /**
  * The region of the art itself, drawn again additively and revealed only under a soft moving band: bright
  * materials (gold, chrome, wet stone) light up, dark areas stay dark, so the reflection follows the art.
  */
-export class Sheen implements EnvController {
-	private s: PIXI.Sprite;
-	private band: PIXI.Sprite;
-	private holder: PIXI.Container;
-	private wait: number;
-	private k = 1;
-	private diag: number;
-
-	constructor(
-		parent: PIXI.Container,
-		art: PIXI.Texture,
-		private spec: SheenSpec,
-	) {
-		const tex = new PIXI.Texture({
-			source: art.source,
-			frame: new PIXI.Rectangle(spec.x, spec.y, spec.w, spec.h),
-		});
-		this.s = new PIXI.Sprite({
-			texture: tex,
-			blendMode: 'add',
-			tint: spec.tint ?? 0xffffff,
-		});
-		this.s.position.set(spec.x, spec.y);
-		this.diag = Math.hypot(spec.w, spec.h);
-		this.holder = new PIXI.Container();
-		this.holder.position.set(spec.x + spec.w / 2, spec.y + spec.h / 2);
-		this.holder.rotation = spec.angle ?? 0.35;
-		this.band = new PIXI.Sprite({ texture: bandTexture(), anchor: 0.5 });
-		this.band.width = this.diag * (spec.band ?? 0.35);
-		this.band.height = this.diag * 1.2;
-		this.holder.addChild(this.band);
-		this.s.mask = this.band;
-		parent.addChild(this.holder, this.s);
-		this.wait = rnd(...(spec.every ?? [4, 8])) * 0.5;
-		this.s.visible = spec.mode === 'drift';
-	}
-
-	update({ dt, t, quality }: EnvFrame) {
-		const span = this.diag * 0.5 + this.band.width;
-		if (this.spec.mode === 'drift') {
-			this.band.x = Math.sin((t * TAU) / (this.spec.duration ?? 14)) * span * 0.6;
-			this.s.alpha = this.spec.alpha * (0.75 + 0.25 * Math.sin(t * 0.9)) * (0.6 + 0.4 * quality.motion);
-			return;
-		}
-		if (this.k < 1) {
-			this.k = Math.min(1, this.k + dt / (this.spec.duration ?? 1.4));
-			this.band.x = -span + 2 * span * easeInOut(this.k);
-			this.s.alpha = this.spec.alpha * Math.sin(this.k * Math.PI);
-			if (this.k >= 1) this.s.visible = false;
-			return;
-		}
-		this.wait -= dt;
-		if (this.wait <= 0) {
-			this.k = 0;
-			this.s.visible = true;
-			this.wait = rnd(...(this.spec.every ?? [4, 8]));
-		}
-	}
-
-	destroy() {
-		this.s.texture.destroy(false);
-	}
-}
 
 // ------------------------------------------------------------------------------------------------ particles
 export type ParticleSpec = {

@@ -4,7 +4,7 @@
 	import { EnablePixiExtension } from 'components-pixi';
 	import { EnableHotkey } from 'components-shared';
 	import { MainContainer } from 'components-layout';
-	import { App, Sprite, getContextApp } from 'pixi-svelte';
+	import { App, Container, Sprite, getContextApp } from 'pixi-svelte';
 
 	import { UiGameName } from 'components-ui-pixi';
 	import GameUI from './GameUI.svelte';
@@ -55,6 +55,22 @@
 		if (r.resolution > cap) r.resolution = cap;
 	});
 
+	// while a bonus entry / Total Win card fully covers the screen (after its 0.5 s fade-in), the scene, board,
+	// HUD and console behind it are not drawn at all: the card's video gets the whole frame budget
+	let covered = $state(false);
+	let coverTimer: ReturnType<typeof setTimeout> | undefined;
+	const cover = (on: boolean) => {
+		clearTimeout(coverTimer);
+		if (on) coverTimer = setTimeout(() => (covered = true), 700);
+		else covered = false;
+	};
+	context.eventEmitter.subscribeOnMount({
+		freeSpinIntroShow: () => cover(true),
+		freeSpinIntroHide: () => cover(false),
+		freeSpinOutroShow: () => cover(true),
+		freeSpinOutroHide: () => cover(false),
+	});
+
 	onMount(() => {
 		context.stateLayout.showLoadingScreen = true;
 		prefetchClips();
@@ -68,6 +84,8 @@
 	<EnableGameActor />
 	<EnablePixiExtension />
 
+	<!-- everything behind the full-screen bonus cards: not drawn while a card covers the whole screen -->
+	<Container visible={!covered}>
 	<Background />
 
 	{#if context.stateLayout.showLoadingScreen}
@@ -106,6 +124,9 @@
 				<Sprite key="UI-LOGO" anchor={{ x: 1, y: 0 }} width={240} height={120} />
 			{/snippet}
 		</GameUI>
+	{/if}
+	</Container>
+	{#if !context.stateLayout.showLoadingScreen}
 		<Win />
 		<FreeSpinIntro />
 		<FreeSpinOutro />

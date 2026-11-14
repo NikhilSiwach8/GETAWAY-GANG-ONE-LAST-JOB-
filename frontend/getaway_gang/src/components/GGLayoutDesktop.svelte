@@ -1,7 +1,7 @@
 <!--
   GETAWAY GANG bet console for desktop, landscape phones and tablets (1920×1080 standard space).
-  One steel rail across the bottom (UI-CONSOLE, cut from the reel frame's own bottom edge) carries every
-  control: settings + Buy Bonus | BALANCE | autoplay · SPIN · turbo | WIN | BET plate with its −/+ ends.
+  Controls in the corners beside the reels (no rail): settings, Buy Bonus, ANTE, BALANCE on the left; SPIN
+  with autoplay / turbo stacked beside it and BET with −/+ on the right; WIN under the reels.
   Same snippets and behaviour as the web-sdk LayoutDesktop; only the arrangement and the art differ.
 -->
 <script lang="ts">

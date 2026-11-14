@@ -32,7 +32,7 @@
 	eventMode="static"
 	cursor={disabled ? 'not-allowed' : 'pointer'}
 	onpointerup={onpress}
-	hitArea={new Rectangle(-(props.width ?? 400) * 0.23, -(props.width ?? 400) * 0.1, (props.width ?? 400) * 0.46, (props.width ?? 400) * 0.25)}
+	hitArea={new Rectangle(-(props.width ?? 300) * 0.4, -(props.width ?? 300) * 0.14, (props.width ?? 300) * 0.8, (props.width ?? 300) * 0.3)}
 >
 	<GGLabel kind="BET" {value} width={props.width} plain={props.plain} />
 </Container>

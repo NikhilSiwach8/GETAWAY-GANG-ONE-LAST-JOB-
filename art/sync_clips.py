@@ -15,6 +15,8 @@ SKIP = {"UI-BUY-BONUS-ANIM", "WIN-BIG", "WIN-SUPER", "WIN-MEGA", "WIN-EPIC"}  # 
 SKIP |= {f"SCR-{b}-INTRO{s}" for b in ("HEIST", "ESCAPE", "HIDDEN") for s in ("", "-LOOP")}
 # bonus end: the layered TOTAL-<BONUS>[-LOOP][-PORTRAIT] cards replace the 8 s story outros
 SKIP |= {f"SCR-{b}-OUTRO" for b in ("HEIST", "ESCAPE", "HIDDEN")}
+# the live background replaced the pre-rendered background loops
+SKIP |= {"BG-MAIN-LOOP", "BG-HEIST-LOOP", "BG-ESCAPE-LOOP", "BG-HIDDEN-LOOP"}
 def is_char_clip(i):
     """ANIM-<CREW>-<ACTION> character videos: the crew are animated live now (LivePose); -ABILITY-FX stays."""
     return i.startswith("ANIM-") and not i.endswith("-FX")

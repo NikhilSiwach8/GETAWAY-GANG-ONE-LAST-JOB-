@@ -22,6 +22,8 @@ const lgs = (p, init) => fetch(`http://localhost:7770${p}`, init).then((r) => r.
 	page.on('pageerror', (e) => errors.push(e.message));
 	page.on('console', (m) => m.text().startsWith('[clips]') && console.log('console', m.text().slice(0, 200)));
 	page.on('request', (r) => r.url().includes('/clips/') && clips.push(r.url().split('/').pop()));
+	// FAIL=<clip files, comma separated>: make those clips unavailable (tests the fallbacks)
+	if (process.env.FAIL) await page.route((u) => process.env.FAIL.split(',').some((f) => u.pathname.endsWith('/' + f)), (route) => route.abort());
 	await page.goto(`${frontendUrl}/?${s.launchQuery.replace('localhost%3A7770', 'localhost%3A7771')}`);
 	await page.waitForTimeout(25000);
 	await page.mouse.click(vp[0] / 2, vp[1] / 2);

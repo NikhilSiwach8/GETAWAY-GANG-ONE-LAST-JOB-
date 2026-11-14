@@ -1,8 +1,8 @@
 <!--
   GETAWAY GANG bet console for portrait phones (1080×1920 standard space). Same snippets, drawer and
-  fold behaviour as the web-sdk LayoutPortrait; arranged on the steel rail (UI-CONSOLE-PORTRAIT):
-  bottom: BET plate with its −/+ ends (free-spin counter in the bonus) · above: BALANCE | WIN ·
-  top row: settings · autoplay · SPIN · turbo · Buy Bonus.
+  fold behaviour as the web-sdk LayoutPortrait; controls in corner clusters (no rail):
+  left: settings, Buy Bonus, ANTE · right: SPIN with autoplay / turbo · bottom row: BALANCE | WIN | BET −/+
+  (the buttons fold away in the bonus; the free-spin counter shows in the middle).
 -->
 <script lang="ts">
 	import { Tween } from 'svelte/motion';

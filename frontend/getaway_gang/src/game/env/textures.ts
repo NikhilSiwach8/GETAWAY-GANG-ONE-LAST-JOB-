@@ -87,29 +87,6 @@ export const glintTexture = () =>
 		}
 	});
 
-/** Soft horizontal band, opaque in the middle (sheen / reflection reveal mask). */
-export const bandTexture = () =>
-	make('band', 128, 16, (g, w, h) => {
-		const l = g.createLinearGradient(0, 0, w, 0);
-		l.addColorStop(0, 'rgba(255,255,255,0)');
-		l.addColorStop(0.5, 'rgba(255,255,255,1)');
-		l.addColorStop(1, 'rgba(255,255,255,0)');
-		g.fillStyle = l;
-		g.fillRect(0, 0, w, h);
-	});
-
-/** Round mask with a 2 px soft edge (machinery rotors). */
-export const discTexture = () =>
-	make('disc', 256, 256, (g, w) => {
-		const r = g.createRadialGradient(w / 2, w / 2, w / 2 - 3, w / 2, w / 2, w / 2);
-		r.addColorStop(0, 'rgba(255,255,255,1)');
-		r.addColorStop(1, 'rgba(255,255,255,0)');
-		g.fillStyle = r;
-		g.beginPath();
-		g.arc(w / 2, w / 2, w / 2, 0, Math.PI * 2);
-		g.fill();
-	});
-
 /** Soft fog band (tiles horizontally): layered blurred blobs, brighter in the middle rows. */
 export const fogTexture = () =>
 	make('fog', 512, 128, (g, w, h) => {

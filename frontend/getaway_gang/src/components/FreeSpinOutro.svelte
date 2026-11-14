@@ -17,10 +17,11 @@
 	 * Without clips the bonus background with the same layout is drawn instead.
 	 */
 	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
-	import { FadeContainer, WinCountUpProvider, ResponsiveBitmapText } from 'components-pixi';
+	import { FadeContainer, ResponsiveBitmapText } from 'components-pixi';
+	import { stateBet } from 'state-shared';
+	import { Timeline, play } from '../game/wins/timeline';
 	import { bookEventAmountToCurrencyString } from 'utils-shared/amount';
 	import { waitForResolve } from 'utils-shared/wait';
-	import { OnMount } from 'components-shared';
 
 	import { getContext } from '../game/context';
 	import PressToContinue from './PressToContinue.svelte';
@@ -40,7 +41,6 @@
 	let amount = $state(0);
 	let winLevelData = $state<WinLevelData>();
 	let oncomplete = $state(() => {});
-	let onCountUpComplete = $state(() => {});
 	let bonus = $state<'heist' | 'escape' | 'hidden'>('heist');
 	let portrait = $state(false);
 
@@ -84,7 +84,35 @@
 		}, POSTER_MS);
 		return () => clearTimeout(id);
 	});
-	const ready = $derived(!useClip || posterMode || (clipShown && handedOver));
+	// the screen never waits on the clip for long: 3 s after it opens the card is treated as ready regardless
+	let forceReady = $state(false);
+	$effect(() => {
+		if (!show || !winLevelData) return;
+		const id = setTimeout(() => (forceReady = true), 3000);
+		return () => clearTimeout(id);
+	});
+	const ready = $derived(!useClip || posterMode || forceReady || (clipShown && handedOver));
+
+	// ---- the count: an eased count of the event's amount, 2-5.5 s by tier (half in fast play); it always lands
+	// exactly on the amount. Press: first finishes the count, then closes the screen.
+	const COUNT_S: Record<string, number> = { big: 3, superwin: 4, mega: 4.5, epic: 5, max: 5.5 };
+	let countValue = $state(0);
+	let counting = $state(false);
+	let countDone = $state(false);
+	let countTl: Timeline | null = null;
+	$effect(() => {
+		if (!ready || !winLevelData || counting || countDone) return;
+		counting = true;
+		const secs = (COUNT_S[winLevelData.alias] ?? 2) * (stateBet.isTurbo ? 0.5 : 1);
+		const tl = new Timeline('total-count').tween(0.15, secs, 0, amount, 'cubicOut', (v) => (countValue = v));
+		countTl = tl;
+		play(tl).done.then(() => {
+			countValue = amount;
+			counting = false;
+			countDone = true;
+		});
+	});
+	const finishCount = () => countTl?.finish();
 	// snapshot of the progression to show (resetHud runs only after this screen closes)
 	const lootPoints = $derived(context.stateGame.hud.lootPoints);
 	const levels = $derived(context.stateGame.hud.levels);
@@ -103,6 +131,10 @@
 			loopShown = false;
 			handedOver = false;
 			clipFailed = false;
+			forceReady = false;
+			countValue = 0;
+			counting = false;
+			countDone = false;
 			show = true;
 		},
 		freeSpinOutroHide: async () => (show = false),
@@ -116,12 +148,6 @@
 
 <FadeContainer {show} zIndex={30}>
 	{#if winLevelData}
-		{@const duration = Math.max(2000, winLevelData.presentDuration)}
-		<WinCountUpProvider {amount} {duration} oncomplete={() => onCountUpComplete()}>
-			{#snippet children({ countUpAmount, startCountUp, finishCountUp, countUpCompleted })}
-				{#if ready}
-					<OnMount onmount={() => setTimeout(() => startCountUp(), useClip ? 150 : 300)} />
-				{/if}
 
 				<Rectangle {...sizes} backgroundColor={0x05070f} />
 				{#if useClip && poster && !clipShown}
@@ -194,7 +220,7 @@
 				<!-- everything below is placed in the clip's own pixels -->
 				<Container x={cover.x - (L.width / 2) * cover.s} y={cover.y - (L.height / 2) * cover.s} scale={cover.s} zIndex={5} visible={ready}>
 					<Container x={L.plaque.x} y={L.plaque.y + 8}>
-						<ResponsiveBitmapText anchor={0.5} maxWidth={L.plaque.w * 0.86} text={bookEventAmountToCurrencyString(countUpAmount)} style={{ fontFamily: 'ggGold', fontSize: L.plaque.h * 0.72 }} />
+						<ResponsiveBitmapText anchor={0.5} maxWidth={L.plaque.w * 0.86} text={bookEventAmountToCurrencyString(countValue)} style={{ fontFamily: 'ggGold', fontSize: L.plaque.h * 0.72 }} />
 					</Container>
 
 					{#if bonus === 'heist'}
@@ -234,13 +260,11 @@
 					{/if}
 				</Container>
 
-				<CoinShower emit={ready && !countUpCompleted} levelAlias={winLevelData?.alias ?? 'big'} />
+				<CoinShower emit={ready && !countDone} levelAlias={winLevelData?.alias ?? 'big'} />
 
 				<!-- the clip has no prompt baked in: the game's TAP / PRESS prompt appears once the card is built -->
 				<Container zIndex={10}>
-					<PressToContinue hideArt={!ready} onpress={() => (countUpCompleted ? oncomplete() : finishCountUp())} />
+					<PressToContinue hideArt={!ready} onpress={() => (countDone ? oncomplete() : finishCount())} />
 				</Container>
-			{/snippet}
-		</WinCountUpProvider>
 	{/if}
 </FadeContainer>
