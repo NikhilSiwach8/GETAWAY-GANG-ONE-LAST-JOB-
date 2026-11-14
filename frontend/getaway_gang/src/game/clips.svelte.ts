@@ -296,6 +296,7 @@ export const LAYER_FADE_OUT_MS = 260;
  */
 export const playClip = async (id: string, readyMs = 1500): Promise<boolean> => {
 	if (!hasClip(id)) return false;
+	const asked = performance.now();
 	// not in memory (never fetched, or released to save memory): give it a moment to download, else the
 	// caller shows its title card rather than pausing
 	if (!isDownloaded(id) && !(await ensureClip(id, 2500))) return false;
@@ -307,6 +308,8 @@ export const playClip = async (id: string, readyMs = 1500): Promise<boolean> => 
 	heldBg.forEach((c) => c.video.pause());
 	const slot: LayerSlot = { key: layerKey++, id, texture: clip.texture, fullFrame: FULL_FRAME.has(id) };
 	clipLayer.current = slot;
+	const waited = performance.now() - asked;
+	if (waited > 400) console.warn(`[clips] ${id}: started after ${Math.round(waited)} ms`);
 	cue(id); // the feature's sound starts with its picture
 	const skipped = new Promise<boolean>((resolve) => {
 		clipLayer.skip = () => {
@@ -332,22 +335,43 @@ export const playClip = async (id: string, readyMs = 1500): Promise<boolean> => 
 };
 
 /**
+ * Pre-start the player of a full-screen clip that is about to play (e.g. a crew ability right after the
+ * crew lands), so its decoder has the first frame ready and playClip starts at once instead of warming up
+ * on the spot. The player is held (not evicted) for `holdMs`.
+ */
+export const warmClip = (id: string, holdMs = 15000) => {
+	if (!hasClip(id)) return;
+	const clip = getClip(id, 'layer');
+	if (!clip) return;
+	retain(clip);
+	if (clip.video.readyState < 2) clip.video.load();
+	setTimeout(() => unretain(clip), holdMs);
+};
+/** Start downloading the clips a bonus round uses (combos, re-spin, meters) while its entry card plays. */
+export const warmBonusClips = () => {
+	for (const id of ['FX-COMBO-RB', 'FX-COMBO-BT', 'FX-COMBO-TF', 'FX-COMBO-FR', 'FX-COMBO-RT', 'FX-RESPIN', 'FX-METER-STAGE',
+		'FX-LOOT-MILESTONE', 'FX-RETRIGGER', 'CIN-CLEAN-GETAWAY', 'CIN-FINAL-ESCAPE', 'CIN-PERFECTLY-BAD-PLAN'])
+		if (hasClip(id)) void download(id);
+};
+/**
  * Download clips in the background after the game loads, most frequent first, a few at a time.
  */
 export const prefetchClips = () => {
 	if (!vp9) return;
 	const symbols = ['H1', 'H2', 'H3', 'H4', 'L1', 'L2', 'L3', 'L4', 'WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'];
 	const bonusCards = [...allEntryClips(isPortrait()), ...allTotalClips(isPortrait())];
-	pinClips(bonusCards);
+	// crew abilities can fire on any spin: keep them in memory too (about 12 MB), so they never wait on a download
+	const crewFx = ['FX-CREW-CHAOS', 'ANIM-ROXY-ABILITY-FX', 'ANIM-BYTE-ABILITY-FX', 'ANIM-TANK-ABILITY-FX', 'ANIM-FUSE-ABILITY-FX'];
+	pinClips([...bonusCards, ...crewFx]);
 	const first = [
 		'FX-TRANSITION',
 		'FX-ANTICIPATION',
 		// bonus entry and Total Win cards for this screen's orientation (about 45 MB together): downloaded first
 		// and pinned, so they are always in memory when a bonus starts or ends
 		...bonusCards,
+		...crewFx,
 		...symbols.map((s) => `SYM-${s}-ANIM-WIN`),
 		...['WILD', 'SCATTER', 'ROXY', 'BYTE', 'TANK', 'FUSE'].map((s) => `SYM-${s}-ANIM-LAND`),
-		'FX-CREW-CHAOS', 'ANIM-ROXY-ABILITY-FX', 'ANIM-BYTE-ABILITY-FX', 'ANIM-TANK-ABILITY-FX', 'ANIM-FUSE-ABILITY-FX',
 		...['CLONE-IN', 'UPGRADE-IN', 'VAULT-REVEAL', 'WILD-STAMP', 'CREW-EXIT'].map((k) => `SYM-FX-${k}`),
 		...['ROXY', 'BYTE', 'TANK', 'FUSE'].flatMap((c) => ['IDLE', 'ABILITY', 'COMPLETE', 'WIN', 'LOSE'].map((a) => `ANIM-${c}-${a}`)),
 		'FX-RESPIN', 'FX-METER-STAGE', 'FX-COMBO-RB', 'FX-COMBO-BT', 'FX-COMBO-TF', 'FX-COMBO-FR', 'FX-COMBO-RT',

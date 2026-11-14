@@ -1,5 +1,7 @@
 """
-GETAWAY GANG sound effects, synthesized. Each function returns a stereo float array (N, 2).
+GETAWAY GANG sound effects. Each function returns a stereo float array (N, 2). Effects (impacts, whooshes,
+engines, coins, glitches) are synthesized; musical parts (horn chords, strings, timpani) are played by the
+same sampled band as the music (sampler.py).
 Names match the game's sound sprite (frontend game/sound.ts).
 """
 from __future__ import annotations
@@ -11,15 +13,39 @@ from synth import (SR, m, hz, rng, secs, t_axis, noise, exp_decay, adsr, lowpass
                    vibes, bell, riser, whoosh, impact, coin, place, mixdown, wrap_loop, limiter, epiano)
 
 
+# ---- sampled players for the musical parts of stingers (same band as the music; see sampler.py)
+import sampler as SM  # noqa: E402
+
+
+def _v(vel):
+    return int(np.clip(64 + 56 * vel, 1, 127))
+
+
+def _chord_brass(midis, dur, vel=1.0, swell=0.01, bright=1.2):
+    """Horn section chord: brass ensemble, trumpet on the top note, trombone an octave under the bottom."""
+    v = _v(vel)
+    L = dur + 2.0
+    x = SM.phrase(SM.P['brass'], [(0.0, n, dur, v) for n in midis], L) * 0.9
+    x += SM.phrase(SM.P['trumpet'], [(0.0, max(midis), dur, v)], L, pan=76) * 0.6
+    x += SM.phrase(SM.P['trombone'], [(0.0, min(midis) - 12 if min(midis) - 12 >= 40 else min(midis), dur, v - 8)], L, pan=50) * 0.6
+    return x * 1.6
+
+
+def timpani(vel=1.0, f=73.4, dur=2.0):
+    n = int(round(69 + 12 * np.log2(f / 440)))
+    while n < 41:
+        n += 12
+    return SM.phrase(SM.P['timpani'], [(0.0, n, min(dur, 1.5), _v(vel))], dur + 0.5) * 2.2
+
+
+def pad(midis, dur, vel=1.0, attack=0.6, bright=2600):
+    return SM.phrase(SM.P['strings'], [(0.0, n, dur, _v(vel) - 10) for n in midis], dur + 2.0) * 1.3
+
+
 def _st(x, p=0.0, wet=0.15, decay=1.2):
     """mono/stereo -> stereo with a touch of room."""
     y = reverb(pan(x, p), wet=wet, decay=decay) if wet else pan(x, p)
     return fade(y, 0.001, 0.02)
-
-
-def _chord_brass(midis, dur, vel=1.0, swell=0.01, bright=1.2):
-    return sum(pan(brass(md, dur, vel, voices=2, swell=swell, bright=bright), -0.4 + 0.8 * i / max(1, len(midis) - 1))
-               for i, md in enumerate(midis))
 
 
 # ------------------------------------------------------------------ UI
@@ -69,19 +95,16 @@ def sfx_scatter_stop(i: int):
 
 
 def sfx_anticipation():
-    """Seamless 4 s tension loop for the last reels: tremolo low strings, pulse, rising shimmer."""
+    """Seamless 4 s tension loop for the last reels: tremolo strings, timpani pulse, rising shimmer."""
     L = 4.0
-    out = mixdown(L + 2)
-    t = t_axis(L + 1)
-    strings = pad([m('D2'), m('A2'), m('D3')], L, 1.0, attack=0.02, bright=1800)
-    trem = 0.6 + 0.4 * np.sign(np.sin(2 * np.pi * 7.5 * t[: len(strings)]))
-    place(out, strings * lowpass(trem, 60), 0, 2.2)
+    out = mixdown(L + 3)
+    strings = SM.phrase(44, [(0.0, n, L, 92) for n in (m('D3'), m('A3'), m('D4'))], L + 2.5)  # GM tremolo strings
+    hi = SM.phrase(44, [(0.0, m('D5'), L * 0.5, 70), (L * 0.5, m('Eb5'), L * 0.5, 80)], L + 2.5)
+    place(out, strings * 1.4 + hi * 0.8, 0, 1.0)
     for k in range(8):
-        place(out, timpani(0.5 + 0.05 * k, hz(m('D2')), 0.5), k * 0.5, 0.35)
+        place(out, timpani(0.45 + 0.05 * k, hz(m('D2')), 0.6), k * 0.5, 0.5)
     sh = svf_sweep(rng.standard_normal(secs(L)), 2000 + 4000 * (t_axis(L) / L), q=3, mode='bp')
-    place(out, sh * 0.08, 0, 1.0, p=0.3)
-    for k in range(16):
-        place(out, hat(0.4 + 0.03 * k), k * 0.25, 0.5, p=0.4)
+    place(out, sh * 0.05, 0, 1.0, p=0.3)
     y = reverb(out, wet=0.25, decay=1.4)
     return wrap_loop(y, L)
 
@@ -425,8 +448,8 @@ def sfx_respin():
 
 def sfx_level_up():
     out = mixdown(1.4)
-    for k, n in enumerate(('A4', 'D5', 'F#5', 'A5')):
-        place(out, brass(m(n), 0.12 if k < 3 else 0.5, 0.9, voices=2, swell=0.01), k * 0.1, 0.5)
+    line = [(k * 0.1, m(n), 0.1 if k < 3 else 0.5, 104) for k, n in enumerate(('A4', 'D5', 'F#5', 'A5'))]
+    place(out, SM.phrase(SM.P['trumpet'], line, 2.4) * 1.8, 0, 1.0)
     place(out, bell(m('D6'), 1.0, 0.8), 0.3, 0.4)
     return _st(out, wet=0.3)
 

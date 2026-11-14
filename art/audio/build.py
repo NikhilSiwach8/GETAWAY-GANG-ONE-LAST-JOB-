@@ -21,7 +21,7 @@ import scipy.io.wavfile as wav
 
 sys.path.insert(0, os.path.dirname(__file__))
 from synth import SR, limiter  # noqa: E402
-import music  # noqa: E402
+import music_real as music  # noqa: E402  (the sampled-band score; music.py is the synth original)
 import sfx  # noqa: E402
 import analyze  # noqa: E402
 

@@ -10,7 +10,7 @@ import { winLevelMap, type WinLevel, type WinLevelData } from './winLevelMap';
 import { stateGame, stateGameDerived, setCell, swapReels, resetHud } from './stateGame.svelte';
 import { CREW_INFO, COMBO_INFO, METER_STAGE_REWARDS, LOOT_REWARDS, LOOT_THRESHOLDS, PALETTE, type CrewKey } from './tempArt';
 import config from './config';
-import { playClip, playCellFx, mascotDo, ensureClip } from './clips.svelte';
+import { playClip, playCellFx, mascotDo, ensureClip, warmBonusClips, warmClip } from './clips.svelte';
 import { restoreAnte } from './ante.svelte';
 import { presentAmount, presentWins, settle } from './wins/winDirector.svelte';
 import { entryBonus, entryClips, isPortrait } from './bonusEntry';
@@ -111,6 +111,36 @@ const transform = async (id: string, cells: Position[], apply: () => void, color
 	await fx;
 };
 
+// Full-screen clips each feature event plays: when a spin's reels start, the clips that spin will need are
+// warmed up (decoder started, first frame ready) while the reels turn, so they play without a pause.
+const CLIPS_FOR: Partial<Record<BookEvent['type'], (e: any) => string[]>> = {
+	crewLanded: () => ['FX-CREW-CHAOS'],
+	laneSwitch: () => ['ANIM-ROXY-ABILITY-FX'],
+	systemClone: () => ['ANIM-BYTE-ABILITY-FX'],
+	vaultBreaker: () => ['ANIM-TANK-ABILITY-FX'],
+	bigBangUpgrade: () => ['ANIM-FUSE-ABILITY-FX'],
+	crewCombo: (e) => [COMBO_CLIP[e.combo] ?? ''],
+	perfectlyBadPlan: () => ['CIN-PERFECTLY-BAD-PLAN'],
+	getawayMeter: (e) => (e.newStages as number[]).map((st) => (st === 5 ? 'CIN-CLEAN-GETAWAY' : 'FX-METER-STAGE')),
+	lootMeter: (e) => (e.rewards.length ? ['FX-LOOT-MILESTONE'] : []),
+	chaosRespinAward: (e) => ((e.reasons as { granted: number }[]).some((r) => r.granted > 0) ? ['FX-RESPIN'] : []),
+	freeSpinRetrigger: () => ['FX-RETRIGGER'],
+	finalEscape: () => ['CIN-FINAL-ESCAPE'],
+	vaultGuarantee: () => ['FX-VAULT-GUARANTEE'],
+};
+const WARM_MAX = 4; // phones have few video decoders: warm at most this many players per spin
+const warmUpcoming = (bookEvents: BookEvent[], current: BookEvent) => {
+	let from = bookEvents.indexOf(current);
+	if (from < 0) from = bookEvents.findIndex((e) => e.index === current.index);
+	if (from < 0) return;
+	const ids: string[] = [];
+	for (const e of bookEvents.slice(from + 1)) {
+		if (e.type === 'reveal') break;
+		for (const id of CLIPS_FOR[e.type]?.(e) ?? []) if (id && !ids.includes(id)) ids.push(id);
+	}
+	ids.slice(0, WARM_MAX).forEach((id) => warmClip(id));
+};
+
 // Mystery Vault outcome held back until the bought round's first board has landed
 let pendingMystery: 'hidden' | 'escape' | 'none' | null = null;
 const playPendingMystery = async () => {
@@ -143,6 +173,7 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 		stateGame.hud.multiplier = stateGame.hud.meterStage >= 5 ? 5 : stateGame.hud.meterStage >= 4 ? 2 : 1;
 		if (!nextRevealIsRespin) stateGame.hud.respinChain = 0;
 		nextRevealIsRespin = false;
+		warmUpcoming(bookEvents, bookEvent);
 		await stateGameDerived.enhancedBoard.spin({ revealEvent: bookEvent });
 		eventEmitter.broadcast({ type: 'soundScatterCounterClear' });
 		if (pendingMystery) await playPendingMystery();
@@ -164,6 +195,7 @@ const handlers: BookEventHandlerMap<BookEvent, BookEventContext> = {
 		loadPoster(entry.intro); // the poster is ready even if the clip is not
 		// wait for the clips at most 8 s: the poster covers a slow start, so the round never stalls on a black screen
 		const introReady = Promise.all([ensureClip(entry.intro, 8000), ensureClip(entry.loop, 8000)]);
+		introReady.then(warmBonusClips); // then the bonus round's own clips, while the card plays
 		// animate scatters
 		eventEmitter.broadcast({ type: 'soundOnce', name: 'sfx_scatter_win_v2' });
 		await animateSymbols({ positions: bookEvent.positions });
@@ -499,6 +531,9 @@ export const bookEventHandlerMap = Object.fromEntries(
 		WIN_EVENTS.has(type)
 			? handler
 			: async (...args: unknown[]) => {
+					// rolling warm-up: as each feature event starts, ready the next clips of this spin
+					const [ev, ctx] = args as [BookEvent, BookEventContext | undefined];
+					if (type !== 'reveal' && ctx?.bookEvents) warmUpcoming(ctx.bookEvents, ev);
 					await settle();
 					return (handler as (...a: unknown[]) => unknown)(...args);
 				},

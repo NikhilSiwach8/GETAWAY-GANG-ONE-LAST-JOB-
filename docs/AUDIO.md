@@ -1,9 +1,25 @@
 # GETAWAY GANG — Audio
 
-All music and sound effects are original. They are composed and synthesized in code
-(`art/audio/`): additive and FM synthesis, Karplus-Strong strings, filtered noise and a
-convolution reverb. No samples, sound libraries or AI audio services are used, so the audio is
-licence-clean.
+All music and sound effects are original compositions and designs.
+
+- **Music and musical stingers** (horn fanfares, strings, timpani) are written as MIDI in code and
+  played by a sampled band. The instruments are recorded samples from the MuseScore General
+  SoundFont (MIT licence; parts public domain or CC0), rendered with FluidSynth (`art/audio/sampler.py`,
+  `art/audio/music_real.py`). The performance is humanized (velocity, micro-timing, swing, ghost notes
+  and fills), then mixed with convolution reverb, bus compression and limiting.
+- **Effects** (impacts, whooshes, engines, coins, glitches) are synthesized (`art/audio/synth.py`,
+  `art/audio/sfx.py`).
+- No AI audio services are used.
+
+The SoundFont is used only to render the WAV and Ogg files. The game ships rendered audio, not the
+SoundFont.
+
+**Requirements:**
+
+```
+apt-get install fluidsynth musescore-general-soundfont
+pip install mido
+```
 
 **Rebuild:**
 
@@ -16,6 +32,7 @@ This renders every sound, normalizes it to its loudness target, and writes the s
 
 - Add `--only name1,name2` to re-render only those sounds; the rest come from the render cache.
 - `art/audio/analyze.py` checks band balance, loudness and loop seams.
+- `art/audio/music.py` is the earlier all-synth score, kept for reference.
 
 ## Music
 
@@ -23,9 +40,9 @@ The music is an original heist-caper theme in D minor (Dm9 – Bbmaj7 – Gm9 �
 
 | Name | Use | Content |
 |---|---|---|
-| `bgm_main` | Base game (74 s loop) | 104 BPM funk: drums, bass, muted guitar and electric piano. The vibraphone carries the theme, brass answers it, and a new layer arrives every 8 bars. |
-| `bgm_freespin` | Free spins (63 s loop) | The same theme at 122 BPM: brass lead, driving drums, risers into each section. |
-| `bgm_winlevel_big` … `_max` | Big-win tiers (about 8 s loops) | A D-major brass fanfare. Each tier adds weight: strings, then bells, then timpani and a key change, then extra brass. |
+| `bgm_main` | Base game (74 s loop) | 104 BPM funk-heist band, lightly swung: Room drum kit, fingered bass, muted guitar and Rhodes. The vibraphone carries the theme, then the horn section (trumpet, tenor sax, trombone) takes it, with strings underneath. |
+| `bgm_freespin` | Free spins (63 s loop) | The same theme at 122 BPM: the horn section leads, with driving drums, string stabs, timpani and glockenspiel. |
+| `bgm_winlevel_big` … `_max` | Big-win tiers (about 8 s loops) | A D-major fanfare for trumpets, trombone and French horn. Each tier adds weight: strings, then glockenspiel, then timpani and a key change, then extra brass. |
 
 ## Sound effects
 
