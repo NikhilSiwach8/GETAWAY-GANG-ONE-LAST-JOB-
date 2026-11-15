@@ -334,7 +334,52 @@ def render() -> str:
     return '\n'.join(out)
 
 
+def render_txt() -> str:
+    """Plain-text version: the same complete prompts, easy to copy one at a time."""
+    rule = '=' * 78
+    out = [
+        'GETAWAY GANG - ART PROMPTS',
+        f'{sum(len(items) for _, _, items in ASSETS)} prompts. Each PROMPT block is complete on its own: paste it, with its NEGATIVE PROMPT, into the generator.',
+        '',
+        'HOW TO KEEP THE SET FROM LOOKING AI-GENERIC',
+        '1. Generate SYM-H1 (diamond) and CHR-ROXY-POSE first; once they look right, use them as the style reference (or same seed / style code) for every other asset.',
+        '2. Never accept glow, sparkles or text from the generator: the game adds light effects and all lettering.',
+        '3. Check each image against its CHECKS list, at the size the game shows it (symbols 64 px, buttons 48 px).',
+        '4. Have an artist do a short paint-over on every final image (hands, faces, line weight, stray detail).',
+        '5. Same lighting everywhere: warm key light upper left, thin cool rim light on the right.',
+        '6. After delivery: python3 art/process_assets.py, then python3 art/measure_symbols.py.',
+        '',
+    ]
+    for sec, intro, items in ASSETS:
+        out += [rule, sec.upper(), rule]
+        if intro:
+            out.append(intro)
+        out.append('')
+        for aid, title, a in items:
+            full = f"{a['prompt']} {STYLE} {LIGHT} {PALETTE} Deliverable: {a['size']}"
+            out += [
+                '-' * 78,
+                f'{aid} - {title}',
+                '-' * 78,
+                f'DELIVER: {a["size"]}',
+                '',
+                'PROMPT:',
+                full,
+                '',
+                'NEGATIVE PROMPT:',
+                a.get('neg') or NEG,
+                '',
+                'CHECKS BEFORE ACCEPTING:',
+                *[f'- {c}' for c in a['checks']],
+                '',
+            ]
+    return '\n'.join(out)
+
+
 if __name__ == '__main__':
     md = render()
     open(OUT, 'w').write(md)
     print(OUT, md.count('### '), 'prompts', len(md.split()), 'words')
+    txt = render_txt()
+    open(OUT[:-3] + '.txt', 'w').write(txt)
+    print(OUT[:-3] + '.txt', txt.count('PROMPT:\n'), 'prompts')
