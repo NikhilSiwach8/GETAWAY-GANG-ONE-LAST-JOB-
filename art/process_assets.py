@@ -14,7 +14,8 @@ import os
 from PIL import Image, ImageFilter
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-SRC = os.path.join(ROOT, "art", "delivery")
+# GG_SRC: build from another copy of the delivery, e.g. art/delivery_styled (art/art_pass.py)
+SRC = os.path.abspath(os.environ["GG_SRC"]) if os.environ.get("GG_SRC") else os.path.join(ROOT, "art", "delivery")
 MASTER = os.environ.get("GG_MASTER") == "1"
 # the Remotion clips zoom and crop the art: they get masters at twice the game size (never above the delivery)
 OUT = os.path.join(ROOT, "video", "public", "gg") if MASTER else os.path.join(ROOT, "frontend", "getaway_gang", "static", "assets", "gg")

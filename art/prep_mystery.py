@@ -11,7 +11,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-SRC = os.path.join(ROOT, "art", "delivery", "hidden")
+SRC = os.path.join(os.path.abspath(os.environ["GG_SRC"]) if os.environ.get("GG_SRC") else os.path.join(ROOT, "art", "delivery"), "hidden")
 OUT = os.path.join(ROOT, "video", "public", "gg")
 
 
