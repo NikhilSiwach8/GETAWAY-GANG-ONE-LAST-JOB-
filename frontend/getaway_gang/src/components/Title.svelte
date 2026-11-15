@@ -30,6 +30,9 @@
 </script>
 
 {#if painted(p.text)}
+	<!-- remounted when the face changes (gold <-> silver): switching fontFamily on a live BitmapText leaves Pixi
+	     drawing a generated fallback font (black glyphs) instead of the painted atlas -->
+	{#key p.silver}
 	<BitmapText
 		anchor={p.anchor ?? 0.5}
 		x={p.x ?? 0}
@@ -39,6 +42,7 @@
 		text={p.text}
 		style={{ fontFamily: p.silver ? 'ggTitleSilver' : 'ggTitleGold', fontSize: size, letterSpacing: p.letterSpacing ?? 0 }}
 	/>
+	{/key}
 {:else}
 	<Text
 		anchor={p.anchor ?? 0.5}

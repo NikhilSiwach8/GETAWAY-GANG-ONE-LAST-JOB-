@@ -100,9 +100,14 @@ const Padlock: React.FC<{x: number; y: number; at: number}> = ({x, y, at}) => {
 };
 
 /** Two-headed circular re-spin arrows. */
+// the red gear badge from the Chaos Re-spins meter art, split by art/split_respin_badge.py: the gear rim, bolts and
+// red face stay still; only the gold arrows turn, about the face's centre
+const ARROWS_PIVOT = '55.7% 48.2%';
 const RespinRing: React.FC<{size: number; rotate: number}> = ({size, rotate}) => (
-	// the red gear badge with gold re-spin arrows from the Chaos Re-spins meter art
-	<Img src={art('FX-RESPIN-BADGE')} style={{width: size, height: size, rotate: `${rotate}deg`, filter: 'drop-shadow(0 10px 0 rgba(42,18,0,0.6)) drop-shadow(0 0 34px rgba(247,201,71,0.75))'}} />
+	<div style={{position: 'relative', width: size, height: size, filter: 'drop-shadow(0 10px 0 rgba(42,18,0,0.6)) drop-shadow(0 0 34px rgba(247,201,71,0.75))'}}>
+		<Img src={art('FX-RESPIN-DISC')} style={{position: 'absolute', inset: 0, width: size, height: size}} />
+		<Img src={art('FX-RESPIN-ARROWS')} style={{position: 'absolute', inset: 0, width: size, height: size, transformOrigin: ARROWS_PIVOT, rotate: `${rotate}deg`}} />
+	</div>
 );
 
 export const ChaosRespin: React.FC = () => {
