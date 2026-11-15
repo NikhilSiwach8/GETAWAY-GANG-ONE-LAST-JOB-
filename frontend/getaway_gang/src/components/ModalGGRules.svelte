@@ -230,6 +230,7 @@
 		font-weight: 600;
 		font-size: 1.05rem;
 		line-height: 1.4;
+		animation: gg-window-in 280ms cubic-bezier(0.2, 1.4, 0.4, 1) both; /* springs open (keyframes in lib/gg-ui.css) */
 	}
 	h3 {
 		text-align: center;

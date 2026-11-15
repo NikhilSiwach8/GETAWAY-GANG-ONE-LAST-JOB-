@@ -119,6 +119,7 @@
 		font-weight: 600;
 		text-align: center;
 		container-type: inline-size;
+		animation: gg-window-in 280ms cubic-bezier(0.2, 1.4, 0.4, 1) both; /* springs open (keyframes in lib/gg-ui.css) */
 	}
 	.plate {
 		position: absolute;
@@ -161,14 +162,14 @@
 		box-shadow:
 			0 0 0 2px #3b2400,
 			0 8px 22px rgba(0, 0, 0, 0.45);
-		transition: transform 160ms ease-out, box-shadow 160ms ease-out;
+		transition: transform 180ms cubic-bezier(0.2, 1.3, 0.4, 1), box-shadow 180ms ease-out;
 	}
 	.card:hover {
-		transform: translateY(-4px);
+		transform: translateY(-6px) scale(1.02);
 		box-shadow:
 			0 0 0 2px #3b2400,
-			0 0 22px rgba(255, 200, 80, 0.35),
-			0 12px 26px rgba(0, 0, 0, 0.5);
+			0 0 28px rgba(255, 200, 80, 0.5),
+			0 14px 28px rgba(0, 0, 0, 0.5);
 		display: flex;
 		flex-direction: column;
 		min-height: 0;

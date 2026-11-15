@@ -70,7 +70,8 @@
 		{@const mw = portrait ? pr.multW : multW}
 		<Container x={portrait ? pr.multX : (W - multW) / 2} y={portrait ? 0 : mH + rH + 20}>
 			<Sprite key="UI-MULT" width={mw} height={h('UI-MULT', mw)} />
-			<PopOnChange trigger={hud.multiplier} x={mw * 0.495} y={h('UI-MULT', mw) * 0.455} glow={mw * 0.9} strength={0.5}>
+			<!-- the plate appears with the first multiplier: pop then too, and on every later change -->
+			<PopOnChange trigger={hud.multiplier} popOnMount x={mw * 0.495} y={h('UI-MULT', mw) * 0.455} glow={mw * 0.9} strength={0.5}>
 				{#key hud.multiplier}<BitmapText anchor={0.5} text={`×${hud.multiplier}`} style={{ fontFamily: 'ggGold', fontSize: 40 * (mw / multW) }} />{/key}
 			</PopOnChange>
 			{#if !portrait}

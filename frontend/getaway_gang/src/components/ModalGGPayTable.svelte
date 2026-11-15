@@ -107,6 +107,7 @@
 		color: #f2f5ff;
 		font-family: 'Barlow Condensed', sans-serif;
 		font-weight: 600;
+		animation: gg-window-in 280ms cubic-bezier(0.2, 1.4, 0.4, 1) both; /* springs open (keyframes in lib/gg-ui.css) */
 	}
 	h3 {
 		text-align: center;

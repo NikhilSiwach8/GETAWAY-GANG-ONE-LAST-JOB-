@@ -1,20 +1,20 @@
 <!--
-  Pops its content when `trigger` changes: a damped back-out scale (overshoot, settle) with a brief gold glow, so a
+  Pops its content when `trigger` changes (and on appearing, with `popOnMount`): a damped back-out scale (overshoot, settle) with a brief gold glow, so a
   counter or multiplier visibly reacts instead of just swapping numbers. Display only.
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { Container, Sprite } from 'pixi-svelte';
 
-	type Props = { trigger: unknown; x?: number; y?: number; strength?: number; glow?: number; ms?: number; children: Snippet };
+	type Props = { trigger: unknown; x?: number; y?: number; strength?: number; glow?: number; ms?: number; popOnMount?: boolean; children: Snippet };
 	const p: Props = $props();
 	let t = $state(1);
 	let first = true;
 	$effect(() => {
 		void p.trigger;
 		if (first) {
-			first = false; // no pop for the initial value
-			return;
+			first = false;
+			if (!p.popOnMount) return; // no pop for the initial value (unless the content appearing is the event)
 		}
 		let raf = 0;
 		const t0 = performance.now();
