@@ -11,9 +11,9 @@ over-saturated neon, airbrushed micro-detail and plastic gloss. This pass gives 
   4. ink outline        every cut-out (symbols, characters, buttons, plates) gets the same warm near-black outline
   5. paper grain        one shared, subtle paper texture over everything
 
-    python3 art/art_pass.py                    # art/delivery -> art/delivery_styled (originals untouched)
-    GG_SRC=art/delivery_styled python3 art/process_assets.py
-    GG_SRC=art/delivery_styled GG_MASTER=1 python3 art/process_assets.py
+    python3 art/art_pass.py --shipped          # the game's art (from its pre-pass version in git), then:
+    python3 art/make_ui_plates.py && python3 art/grade_clips.py && python3 art/sync_clips.py && python3 art/make_cellfx_sheets.py
+    python3 art/art_pass.py                    # or: art/delivery -> art/delivery_styled, for a rebuild from source
 """
 from __future__ import annotations
 
@@ -248,5 +248,39 @@ def run(only: set[str] | None = None):
     print(n, 'images ->', OUT)
 
 
+# ---------------------------------------------------------------- shipped files (the mode the game uses)
+# The shipped art (frontend/.../assets/gg) was built from 2x upscaled masters that are not in the repository, so the
+# pass is applied to the shipped files themselves (same sizes, same layout). It always starts from the pre-pass
+# version in git (BASE_REF), so running it again never styles an image twice.
+GG = os.path.join(ROOT, 'frontend', 'getaway_gang', 'static', 'assets', 'gg')
+BASE_REF = 'e3c1306'  # last commit before the art pass
+SKIP = {'UI-SOFT-GLOW', 'UI-SHINE', 'UI-RAYS', 'UI-CELL-GLOW',  # procedural FX textures
+        'UI-PLATE-NAVY', 'UI-PLATE-RED'}                         # cut from UI-FS-COUNTER afterwards (make_ui_plates)
+
+
+def run_shipped(only: set[str] | None = None):
+    import io
+    import subprocess
+    n = 0
+    for f in sorted(os.listdir(GG)):
+        if not f.endswith('.webp'):
+            continue
+        aid = f[:-5]
+        if aid in SKIP or (only and aid not in only):
+            continue
+        rel = os.path.relpath(os.path.join(GG, f), ROOT)
+        raw = subprocess.run(['git', 'show', f'{BASE_REF}:{rel}'], cwd=ROOT, capture_output=True).stdout
+        if not raw:
+            continue  # not in the base commit (added later): leave as is
+        im = Image.open(io.BytesIO(raw))
+        res = process(im, category(f))
+        res.save(os.path.join(GG, f), 'WEBP', lossless=True, quality=100, method=4)
+        n += 1
+        print(f'{f:34s} {category(f):9s} {im.size[0]}x{im.size[1]}', flush=True)
+    print(n, 'shipped images styled')
+
+
 if __name__ == '__main__':
-    run(set(a.upper() for a in sys.argv[1:]) or None)
+    args = [a for a in sys.argv[1:] if not a.startswith('--')]
+    only = set(a.upper() for a in args) or None
+    run_shipped(only) if '--shipped' in sys.argv else run(only)
