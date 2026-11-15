@@ -104,8 +104,9 @@
 		max-height: 92vh;
 		overflow-y: auto;
 		padding: 1.2rem;
-		color: #fff;
-		font-family: 'Luckiest Guy', sans-serif;
+		color: #f2f5ff;
+		font-family: 'Barlow Condensed', sans-serif;
+		font-weight: 600;
 	}
 	h3 {
 		text-align: center;
@@ -168,13 +169,18 @@
 		flex: none;
 	}
 	.name {
-		font-weight: 800;
+		font-family: 'Luckiest Guy', sans-serif;
+		font-weight: 400;
+		letter-spacing: 0.04em;
+		color: #ffe27a;
+		text-shadow: 0 2px 0 #5a2a00;
 		margin-bottom: 0.2rem;
 	}
 	.pay {
 		display: flex;
 		gap: 0.6rem;
-		font-size: 0.9rem;
+		font-size: 1.05rem;
+		font-weight: 700;
 	}
 	.pay span {
 		width: 2rem;
@@ -205,8 +211,8 @@
 	}
 	.special p {
 		margin: 0.2rem 0 0;
-		font-size: 0.9rem;
-		line-height: 1.35;
+		font-size: 1rem;
+		line-height: 1.3;
 	}
 	.small {
 		font-size: 0.8rem;

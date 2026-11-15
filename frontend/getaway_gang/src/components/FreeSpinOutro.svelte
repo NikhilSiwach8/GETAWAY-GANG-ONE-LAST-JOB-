@@ -8,6 +8,7 @@
 </script>
 
 <script lang="ts">
+	import Title from './Title.svelte';
 	import { presentTurbo } from '../game/turbo';
 	/**
 	 * Bonus end screen: the TOTAL-<BONUS> clip builds the Total Win card (crew cheer, title slam, the gold plaque
@@ -218,9 +219,9 @@
 					<!-- no clips: the bonus background with the same layout, drawn live -->
 					<Sprite key={bonus === 'heist' ? 'BG-HEIST' : bonus === 'escape' ? 'BG-ESCAPE' : 'BG-HIDDEN'} anchor={0.5} x={cover.x} y={cover.y} width={Math.max(sizes.width, (sizes.height * 16) / 9)} height={Math.max(sizes.height, (sizes.width * 9) / 16)} alpha={0.5} />
 					<Container x={cover.x - (L.width / 2) * cover.s} y={cover.y - (L.height / 2) * cover.s} scale={cover.s}>
-						<Text anchor={0.5} x={L.title.x} y={L.title.y} text="TOTAL WIN" style={{ ...LABEL, fontSize: L.title.size, stroke: { color: 0x2a1200, width: 14 } }} />
+						<Title x={L.title.x} y={L.title.y} text="TOTAL WIN" size={L.title.size * 1.1} />
 						<Rectangle anchor={0.5} x={L.plaque.x} y={L.plaque.y} width={L.plaque.w} height={L.plaque.h} borderRadius={L.plaque.h / 2} backgroundColor={0x0a1030} borderColor={0xf7c947} borderWidth={10} />
-						<Text anchor={0.5} x={L.ribbon.x} y={L.ribbon.y} text={{ escape: 'PERFECT ESCAPE!', heist: 'HEIST COMPLETE!', hidden: 'HIDDEN BONUS!' }[bonus]} style={{ ...LABEL, fontSize: 62 }} />
+						<Title x={L.ribbon.x} y={L.ribbon.y} text={{ escape: 'PERFECT ESCAPE!', heist: 'HEIST COMPLETE!', hidden: 'HIDDEN BONUS!' }[bonus]} size={66} />
 					</Container>
 				{/if}
 
@@ -232,19 +233,19 @@
 
 					{#if bonus === 'heist'}
 						{@const top = L.info.y - L.info.h / 2}
-						<Text anchor={0.5} x={L.info.x} y={top + 32} text="LOOT MILESTONES · {lootPoints} PTS" style={{ ...LABEL, fontSize: 34 }} />
+						<Title x={L.info.x} y={top + 32} text="LOOT MILESTONES · {lootPoints} PTS" size={36} maxWidth={L.info.w * 0.9} />
 						{#each LOOT as t, i (t)}
 							{@const lit = lootPoints >= t}
 							{@const cx = L.info.x - L.info.w / 2 + L.info.w * ((i + 0.5) / LOOT.length)}
 							<!-- milestone plate (UI-MILESTONE art): points in the navy window, reward on the red plate -->
 							<Container x={cx} y={L.info.y + 30} alpha={lit ? 1 : 0.8}>
 								<Sprite key="UI-MILESTONE" anchor={0.5} width={176} height={176 * (475 / 600)} tint={lit ? 0xffffff : 0x6d6a80} />
-								<Text anchor={0.5} y={-14} text="{t} PTS" style={{ ...LABEL, fontSize: 30, fill: lit ? 0xffe27a : 0xa9a6c0, stroke: { color: 0x0b0618, width: 5 } }} />
+								<Title y={-14} text="{t} PTS" size={32} silver={!lit} alpha={lit ? 1 : 0.85} />
 								<Text
 									anchor={0.5}
 									y={38}
 									text={LOOT_REWARDS[i] ?? ''}
-									style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: 13, fill: lit ? 0xffffff : 0xb9b6cc, align: 'center', wordWrap: true, wordWrapWidth: 140, stroke: { color: 0x2a0606, width: 3 } }}
+									style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: '700', fontSize: 17, lineHeight: 18, fill: lit ? 0xffffff : 0xc9c6dc, align: 'center', wordWrap: true, wordWrapWidth: 140, stroke: { color: 0x2a0606, width: 3 } }}
 								/>
 								{#if lit}
 									<Sprite key="UI-STAR-ON" anchor={0.5} x={70} y={-52} width={40} height={40} />
@@ -258,7 +259,7 @@
 							{@const cx = L.info.x - L.info.w / 2 + L.info.w * ((i + 0.5) / CREW.length)}
 							<Container x={cx} y={L.info.y}>
 								<Sprite key={CREW_SYM[k]} anchor={0.5} y={-40} width={120} height={120} />
-								<Text anchor={0.5} y={40} text="LV {lv}" style={{ ...LABEL, fontSize: 36, fill: 0xffffff }} />
+								<Title y={40} text="LV {lv}" size={40} />
 								{#each Array.from({ length: MAX_LEVEL }, (_, j) => j) as j (j)}
 									<Sprite key="UI-STAR-ON" anchor={0.5} x={(j - 1) * 46} y={86} width={40} height={40} tint={j < lv ? 0xffffff : 0x2c2648} alpha={j < lv ? 1 : 0.9} />
 								{/each}

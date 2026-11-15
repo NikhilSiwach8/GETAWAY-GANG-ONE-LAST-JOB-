@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Title from './Title.svelte';
 	/**
 	 * Big win presentation, live (no video). Driven by the win director's tier state (game/wins): the scene
 	 * escalates BIG -> SUPER -> MEGA -> EPIC (-> MAX) up to the outcome's level, one stage per share of the
@@ -10,7 +11,7 @@
 	 */
 	import { onDestroy } from 'svelte';
 	import type * as PIXI from 'pixi.js';
-	import { Container, Rectangle, Sprite, Text, getContextApp } from 'pixi-svelte';
+	import { Container, Rectangle, Sprite, getContextApp } from 'pixi-svelte';
 	import LivePose from './LivePose.svelte';
 	import { getContext } from '../game/context';
 	import { winFx } from '../game/wins/winDirector.svelte';
@@ -102,18 +103,7 @@
 
 	<!-- stage title -->
 	<Container x={cx} y={cy - 210 * k} scale={titleScale * k} alpha={titleAlpha}>
-		<Text
-			anchor={0.5}
-			text={look.title}
-			style={{
-				fontFamily: 'Luckiest Guy, sans-serif',
-				fontSize: 170,
-				fill: look.fill,
-				stroke: { color: 0x2a1200, width: 22 },
-				dropShadow: { color: look.shadow, distance: 12, angle: Math.PI / 2, blur: 0, alpha: 1 },
-				letterSpacing: 6,
-			}}
-		/>
+		<Title text={look.title} size={190} maxWidth={1500} letterSpacing={4} />
 	</Container>
 </Container>
 

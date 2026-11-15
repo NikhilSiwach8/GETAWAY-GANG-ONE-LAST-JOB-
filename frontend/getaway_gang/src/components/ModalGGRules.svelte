@@ -225,9 +225,11 @@
 		max-height: 92vh;
 		overflow-y: auto;
 		padding: 1.2rem;
-		color: #fff;
-		font-family: 'Luckiest Guy', sans-serif;
-		line-height: 1.45;
+		color: #f2f5ff;
+		font-family: 'Barlow Condensed', sans-serif;
+		font-weight: 600;
+		font-size: 1.05rem;
+		line-height: 1.4;
 	}
 	h3 {
 		text-align: center;
@@ -268,21 +270,29 @@
 		justify-content: center;
 		margin-bottom: 0.8rem;
 	}
+	/* tabs: the painted plates (navy, red for the open tab) */
 	nav button {
 		cursor: pointer;
-		font: inherit;
-		font-weight: 800;
-		font-size: 0.85rem;
-		color: #fff;
-		background: rgba(13, 21, 48, 0.85);
-		border: 2px solid #46557a;
-		border-radius: 999px;
-		padding: 0.35rem 0.9rem;
+		font-family: 'Barlow Condensed', sans-serif;
+		font-weight: 700;
+		font-size: 0.95rem;
+		letter-spacing: 0.05em;
+		color: #dfe6ff;
+		background: none;
+		border-style: solid;
+		border-width: 8px 16px;
+		border-image: var(--gg-plate-navy) 34 62 fill / 8px 16px stretch;
+		padding: 0.05rem 0.4rem;
+		text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+		transition: transform 120ms ease-out, filter 120ms ease-out;
+	}
+	nav button:hover {
+		filter: brightness(1.15);
 	}
 	nav button.on {
-		color: #2a1600;
-		background: linear-gradient(180deg, #ffe27a, #f7a928);
-		border-color: #f7c947;
+		color: #ffe27a;
+		border-image: var(--gg-plate-red) 30 62 fill / 8px 16px stretch;
+		filter: drop-shadow(0 0 6px rgba(255, 200, 80, 0.4));
 	}
 	section {
 		background: rgba(13, 21, 48, 0.85);

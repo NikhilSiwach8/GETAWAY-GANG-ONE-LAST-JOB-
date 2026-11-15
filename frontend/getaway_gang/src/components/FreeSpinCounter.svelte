@@ -6,10 +6,11 @@
 </script>
 
 <script lang="ts">
+	import PopOnChange from './PopOnChange.svelte';
+	import Title from './Title.svelte';
 	/** UI-FS-COUNTER with live label, counter and bonus name drawn into its empty plates. */
-	import { BitmapText, Container, Sprite, Text } from 'pixi-svelte';
+	import { BitmapText, Container, Sprite } from 'pixi-svelte';
 	import { getContext } from '../game/context';
-	import { PALETTE } from '../game/tempArt';
 	import { GG_LAYOUT } from '../game/ggAssets';
 	import { frameRect } from '../game/frameLayout';
 	import { portraitRows } from '../game/hudLayout';
@@ -25,7 +26,6 @@
 	const bonusName = $derived({ escape: 'THE PERFECT ESCAPE', hidden: 'HIDDEN BONUS', heist: 'THE HEIST' }[context.stateGame.hud.bonus ?? 'heist']);
 	const portrait = $derived(context.stateLayoutDerived.layoutType() === 'portrait');
 	const pr = $derived(portraitRows(layout, frame, context.stateGame.hud.bonus));
-	const font = (size: number, fill: number) => ({ fontFamily: 'Luckiest Guy, sans-serif', fontSize: size, fill });
 
 	context.eventEmitter.subscribeOnMount({
 		freeSpinCounterShow: () => (show = true),
@@ -45,16 +45,21 @@
 		zIndex={5}
 	>
 		<Sprite key="UI-FS-COUNTER" width={W} height={H} />
-		<Text anchor={0.5} x={W / 2} y={H * 0.16} text="FREE SPINS" style={font(14, PALETTE.gold)} />
+		<Title x={W / 2} y={H * 0.16} text="FREE SPINS" size={17} maxWidth={W * 0.6} />
 		<!-- FONT-COUNTER silver numerals (the glyph set has no '/', drawn as text) -->
 		<!-- remounted on change: an updated right-anchored BitmapText can keep its previous glyphs -->
-		{#key current}
-			<BitmapText anchor={{ x: 1, y: 0.5 }} x={W / 2 - 10} y={H * 0.51} text={String(current)} style={{ fontFamily: 'ggSilver', fontSize: 40 }} />
-		{/key}
-		<Text anchor={0.5} x={W / 2} y={H * 0.51} text="/" style={{ ...font(30, 0xdbe7ff), stroke: { color: 0x0a1633, width: 4 } }} />
-		{#key total}
-			<BitmapText anchor={{ x: 0, y: 0.5 }} x={W / 2 + 10} y={H * 0.51} text={String(total)} style={{ fontFamily: 'ggSilver', fontSize: 40 }} />
-		{/key}
-		<Text anchor={0.5} x={W / 2} y={H * 0.8} text={bonusName} style={font(13, 0xffffff)} />
+		<!-- each new spin pops the count; a retrigger pops the total -->
+		<PopOnChange trigger={current} x={W / 2 - 10} y={H * 0.51} glow={W * 0.45}>
+			{#key current}
+				<BitmapText anchor={{ x: 1, y: 0.5 }} text={String(current)} style={{ fontFamily: 'ggSilver', fontSize: 40 }} />
+			{/key}
+		</PopOnChange>
+		<Title silver x={W / 2} y={H * 0.51} text="/" size={34} />
+		<PopOnChange trigger={total} x={W / 2 + 10} y={H * 0.51} glow={W * 0.45} strength={0.45}>
+			{#key total}
+				<BitmapText anchor={{ x: 0, y: 0.5 }} text={String(total)} style={{ fontFamily: 'ggSilver', fontSize: 40 }} />
+			{/key}
+		</PopOnChange>
+		<Title silver x={W / 2} y={H * 0.8} text={bonusName} size={16} maxWidth={W * 0.7} />
 	</Container>
 {/if}

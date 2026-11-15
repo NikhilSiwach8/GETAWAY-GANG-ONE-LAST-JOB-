@@ -14,6 +14,7 @@
 </script>
 
 <script lang="ts">
+	import Title from './Title.svelte';
 	import { presentTurbo } from '../game/turbo';
 	/**
 	 * Feature card on the delivered blueprint scroll (UI-INFO-HEADER art): title in the scroll's window with
@@ -22,7 +23,7 @@
 	 * clip and stands in for the clip when clips cannot play. Awaitable: the book player waits for it.
 	 */
 	import { onDestroy } from 'svelte';
-	import { Container, Sprite, Text } from 'pixi-svelte';
+	import { Container, Sprite } from 'pixi-svelte';
 	import { stateBet } from 'state-shared';
 	import { getContext } from '../game/context';
 	import { CREW_INFO } from '../game/tempArt';
@@ -69,7 +70,6 @@
 	const H = $derived(SH + (banner?.subtitle ? 30 : 0));
 	const x = $derived(layout.x + (hasCrew ? layout.width * 0.07 : 0));
 	const y = $derived(layout.y - layout.height * 0.5 + 78);
-	const hex = (c: number) => c;
 	const poseH = 300;
 	const pulse = $derived(1 + Math.sin(t * 9) * 0.015 * (t > 0.22 ? 1 : 0));
 </script>
@@ -87,32 +87,9 @@
 		<Container scale={pop * pulse}>
 			<!-- the blueprint scroll (UI-INFO-HEADER art); the title sits in its window -->
 			<Sprite key="UI-BANNER" anchor={0.5} width={W} height={SH} />
-			<Text
-				anchor={0.5}
-				y={SH * 0.1}
-				text={banner.title}
-				style={{
-					fontFamily: 'Luckiest Guy, sans-serif',
-					fontSize: Math.min(SH * 0.34, (W * 0.66) / Math.max(6, banner.title.length * 0.6)),
-					fill: 0xffffff,
-					stroke: { color: hex(banner.color), width: 7 },
-					dropShadow: { color: 0x0b0618, alpha: 0.85, distance: 4, angle: Math.PI / 2, blur: 2 },
-					letterSpacing: 1,
-				}}
-			/>
+			<Title text={banner.title} size={SH * 0.4} maxWidth={W * 0.66} y={SH * 0.1} />
 			{#if banner.subtitle}
-				<Text
-					anchor={{ x: 0.5, y: 0 }}
-					y={SH * 0.5 + 2}
-					text={banner.subtitle}
-					style={{
-						fontFamily: 'Luckiest Guy, sans-serif',
-						fontSize: Math.min(22, (W * 0.9) / Math.max(10, banner.subtitle.length * 0.55)),
-						fill: 0xffe9a8,
-						stroke: { color: 0x120a24, width: 5 },
-						dropShadow: { color: 0x000000, alpha: 0.7, distance: 3, angle: Math.PI / 2, blur: 2 },
-					}}
-				/>
+				<Title text={banner.subtitle} silver size={26} maxWidth={W * 0.92} anchor={{ x: 0.5, y: 0 }} y={SH * 0.5 + 2} />
 			{/if}
 			{#if banner.level}
 				<!-- level stars beside the scroll's wheel -->

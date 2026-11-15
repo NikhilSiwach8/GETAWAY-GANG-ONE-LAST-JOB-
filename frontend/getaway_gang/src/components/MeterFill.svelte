@@ -1,11 +1,12 @@
 <script lang="ts">
+	import Title from './Title.svelte';
 	/**
 	 * Progress fill drawn *on top of* a meter frame's (opaque) bar channel. Points map piecewise onto the
 	 * art's milestone pins, so reaching a milestone fills exactly up to its pin. The fill eases to new values
 	 * and flashes when it grows.
 	 */
 	import { onDestroy } from 'svelte';
-	import { Container, Rectangle, Sprite, Text } from 'pixi-svelte';
+	import { Container, Rectangle, Sprite } from 'pixi-svelte';
 
 	type Props = {
 		points: number;
@@ -80,10 +81,4 @@
 		{/if}
 	</Container>
 {/if}
-<Text
-	anchor={0.5}
-	x={(props.width * (props.x0 + props.x1)) / 2}
-	y={cy + ch / 2}
-	text={`${Math.min(props.points, max)} / ${max}`}
-	style={{ fontFamily: 'Luckiest Guy, sans-serif', fontSize: Math.max(11, ch * 0.62), fill: 0xffffff, stroke: { color: 0x2a1600, width: 4 } }}
-/>
+<Title silver x={(props.width * (props.x0 + props.x1)) / 2} y={cy + ch / 2} text={`${Math.min(props.points, max)} / ${max}`} size={Math.max(12, ch * 0.72)} />

@@ -115,7 +115,8 @@
 		background: var(--panel) center / 100% 100% no-repeat;
 		filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
 		color: #fff;
-		font-family: 'Luckiest Guy', sans-serif;
+		font-family: 'Barlow Condensed', sans-serif;
+		font-weight: 600;
 		text-align: center;
 		container-type: inline-size;
 	}
@@ -155,9 +156,19 @@
 	.card {
 		border-radius: 14px;
 		overflow: hidden;
-		background: linear-gradient(180deg, #16204a, #0b1230);
-		border: 3px solid #f7c947;
-		box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+		background: #0c1535;
+		border: 3px solid #d9a93a;
+		box-shadow:
+			0 0 0 2px #3b2400,
+			0 8px 22px rgba(0, 0, 0, 0.45);
+		transition: transform 160ms ease-out, box-shadow 160ms ease-out;
+	}
+	.card:hover {
+		transform: translateY(-4px);
+		box-shadow:
+			0 0 0 2px #3b2400,
+			0 0 22px rgba(255, 200, 80, 0.35),
+			0 12px 26px rgba(0, 0, 0, 0.5);
 		display: flex;
 		flex-direction: column;
 		min-height: 0;
@@ -242,29 +253,39 @@
 		margin: 0;
 		padding-left: 1.1rem;
 		text-align: left;
-		font-size: clamp(11px, 1.35cqw, 15px);
-		line-height: 1.35;
+		font-size: clamp(13px, 1.6cqw, 18px);
+		line-height: 1.3;
 		flex: 1;
 		min-height: 0;
 		overflow-y: auto;
 		scrollbar-width: thin;
 	}
+	/* buttons are the painted plates cut from the UI art (art/make_ui_plates.py) */
 	button {
 		cursor: pointer;
 		font-family: 'Luckiest Guy', sans-serif;
 		font-size: clamp(14px, 1.8cqw, 22px);
 		letter-spacing: 0.04em;
-		border-radius: 999px;
-		padding: 0.55rem 1.2rem 0.4rem;
-		border: none;
+		background: none;
+		border-style: solid;
+		border-width: 10px 22px;
+		border-image: var(--gg-plate-navy) 34 62 fill / 10px 22px stretch;
+		padding: 0.25rem 0.6rem 0.1rem;
+		color: #fff;
+		text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+		transition: transform 120ms ease-out, filter 120ms ease-out;
+	}
+	button:active:not(:disabled) {
+		transform: scale(0.96);
 	}
 	.buy {
-		color: #2a1600;
-		background: linear-gradient(180deg, #ffe27a, #f7a928);
-		box-shadow: 0 4px 0 #a05a00;
+		color: #ffe27a;
+		border-image: var(--gg-plate-red) 30 62 fill / 10px 22px stretch;
+		text-shadow: 0 2px 0 #3a0a00;
+		filter: drop-shadow(0 0 6px rgba(255, 200, 80, 0.35));
 	}
 	.buy:hover:not(:disabled) {
-		filter: brightness(1.08);
+		filter: brightness(1.12) drop-shadow(0 0 10px rgba(255, 200, 80, 0.55));
 	}
 	.buy:disabled {
 		filter: grayscale(1);
@@ -272,9 +293,7 @@
 		cursor: not-allowed;
 	}
 	.ghost {
-		color: #fff;
-		background: transparent;
-		border: 2px solid #fff;
+		color: #dfe6ff;
 	}
 	.row {
 		display: flex;
@@ -305,21 +324,21 @@
 
 	/* portrait phones: CSS frame in the same palette, cards stacked */
 	@media (max-aspect-ratio: 1/1) {
+		/* portrait: the same panel art as a 9-slice frame (keeps its corners and top plate in proportion) */
 		.panel {
+			--k: 0.19;
 			width: 94vw;
 			height: auto;
 			aspect-ratio: auto;
 			max-height: 90vh;
-			background: linear-gradient(180deg, #1b2547, #0d1530);
-			border: 4px solid #f7c947;
-			border-radius: 20px;
-			padding-top: 3.6rem;
+			background: none;
+			border-style: solid;
+			border-width: calc(var(--k) * 460px) calc(var(--k) * 260px) calc(var(--k) * 310px);
+			border-image: var(--panel) 460 260 310 fill / calc(var(--k) * 460px) calc(var(--k) * 260px) calc(var(--k) * 310px) stretch;
 		}
 		.plate {
-			top: 1.8rem;
-			color: #ffe27a;
-			text-shadow: 0 3px 0 #b5470f;
-			font-size: 26px;
+			top: calc(var(--k) * -200px);
+			font-size: 24px;
 		}
 		.glass {
 			position: relative;

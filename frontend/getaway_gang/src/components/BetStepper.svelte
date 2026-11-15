@@ -1,8 +1,12 @@
 <script lang="ts">
-	/** − BET + inside the info modals: same bet levels and rules as the main +/− buttons (idle only). */
+	/**
+	 * − BET + inside the info modals: same bet levels and rules as the main −/+ buttons (idle only), drawn with
+	 * the same painted −/+ buttons (UI-BET-MINUS / UI-BET-PLUS) and the amount on the painted navy plate.
+	 */
 	import { stateBet, stateBetDerived, stateConfig } from 'state-shared';
 	import { numberToCurrencyString } from 'utils-shared/amount';
 	import { getContext } from '../game/context';
+	import { ggUrl } from '../game/ggAssets';
 
 	const context = getContext();
 	const options = $derived([...stateConfig.betAmountOptions].sort((a, b) => a - b));
@@ -16,9 +20,9 @@
 </script>
 
 <div class="stepper">
-	<button aria-label="Decrease bet" disabled={!idle || stateBet.betAmount <= options[0]} onclick={() => step(-1)}>−</button>
+	<button aria-label="Decrease bet" disabled={!idle || stateBet.betAmount <= options[0]} onclick={() => step(-1)} style="background-image:url({ggUrl('UI-BET-MINUS')})"></button>
 	<div class="bet"><span>BET</span><b>{numberToCurrencyString(stateBet.betAmount)}</b></div>
-	<button aria-label="Increase bet" disabled={!idle || stateBet.betAmount >= options[options.length - 1]} onclick={() => step(1)}>+</button>
+	<button aria-label="Increase bet" disabled={!idle || stateBet.betAmount >= options[options.length - 1]} onclick={() => step(1)} style="background-image:url({ggUrl('UI-BET-PLUS')})"></button>
 </div>
 
 <style>
@@ -30,17 +34,19 @@
 		margin: 0.2rem auto 0.8rem;
 	}
 	button {
-		width: 2.4rem;
-		height: 2.4rem;
-		border-radius: 50%;
-		border: 3px solid #b8bec8;
-		background: radial-gradient(circle at 40% 35%, #ffe27a, #f7a928 70%);
-		color: #2a1600;
-		font-size: 1.5rem;
-		font-weight: 900;
-		line-height: 1;
+		width: 2.6rem;
+		height: 2.6rem;
+		border: none;
+		background: center / contain no-repeat;
 		cursor: pointer;
-		box-shadow: 0 3px 0 #7a4a00;
+		filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.55));
+		transition: transform 120ms ease-out;
+	}
+	button:hover:not(:disabled) {
+		transform: scale(1.08);
+	}
+	button:active:not(:disabled) {
+		transform: scale(0.94);
 	}
 	button:disabled {
 		filter: grayscale(1);
@@ -48,24 +54,26 @@
 		cursor: not-allowed;
 	}
 	.bet {
-		min-width: 8rem;
-		padding: 0.35rem 1rem;
-		border-radius: 999px;
-		background: #0b1230;
-		border: 2px solid #f7c947;
+		min-width: 8.5rem;
+		padding: 0.15rem 0.8rem;
+		border-style: solid;
+		border-width: 9px 20px;
+		border-image: var(--gg-plate-navy) 34 62 fill / 9px 20px stretch;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		line-height: 1.1;
+		line-height: 1.05;
+		font-family: 'Barlow Condensed', sans-serif;
 	}
 	.bet span {
-		font-size: 0.65rem;
-		letter-spacing: 0.12em;
+		font-size: 0.7rem;
+		letter-spacing: 0.14em;
 		color: #c9d3ff;
-		font-weight: 800;
+		font-weight: 700;
 	}
 	.bet b {
-		font-size: 1.15rem;
+		font-size: 1.2rem;
 		color: #ffe27a;
+		font-weight: 700;
 	}
 </style>

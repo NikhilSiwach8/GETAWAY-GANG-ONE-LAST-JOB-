@@ -1,10 +1,12 @@
 <script lang="ts">
+	import PopOnChange from './PopOnChange.svelte';
+	import Title from './Title.svelte';
 	/**
 	 * HUD on the delivered frames (UI-METER-GETAWAY, UI-METER-LOOT, UI-CREW-LEVELS, UI-RESPIN, UI-MULT).
 	 * Live state (fill, lit locks/stars, numbers) is drawn in code inside the empty plates; positions
 	 * are fractions of each image measured from the art. Display only: values come from book events.
 	 */
-	import { BitmapText, Container, Sprite, Text } from 'pixi-svelte';
+	import { BitmapText, Container, Sprite } from 'pixi-svelte';
 	import { getContext } from '../game/context';
 	import { METER_THRESHOLDS, LOOT_THRESHOLDS, PALETTE, CREW_INFO, type CrewKey } from '../game/tempArt';
 	import { GG_LAYOUT } from '../game/ggAssets';
@@ -68,9 +70,11 @@
 		{@const mw = portrait ? pr.multW : multW}
 		<Container x={portrait ? pr.multX : (W - multW) / 2} y={portrait ? 0 : mH + rH + 20}>
 			<Sprite key="UI-MULT" width={mw} height={h('UI-MULT', mw)} />
-			{#key hud.multiplier}<BitmapText anchor={0.5} x={mw * 0.495} y={h('UI-MULT', mw) * 0.455} text={`×${hud.multiplier}`} style={{ fontFamily: 'ggGold', fontSize: 40 * (mw / multW) }} />{/key}
+			<PopOnChange trigger={hud.multiplier} x={mw * 0.495} y={h('UI-MULT', mw) * 0.455} glow={mw * 0.9} strength={0.5}>
+				{#key hud.multiplier}<BitmapText anchor={0.5} text={`×${hud.multiplier}`} style={{ fontFamily: 'ggGold', fontSize: 40 * (mw / multW) }} />{/key}
+			</PopOnChange>
 			{#if !portrait}
-				<Text anchor={0.5} x={mw * 0.5} y={h('UI-MULT', mw) * 0.75} text="WIN MULTIPLIER" style={{ ...numStyle(10), fill: 0xffffff, stroke: undefined }} />
+				<Title silver x={mw * 0.5} y={h('UI-MULT', mw) * 0.75} text="WIN MULTIPLIER" size={12} maxWidth={mw * 0.8} />
 			{/if}
 		</Container>
 	{/if}

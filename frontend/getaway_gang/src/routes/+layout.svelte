@@ -6,7 +6,16 @@
 	import '../game/pixiDefaults';
 	import '../lib/gg-ui.css';
 	import { ggUrl } from '../game/ggAssets';
-	if (typeof document !== 'undefined') document.documentElement.style.setProperty('--gg-close', `url(${ggUrl('UI-CLOSE')})`);
+	import { UI_PLATES } from '../game/uiPlates';
+	// painted art for the HTML windows (lib/gg-ui.css): close button, panel frame, plate buttons, star knob
+	if (typeof document !== 'undefined') {
+		const css = document.documentElement.style;
+		css.setProperty('--gg-close', `url(${ggUrl('UI-CLOSE')})`);
+		css.setProperty('--gg-panel', `url(${ggUrl('UI-BUY-PANEL')})`);
+		css.setProperty('--gg-plate-navy', `url(${UI_PLATES['UI-PLATE-NAVY']})`);
+		css.setProperty('--gg-plate-red', `url(${UI_PLATES['UI-PLATE-RED']})`);
+		css.setProperty('--gg-star', `url(${ggUrl('UI-STAR-ON')})`);
+	}
 	import Game from '../components/Game.svelte';
 	import { setContext } from '../game/context';
 
