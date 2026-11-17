@@ -10,7 +10,7 @@
 </script>
 
 <script lang="ts">
-	import { BitmapText, Text } from 'pixi-svelte';
+	import { BitmapText, Container, Text } from 'pixi-svelte';
 
 	type Props = {
 		text: string;
@@ -32,16 +32,18 @@
 {#if painted(p.text)}
 	<!-- remounted when the face changes (gold <-> silver): switching fontFamily on a live BitmapText leaves Pixi
 	     drawing a generated fallback font (black glyphs) instead of the painted atlas -->
-	{#key p.silver}
-	<BitmapText
-		anchor={p.anchor ?? 0.5}
-		x={p.x ?? 0}
-		y={p.y ?? 0}
-		alpha={p.alpha ?? 1}
-		tint={p.tint ?? 0xffffff}
-		text={p.text}
-		style={{ fontFamily: p.silver ? 'ggTitleSilver' : 'ggTitleGold', fontSize: size, letterSpacing: p.letterSpacing ?? 0 }}
-	/>
+	<!-- the painted text is drawn at one fixed size and fitted by scaling its container: changing any style field
+	     (fontSize included) on a live BitmapText makes Pixi fall back to a generated font with black glyphs -->
+	{#key `${p.silver}|${p.size}|${p.letterSpacing ?? 0}`}
+	<Container x={p.x ?? 0} y={p.y ?? 0} scale={size / p.size}>
+		<BitmapText
+			anchor={p.anchor ?? 0.5}
+			alpha={p.alpha ?? 1}
+			tint={p.tint ?? 0xffffff}
+			text={p.text}
+			style={{ fontFamily: p.silver ? 'ggTitleSilver' : 'ggTitleGold', fontSize: p.size, letterSpacing: p.letterSpacing ?? 0 }}
+		/>
+	</Container>
 	{/key}
 {:else}
 	<Text
